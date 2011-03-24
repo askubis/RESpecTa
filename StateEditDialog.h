@@ -10,6 +10,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QGridLayout;
 QT_END_NAMESPACE
 
 
@@ -27,10 +28,14 @@ private:
     QLineEdit *stateName;
     QPushButton *typeAcceptedButton;
     QComboBox *genTypeCombo;
-    //QWidget *extension;
+    QGridLayout *mainLayout;
+    QWidget *extension;
+
+
 
 private slots:
     void typeAccepted();
+    void setStateSubclass(int chosen);
 
 };
 #endif // STATEEDITDIALOG_H

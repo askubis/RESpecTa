@@ -101,8 +101,10 @@ private:
     void createActions();
     void createToolbars();
 
-    MyGraphType graph;
-    std::map<std::string, MyGraphType> subtasks;
+
+    QWidget *editWidget;
+
+
     QWidget *createBackgroundCellWidget(const QString &text,
                                         const QString &image);
     QWidget *createCellWidget(const QString &text);

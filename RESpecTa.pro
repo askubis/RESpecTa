@@ -16,7 +16,11 @@ SOURCES += main.cpp\
     diagramitem.cpp \
     diagramtextitem.cpp \
     arrow.cpp \
-    StateEditDialog.cpp
+    StateEditDialog.cpp \
+    editWidget.cpp \
+    stateWidget.cpp \
+    transWidget.cpp \
+    GraphFunctions.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -31,7 +35,12 @@ HEADERS  += respecta.h \
     sysInitNode.h \
     RobotSet.h \
     States.h \
-    StateEditDialog.h
+    StateEditDialog.h \
+    editWidget.h \
+    stateWidget.h \
+    transWidget.h \
+    GraphFunctions.h \
+    GlobalVariables.h
 
 FORMS    += respecta.ui
 

@@ -11,9 +11,10 @@
 #ifndef BASESTATE_H
 #define BASESTATE_H
 
-class BaseState : public DiagramItem
+class BaseState// : public DiagramItem
 {
 public:
+    BaseState() {}
     std::string getName() {return stateName;}
     void setName(std::string newName) {stateName=newName;}
     StateType getType() {return type;}
@@ -24,10 +25,10 @@ public:
     void setParameters(std::string newParams){parameters = newParams;}
     DiagramItem* getItem() {return item;}
     void setItem (DiagramItem * newItem){item=newItem;}
-
+    std::string stateName;
 
 private:
-    std::string stateName;
+    //std::string stateName;
     StateType type;
     int argument;
     std::string parameters;
@@ -101,7 +102,7 @@ private:
     Robot robot;
     GeneratorType genType;
     Coordinates * coords;
-    //float * genArg;//niepotrzebne - pole BaseState::parameters
+    float * genArg;
     std::string speech;
 
 };

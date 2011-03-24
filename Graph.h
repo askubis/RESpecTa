@@ -20,16 +20,16 @@ struct state_t {
 struct transition_t {
     typedef edge_property_tag kind;
   };
-struct node_count_t{
+/*struct graph_title_t{
     typedef graph_property_tag kind;
-};
+};*/
 
 typedef property<state_t, BaseState> VertexProperty;
 typedef property<transition_t, Transition> EdgeProperty;
-typedef property<node_count_t, int> GraphProperty;
+//typedef property<graph_title_t, std::string> GraphProperty;
 
-typedef adjacency_list<listS, setS, directedS, VertexProperty, EdgeProperty, GraphProperty> MyGraphType;
-
+//typedef adjacency_list<listS, listS, directedS, VertexProperty, EdgeProperty, GraphProperty> MyGraphType;
+typedef adjacency_list<vecS, vecS, directedS, VertexProperty, EdgeProperty> MyGraphType;
 
 
 

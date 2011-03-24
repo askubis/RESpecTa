@@ -47,6 +47,9 @@
 #include "diagramtextitem.h"
 #include "arrow.h"
 
+//#include "StateEditDialog.h"
+#include "editWidget.h"
+
 const int InsertTextButton = 10;
 
 //! [0]
@@ -66,10 +69,18 @@ RESpecTa::RESpecTa()
         this, SLOT(itemSelected(QGraphicsItem*)));
     createToolbars();
 
+
+
+    editWidget = new EditWidget(this);
+   // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
+    editWidget->resize(10,800);
+
+
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(toolBox);
     view = new QGraphicsView(scene);
     layout->addWidget(view);
+    layout->addWidget(editWidget);
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
@@ -247,6 +258,9 @@ void RESpecTa::sendToBack()
 //! [7]
 void RESpecTa::itemInserted(DiagramItem *item)
 {
+    //StateEditDialog editDialog;
+    //editDialog.exec();
+
     pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
     //buttonGroup->button(int(item->diagramType()))->setChecked(false);

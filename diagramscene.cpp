@@ -141,11 +141,11 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
-StateEditDialog editDialog;
+
     DiagramItem *item;
     switch (myMode) {
         case InsertItem:
-            editDialog.exec();
+            //
             item = new DiagramItem( myItemMenu);
             item->setBrush(myItemColor);
             addItem(item);
