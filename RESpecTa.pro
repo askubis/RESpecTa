@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     editWidget.cpp \
     stateWidget.cpp \
     transWidget.cpp \
-    GraphFunctions.cpp
+    GraphFunctions.cpp \
+    StateTypeWidgets.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -40,7 +41,8 @@ HEADERS  += respecta.h \
     stateWidget.h \
     transWidget.h \
     GraphFunctions.h \
-    GlobalVariables.h
+    GlobalVariables.h \
+    StateTypeWidgets.h \
 
 FORMS    += respecta.ui
 

@@ -12,7 +12,7 @@
 class Coordinates
 {
 public:
-
+    Coordinates(){}
 private:
     std::string filePath;
     CoordType coordType;

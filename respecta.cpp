@@ -69,6 +69,12 @@ RESpecTa::RESpecTa()
         this, SLOT(itemSelected(QGraphicsItem*)));
     createToolbars();
 
+    myGraph = new MyGraphType();
+    subtasks = new std::map<std::string, MyGraphType*> ();
+
+    //subtasks->insert(std::make_pair<std::string, MyGraphType *>("kopytko", NULL));
+
+
 
 
     editWidget = new EditWidget(this);

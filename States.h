@@ -25,10 +25,11 @@ public:
     void setParameters(std::string newParams){parameters = newParams;}
     DiagramItem* getItem() {return item;}
     void setItem (DiagramItem * newItem){item=newItem;}
-    std::string stateName;
+
 
 private:
-    //std::string stateName;
+
+    std::string stateName;
     StateType type;
     int argument;
     std::string parameters;
@@ -40,6 +41,7 @@ private:
 class EmptyGenForSetState:public BaseState
 {
 public:
+    EmptyGenForSetState(){}
     RobotSet getSet() {return set;}
     void setSet(RobotSet newSet) {set=newSet;}
 
@@ -53,6 +55,7 @@ private:
 class EmptyGenState:public BaseState
 {
 public:
+    EmptyGenState() {}
     Robot getRobot() {return robot;}
     void setRobot(Robot newRobot) {robot=newRobot;}
 private:
@@ -63,6 +66,7 @@ private:
 class GetSensorState:public BaseState
 {
 public:
+    GetSensorState(){}
     Sensor getSensor() {return sensor;}
     void setSensor(Sensor newSensor) {sensor=newSensor;}
 
@@ -75,6 +79,7 @@ private:
 class InitiateSensorState:public BaseState
 {
 public:
+    InitiateSensorState(){}
     Sensor getSensor() {return sensor;}
     void setSensor(Sensor newSensor) {sensor=newSensor;}
 
@@ -87,7 +92,7 @@ private:
 class RunGenState:public BaseState
 {
 public:
-
+    RunGenState(){coords = new Coordinates();}
     Robot getRobot() {return robot;}
     void setRobot(Robot newRobot) {robot=newRobot;}
     GeneratorType getGenType() {return genType;}
@@ -96,13 +101,15 @@ public:
     void setCoords (Coordinates * newCoords) {coords = newCoords;}
     std::string getSpeech() {return speech;}
     void setSpeech(std::string newSpeech) {speech = newSpeech;}
+    std::string gerArgs(){return genArgs;}
+    void setArgs(std::string newGenArgs){genArgs=newGenArgs;}
 
 
 private:
     Robot robot;
     GeneratorType genType;
     Coordinates * coords;
-    float * genArg;
+    std::string genArgs;
     std::string speech;
 
 };
@@ -111,7 +118,7 @@ private:
 class StopGenState:public BaseState
 {
 public:
-
+    StopGenState(){}
     RobotSet getSet() {return set;}
     void setSet(RobotSet newSet) {set=newSet;}
 
@@ -131,6 +138,7 @@ struct genInit
 class sysInitState:public BaseState
 {
 public:
+    sysInitState(){}
     std::vector<genInit> getInits() {return inits;}
     void setInits (std::vector<genInit> newInits) {inits=newInits;}
     Transmitter getTransmitter() {return transmitter;}
@@ -148,6 +156,7 @@ private:
 class WaitState:public BaseState
 {
 public:
+    WaitState(){}
     long long int getTimespan() {return Timespan;}
     void setTimespan(long long int newTimeSpan){Timespan = newTimeSpan;}
 private:

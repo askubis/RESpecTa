@@ -19,7 +19,7 @@ QStringList getStateNames(VertexIter first, VertexIter last, const theGraph &G)
        {
          st = boost::get(stateMap, *first);
          //std::string tmp = st.getName();
-         std::string tmp = st.stateName;
+         std::string tmp = st.getName();
          items<< (tmp.c_str());
          ++first;
        }

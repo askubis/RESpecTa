@@ -38,10 +38,11 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef RESPECTA_H
+#define RESPECTA_H
 
 #include <QMainWindow>
+//#include "GlobalVariables.h"
 
 #include "diagramitem.h"
 #include "Graph.h"
@@ -70,6 +71,8 @@ class RESpecTa : public QMainWindow
 
 public:
    RESpecTa();
+   MyGraphType * getGraph (){return myGraph;}
+   std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
 
 private slots:
     //void backgroundButtonGroupClicked(QAbstractButton *button);
@@ -100,6 +103,12 @@ private:
     void createToolBox();
     void createActions();
     void createToolbars();
+
+
+
+
+    MyGraphType * myGraph;
+    std::map<std::string, MyGraphType *> * subtasks;
 
 
     QWidget *editWidget;

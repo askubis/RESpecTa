@@ -1,12 +1,18 @@
+
+#ifndef STATEWIDGET_H
+#define STATEWIDGET_H
+
 #include "respecta.h"
 #include "States.h"
 #include "globals.h"
+#include "StateTypeWidgets.h"
 
 #include <QDialog>
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QDialogButtonBox;
+class QComboBox;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
@@ -15,8 +21,6 @@ class QGridLayout;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
-#ifndef STATEWIDGET_H
-#define STATEWIDGET_H
 
 class StateWidget : public QWidget
 {
@@ -26,6 +30,7 @@ public:
 private:
     QVBoxLayout *topLayout;
     QVBoxLayout *StateLayout;
+    QVBoxLayout *mainLayout;
 
     QVBoxLayout *StateTypeLayout;
     QVBoxLayout *RunGenTypeLayout;
@@ -33,16 +38,36 @@ private:
     QLabel *nameLabel;
     QLineEdit *stateNameEdit;
 
-    QGridLayout *mainLayout;
 
     QPushButton *OKButton;
     QPushButton *InsertButton;
+    QPushButton *createTaskButton;
 
-    QComboBox *genTypeCombo;
+    QLineEdit * taskNameEdit;
+
+    QComboBox *stateTypeCombo;
+    QComboBox *subtaskCombo;
+
+    QWidget * sysIni;
+    QWidget * runGen;
+    QWidget * emptyForSet;
+    QWidget * emptyGen;
+    QWidget * waitGen;
+    QWidget * stopGen;
+    QWidget * initSensor;
+    QWidget * getSensorReading;
+    QWidget* StateWidgets[STATES_NUMBER];
+
+    int tmpWidget;
 
 private slots:
     void setStateSubclass(int chosen);
+
+    void createNewSubtask();
+
+    void lengthSubtaskChanged(QString newString);
     void lengthChanged(QString text);
+
     void AcceptState();
     void InsertState();
 

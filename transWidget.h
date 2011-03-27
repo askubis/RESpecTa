@@ -1,3 +1,8 @@
+
+#ifndef TRANSWIDGET_H
+#define TRANSWIDGET_H
+
+
 #include "respecta.h"
 #include "States.h"
 #include "globals.h"
@@ -11,12 +16,11 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QComboBox;
 class QGridLayout;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
-#ifndef TRANSWIDGET_H
-#define TRANSWIDGET_H
 
 
 class TransWidget : public QWidget
@@ -29,8 +33,8 @@ public:
 private:
     QVBoxLayout *TransitionLayout;
 
-    QLabel *transCondLabel;
-    QLineEdit *transCondEdit;
+    //QLabel *transCondLabel;
+    QLineEdit *conditionLineEdit;
 
 
     //QWidget *extension;
@@ -42,6 +46,10 @@ private:
     QComboBox *sourceCombo;
     QComboBox *destCombo;
     QComboBox *subtaskCombo;
+
+
+
+
 
 
 

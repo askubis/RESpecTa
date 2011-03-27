@@ -44,6 +44,7 @@
 #include <QGraphicsScene>
 #include "diagramitem.h"
 #include "diagramtextitem.h"
+#include "Graph.h"
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -62,6 +63,8 @@ class DiagramScene : public QGraphicsScene
 
 public:
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
+
+
 
     DiagramScene(QMenu *itemMenu, QObject *parent = 0);
     QFont font() const
@@ -94,6 +97,7 @@ protected:
 
 private:
     bool isItemChange(int type);
+
 
     //DiagramItem::DiagramType myItemType;
     QMenu *myItemMenu;

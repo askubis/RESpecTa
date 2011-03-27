@@ -6,10 +6,10 @@
 EditWidget::EditWidget(QWidget *parent)
     : QWidget(parent)
 {
-    tabWidget = new QTabWidget;
-stateWidget = new StateWidget(this);
+    tabWidget = new QTabWidget(this);
+stateWidget = new StateWidget(tabWidget);
     tabWidget->addTab(stateWidget,tr("State"));
-transWidget = new TransWidget(this);
+transWidget = new TransWidget(tabWidget);
     tabWidget->addTab(transWidget, tr("Transition"));
     //tabWidget->setTabEnabled(1, false);
 

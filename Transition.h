@@ -15,13 +15,13 @@ class Transition
 public:
     std::string getCondition() {return condition;}
     void setCondition(std::string newCondition) {condition=newCondition;}
-    MyGraphType getSubtask() {return subtask;}
-    void setSubtask(MyGraphType newSubtask) {subtask=newSubtask;}
+    MyGraphType* getSubtask() {return subtask;}
+    void setSubtask(MyGraphType* newSubtask) {subtask=newSubtask;}
 
 private:
     std::string condition;
     //std::string subtask;//@TODO:askubis change to a pointer
-    MyGraphType subtask;
+    MyGraphType *subtask;
 };
 
 #endif // TRANSITION_H
