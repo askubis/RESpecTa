@@ -89,35 +89,35 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 
 
     QLabel *FirstSetLabel = new QLabel(tr("First Set:/nxxx"));
-    emptyGenLayout->addWidget(FirstSetLabel);
+    emptyGenLayout->insertWidget(0,FirstSetLabel);
     //labels with setText
 
     FirstRobotCombo = new QComboBox(this);
     FirstRobotCombo->setFixedWidth(200);
     FirstRobotCombo->addItems(items);
-    emptyGenLayout->addWidget(FirstRobotCombo);
+    emptyGenLayout->insertWidget(1,FirstRobotCombo);
 
     QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
     QPushButton * addFirstButton = new QPushButton("Add");
     QPushButton * removeFirstButton = new QPushButton("Remove");
     firstButtonsLayout->addWidget(addFirstButton);
     firstButtonsLayout->addWidget(removeFirstButton);
-    emptyGenLayout->addLayout(firstButtonsLayout);
+    emptyGenLayout->insertLayout(2,firstButtonsLayout);
 
 
     QLabel *SecondSetLabel = new QLabel("Second Set:");
-    emptyGenLayout->addWidget(SecondSetLabel);
+    emptyGenLayout->insertWidget(3,SecondSetLabel);
 
     SecondRobotCombo = new QComboBox(this);
     SecondRobotCombo->setFixedWidth(200);
     SecondRobotCombo->addItems(items);
-    emptyGenLayout->addWidget(FirstRobotCombo);
+    emptyGenLayout->insertWidget(4,FirstRobotCombo);
     QHBoxLayout * secondButtonsLayout = new QHBoxLayout;
     QPushButton * addSecondButton = new QPushButton("Add");
     QPushButton * removeSecondButton = new QPushButton("Remove");
     secondButtonsLayout->addWidget(addSecondButton);
     secondButtonsLayout->addWidget(removeSecondButton);
-    emptyGenLayout->addLayout(secondButtonsLayout);
+    emptyGenLayout->insertLayout(5,secondButtonsLayout);
 
      setLayout(emptyGenLayout);
 }

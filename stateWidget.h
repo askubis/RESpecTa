@@ -60,6 +60,8 @@ private:
 
     int tmpWidget;
 
+    std::map<std::string, MyGraphType *> * xsubtasks;
+
 private slots:
     void setStateSubclass(int chosen);
 

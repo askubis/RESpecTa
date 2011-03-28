@@ -61,6 +61,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
     subtaskList<<tr("MAIN");
     RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
     std::map<std::string, MyGraphType *> * subtasks = x->getSubtasks();
+    xsubtasks = subtasks;
     for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
     {
         subtaskList<<(*it).first.c_str();
@@ -204,9 +205,9 @@ void StateWidget::createNewSubtask()
 
 
     bool mark = false;
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    for (std::map<std::string, MyGraphType *>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
     {
-exit(7);
+//exit(7);
         if((*it).first==newSubtaskName) mark = true;
 
     }
@@ -219,18 +220,12 @@ exit(7);
     }
     else
     {
-        exit(2);
+        //exit(2);
         MyGraphType * tmpGraph = new MyGraphType();
-        (*subtasks)[newSubtaskName]= tmpGraph;
-        delete subtaskCombo;
-        subtaskCombo = new QComboBox(this);
-        QStringList subtaskList;
-        subtaskList<<tr("MAIN");
-        for (std::map<std::string, MyGraphType*>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
-        {
-            subtaskList<<(*it).first.c_str();
-        }
-        subtaskCombo->addItems(subtaskList);
+        (*xsubtasks)[newSubtaskName]= tmpGraph;
+        QString newSubtask = taskNameEdit->text();
+        subtaskCombo->addItem(newSubtask);
+
     }
     return;//*/
 }
