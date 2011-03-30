@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Wed Mar 30 14:26:00 2011
+** Created: Wed Mar 30 21:15:48 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -85,7 +85,7 @@ static const uint qt_meta_data_runGenWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -94,12 +94,18 @@ static const uint qt_meta_data_runGenWidget[] = {
 
  // slots: signature, parameters, type, tag, flags
       14,   13,   13,   13, 0x08,
+      27,   13,   13,   13, 0x08,
+      40,   13,   13,   13, 0x08,
+      50,   13,   13,   13, 0x08,
+      71,   13,   13,   13, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_runGenWidget[] = {
-    "runGenWidget\0\0addPoses()\0"
+    "runGenWidget\0\0PoseCancel()\0PosesReset()\0"
+    "PoseAdd()\0showAddPosesDialog()\0"
+    "selectTrjFilePath()\0"
 };
 
 const QMetaObject runGenWidget::staticMetaObject = {
@@ -131,10 +137,14 @@ int runGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: addPoses(); break;
+        case 0: PoseCancel(); break;
+        case 1: PosesReset(); break;
+        case 2: PoseAdd(); break;
+        case 3: showAddPosesDialog(); break;
+        case 4: selectTrjFilePath(); break;
         default: ;
         }
-        _id -= 1;
+        _id -= 5;
     }
     return _id;
 }
@@ -308,18 +318,22 @@ static const uint qt_meta_data_stopGenWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      15,   14,   14,   14, 0x08,
+      26,   14,   14,   14, 0x08,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_stopGenWidget[] = {
-    "stopGenWidget\0"
+    "stopGenWidget\0\0addFirst()\0removeFirst()\0"
 };
 
 const QMetaObject stopGenWidget::staticMetaObject = {
@@ -349,6 +363,14 @@ int stopGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: addFirst(); break;
+        case 1: removeFirst(); break;
+        default: ;
+        }
+        _id -= 2;
+    }
     return _id;
 }
 static const uint qt_meta_data_iniSensorWidget[] = {

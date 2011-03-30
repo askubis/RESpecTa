@@ -44,7 +44,7 @@
 #include <QMainWindow>
 //#include "GlobalVariables.h"
 
-#include "diagramitem.h"
+#include "baseState.h"
 #include "Graph.h"
 
 class DiagramScene;
@@ -81,7 +81,7 @@ private slots:
     void pointerGroupClicked(int id);
     void bringToFront();
     void sendToBack();
-    void itemInserted(DiagramItem *item);
+    void itemInserted(BaseState *item);
     //void textInserted(QGraphicsTextItem *item);
     //void currentFontChanged(const QFont &font);
     //void fontSizeChanged(const QString &size);

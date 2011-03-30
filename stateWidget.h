@@ -57,7 +57,7 @@ private:
     QWidget * stopGen;
     QWidget * initSensor;
     QWidget * getSensorReading;
-    QWidget* StateWidgets[STATES_NUMBER];
+    QWidget* StateWidgets[STATE_TYPES_NUMBER];
 
     int tmpWidget;
 

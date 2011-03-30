@@ -6,36 +6,22 @@
 #include "RobotSet.h"
 #include "Coordinates.h"
 
-#include "diagramitem.h"
+#include "baseState.h"
 
 #ifndef BASESTATE_H
 #define BASESTATE_H
-
+/*
 class BaseState// : public DiagramItem
 {
 public:
-    BaseState() {}
-    std::string getName() {return stateName;}
-    void setName(std::string newName) {stateName=newName;}
-    StateType getType() {return type;}
-    void setType(StateType newType) {type=newType;}
-    int getArgument() {return argument;}
-    void setArgument(int newArg){argument = newArg;}
-    std::string getParameters() {return parameters;}
-    void setParameters(std::string newParams){parameters = newParams;}
-    DiagramItem* getItem() {return item;}
-    void setItem (DiagramItem * newItem){item=newItem;}
+
 
 
 private:
 
-    std::string stateName;
-    StateType type;
-    int argument;
-    std::string parameters;
-    DiagramItem *item;
-};
 
+};
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class EmptyGenForSetState:public BaseState
@@ -163,6 +149,7 @@ private:
     long long int Timespan;
 
 };
+
 
 
 

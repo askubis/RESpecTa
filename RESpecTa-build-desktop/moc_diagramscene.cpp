@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'diagramscene.h'
 **
-** Created: Wed Mar 30 13:35:33 2011
+** Created: Wed Mar 30 18:24:08 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,17 +32,17 @@ static const uint qt_meta_data_DiagramScene[] = {
 
  // signals: signature, parameters, type, tag, flags
       19,   14,   13,   13, 0x05,
-      46,   14,   13,   13, 0x05,
-      79,   14,   13,   13, 0x05,
+      44,   14,   13,   13, 0x05,
+      77,   14,   13,   13, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     113,  108,   13,   13, 0x0a,
+     111,  106,   13,   13, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_DiagramScene[] = {
-    "DiagramScene\0\0item\0itemInserted(DiagramItem*)\0"
+    "DiagramScene\0\0item\0itemInserted(BaseState*)\0"
     "textInserted(QGraphicsTextItem*)\0"
     "itemSelected(QGraphicsItem*)\0mode\0"
     "setMode(Mode)\0"
@@ -77,7 +77,7 @@ int DiagramScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: itemInserted((*reinterpret_cast< DiagramItem*(*)>(_a[1]))); break;
+        case 0: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
         case 1: textInserted((*reinterpret_cast< QGraphicsTextItem*(*)>(_a[1]))); break;
         case 2: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
         case 3: setMode((*reinterpret_cast< Mode(*)>(_a[1]))); break;
@@ -89,7 +89,7 @@ int DiagramScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void DiagramScene::itemInserted(DiagramItem * _t1)
+void DiagramScene::itemInserted(BaseState * _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

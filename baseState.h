@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-#ifndef DIAGRAMITEM_H
-#define DIAGRAMITEM_H
+#ifndef BaseState_H
+#define BaseState_H
 
 #include <QGraphicsPixmapItem>
 #include <QList>
@@ -58,20 +58,35 @@ class QWidget;
 class QPolygonF;
 QT_END_NAMESPACE
 
+#include "RobotSet.h"
+#include "Coordinates.h"
+
 class Arrow;
 
 //! [0]
-class DiagramItem : public QGraphicsPolygonItem
+class BaseState : public QGraphicsPolygonItem
 {
 public:
+
+    StateType getType() {return stateType;}
+    void setType(StateType newType) {stateType=newType;}
+    std::string getName() {return stateName;}
+    void setName(std::string newName) {stateName=newName;}
+    int getArgument() {return argument;}
+    void setArgument(int newArg){argument = newArg;}
+    std::string getParameters() {return parameters;}
+    void setParameters(std::string newParams){parameters = newParams;}
+
+
+
     enum { Type = UserType + 15 };
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
 
-    DiagramItem & operator =(const DiagramItem &);
+    BaseState & operator =(const BaseState &);
 
-    DiagramItem();
+    BaseState(){}
 
-    DiagramItem( QMenu *contextMenu,
+    BaseState( QMenu *contextMenu,
         QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
     void removeArrow(Arrow *arrow);
@@ -94,6 +109,15 @@ private:
     QPolygonF myPolygon;
     QMenu *myContextMenu;
     QList<Arrow *> arrows;
+
+
+    std::string stateName;
+    StateType stateType;
+    int argument;
+    std::string parameters;
+
+
+
 };
 //! [0]
 

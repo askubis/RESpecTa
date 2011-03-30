@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Wed Mar 30 13:35:31 2011
+** Created: Wed Mar 30 18:24:05 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -37,13 +37,13 @@ static const uint qt_meta_data_RESpecTa[] = {
       75,    9,    9,    9, 0x08,
       90,    9,    9,    9, 0x08,
      108,  103,    9,    9, 0x08,
-     141,  135,    9,    9, 0x08,
-     168,    9,    9,    9, 0x08,
-     187,    9,    9,    9, 0x08,
-     206,    9,    9,    9, 0x08,
-     228,    9,    9,    9, 0x08,
-     250,  103,    9,    9, 0x08,
-     279,    9,    9,    9, 0x08,
+     139,  133,    9,    9, 0x08,
+     166,    9,    9,    9, 0x08,
+     185,    9,    9,    9, 0x08,
+     204,    9,    9,    9, 0x08,
+     226,    9,    9,    9, 0x08,
+     248,  103,    9,    9, 0x08,
+     277,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -52,7 +52,7 @@ static const char qt_meta_stringdata_RESpecTa[] = {
     "RESpecTa\0\0id\0buttonGroupClicked(int)\0"
     "deleteItem()\0pointerGroupClicked(int)\0"
     "bringToFront()\0sendToBack()\0item\0"
-    "itemInserted(DiagramItem*)\0scale\0"
+    "itemInserted(BaseState*)\0scale\0"
     "sceneScaleChanged(QString)\0"
     "itemColorChanged()\0lineColorChanged()\0"
     "fillButtonTriggered()\0lineButtonTriggered()\0"
@@ -93,7 +93,7 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 2: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: bringToFront(); break;
         case 4: sendToBack(); break;
-        case 5: itemInserted((*reinterpret_cast< DiagramItem*(*)>(_a[1]))); break;
+        case 5: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
         case 6: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 7: itemColorChanged(); break;
         case 8: lineColorChanged(); break;

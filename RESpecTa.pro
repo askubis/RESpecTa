@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         respecta.cpp \
     diagramscene.cpp \
-    diagramitem.cpp \
     diagramtextitem.cpp \
     arrow.cpp \
     StateEditDialog.cpp \
@@ -21,11 +20,11 @@ SOURCES += main.cpp\
     stateWidget.cpp \
     transWidget.cpp \
     GraphFunctions.cpp \
-    StateTypeWidgets.cpp
+    StateTypeWidgets.cpp \
+    baseState.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
-    diagramitem.h \
     arrow.h \
     diagramtextitem.h \
     Graph.h \
@@ -43,6 +42,7 @@ HEADERS  += respecta.h \
     GraphFunctions.h \
     GlobalVariables.h \
     StateTypeWidgets.h \
+    baseState.h
 
 FORMS    += respecta.ui
 

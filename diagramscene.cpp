@@ -51,7 +51,7 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
 {
     myItemMenu = itemMenu;
     myMode = MoveItem;
-    //myItemType = DiagramItem::Step;
+    //myItemType = BaseState::Step;
     line = 0;
     //textItem = 0;
     myItemColor = Qt::white;
@@ -89,9 +89,9 @@ void DiagramScene::setLineColor(const QColor &color)
 void DiagramScene::setItemColor(const QColor &color)
 {
     myItemColor = color;
-    if (isItemChange(DiagramItem::Type)) {
-        DiagramItem *item =
-            qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
+    if (isItemChange(BaseState::Type)) {
+        BaseState *item =
+            qgraphicsitem_cast<BaseState *>(selectedItems().first());
         item->setBrush(myItemColor);
     }
 }
@@ -117,7 +117,7 @@ void DiagramScene::setMode(Mode mode)
     myMode = mode;
 }
 
-/*void DiagramScene::setItemType(DiagramItem::DiagramType type)
+/*void DiagramScene::setItemType(BaseState::DiagramType type)
 {
     myItemType = type;
 }*/
@@ -142,11 +142,11 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
-    DiagramItem *item;
+    BaseState *item;
     switch (myMode) {
         case InsertItem:
             //
-            item = new DiagramItem( myItemMenu);
+            item = new BaseState( myItemMenu);
             item->setBrush(myItemColor);
             addItem(item);
             item->setPos(mouseEvent->scenePos());
@@ -209,13 +209,13 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [11] //! [12]
 
         if (startItems.count() > 0 && endItems.count() > 0 &&
-            startItems.first()->type() == DiagramItem::Type &&
-            endItems.first()->type() == DiagramItem::Type &&
+            startItems.first()->type() == BaseState::Type &&
+            endItems.first()->type() == BaseState::Type &&
             startItems.first() != endItems.first()) {
-            DiagramItem *startItem =
-                qgraphicsitem_cast<DiagramItem *>(startItems.first());
-            DiagramItem *endItem =
-                qgraphicsitem_cast<DiagramItem *>(endItems.first());
+            BaseState *startItem =
+                qgraphicsitem_cast<BaseState *>(startItems.first());
+            BaseState *endItem =
+                qgraphicsitem_cast<BaseState *>(endItems.first());
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
             startItem->addArrow(arrow);

@@ -42,13 +42,13 @@ runGenWidget::runGenWidget(QWidget * parent)
     :QWidget(parent)
 {
     QVBoxLayout * runGenLayout = new QVBoxLayout;
-    QStringList items;
-    items << tr("ECP_GEN_TEACH_IN") << tr("ECP_GEN_NEWSMOOTH") << tr("ECP_GEN_WEIGHT_MEASURE") << tr("ECP_GEN_TRANSPARENT")
-            << tr("ECP_GEN_TFF_NOSE_RUN") << tr("ECP_GEN_BIAS_EDP_FORCE") << tr("ECP_GEN_TFF_RUBIK_GRAB")
-            << tr("ECP_GEN_TFF_RUBIK_FACE_ROTATE") << tr("ECP_ST_GRIPPER_OPENING");
+    robotCombo = new QComboBox(this);
+    robotCombo->addItems(getRobotTable());
+    runGenLayout->addWidget(robotCombo);
     genTypeCombo = new QComboBox(this);
     genTypeCombo->setFixedWidth(200);
-    genTypeCombo->addItems(items);
+    genTypeCombo->addItems(getGeneratorTypeTable());
+    runGenLayout->addWidget(genTypeCombo);
     //connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
     argsLabel = new QLabel("Arguments:");
     argsLineEdit = new QLineEdit;
@@ -62,16 +62,74 @@ runGenWidget::runGenWidget(QWidget * parent)
 
 
 
+    QHBoxLayout *filePathLayout = new QHBoxLayout();
+    QLabel * filePathLabel = new QLabel ("Path to .trj file:");
+    filePathLayout->addWidget(filePathLabel);
+    QPushButton * setFilePathButton = new QPushButton("...");
+    filePathLayout->addWidget(setFilePathButton);
+    runGenLayout->addLayout(filePathLayout);
+    connect(setFilePathButton, SIGNAL(clicked()), this, SLOT(selectTrjFilePath()));
+    trjFileName=new QLineEdit();
+    runGenLayout->addWidget(trjFileName);
+
+
+
+
+
+
+
+
     QPushButton * runGenAddPoseButton = new QPushButton (tr("Add Pose"));
+    connect(runGenAddPoseButton, SIGNAL(clicked()), this, SLOT(showAddPosesDialog()));
  //connectButton with dialog box
     runGenLayout->addWidget(runGenAddPoseButton);
     setLayout(runGenLayout);
 
+    poseDialog = new PoseDialog(this);
+    poseDialog->setVisible(false);
+
 }
 
-void runGenWidget::addPoses()
+void runGenWidget::selectTrjFilePath()
 {
+    QFileDialog::Options options;
+    //if (!native->isChecked())
+      //  options |= QFileDialog::DontUseNativeDialog;
+    QString selectedFilter;
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                tr("QFileDialog::getOpenFileName()"),
+                                trjFileName->text(),
+                                tr("Trajectory Files(*.trj);;All Files (*)"),
+                                &selectedFilter,
+                                options);
+    if (!fileName.isEmpty())
+        trjFileName->setText(fileName);
+}
+
+void runGenWidget::showAddPosesDialog()
+{
+
+    //poseDialog->show();
+    poseDialog->setVisible(true);
+    poseDialog->exec();
     //create a dialog with poses.
+}
+
+void runGenWidget::PoseAdd()
+{
+    poseDialog->setVisible(false);
+}
+
+
+
+void runGenWidget::PosesReset()
+{
+
+}
+
+void runGenWidget::PoseCancel()
+{
+
 }
 
 
@@ -83,10 +141,6 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
-    QStringList items;
-    items << tr("ROBOT_UNDEFINED") << tr("ROBOT_IRP6OT_M") << tr("ROBOT_IRP6P_M") << tr("ROBOT_FESTIVAL")
-            << tr("ROBOT_CONVEYOR") << tr(" ROBOT_SPEAKER") << tr("ROBOT_IRP6_MECHATRONIKA") << tr("ROBOT_ELECTRON")
-            << tr("ROBOT_HAND") << tr("ROBOT_SPEECHRECOGNITION");
 
 
     QLabel *FirstSetLabel = new QLabel(tr("First Set:"));
@@ -97,10 +151,10 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 
     FirstRobotCombo = new QComboBox(this);
     FirstRobotCombo->setFixedWidth(200);
-    FirstRobotCombo->addItems(items);
+    FirstRobotCombo->addItems(getRobotTable());
 
     emptyGenLayout->insertWidget(2,FirstRobotCombo);
-    FirstRobotCombo->setVisible(true);
+
 
 
     QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
@@ -121,9 +175,9 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 
     SecondRobotCombo = new QComboBox(this);
     SecondRobotCombo->setFixedWidth(200);
-    SecondRobotCombo->addItems(items);
+    SecondRobotCombo->addItems(getRobotTable());
     emptyGenLayout->insertWidget(6,SecondRobotCombo);
-    FirstRobotCombo->setVisible(true);
+
 
     QHBoxLayout * secondButtonsLayout = new QHBoxLayout;
     QPushButton * addSecondButton = new QPushButton("Add");
@@ -187,10 +241,7 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
-    QStringList items;
-    items << tr("ROBOT_UNDEFINED") << tr("ROBOT_IRP6OT_M") << tr("ROBOT_IRP6P_M") << tr("ROBOT_FESTIVAL")
-            << tr("ROBOT_CONVEYOR") << tr(" ROBOT_SPEAKER") << tr("ROBOT_IRP6_MECHATRONIKA") << tr("ROBOT_ELECTRON")
-            << tr("ROBOT_HAND") << tr("ROBOT_SPEECHRECOGNITION");
+
 
 
     QLabel *FirstSetLabel = new QLabel(tr("Robot:"));
@@ -199,7 +250,7 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
 
     RobotCombo = new QComboBox(this);
     RobotCombo->setFixedWidth(200);
-    RobotCombo->addItems(items);
+    RobotCombo->addItems(getRobotTable());
     emptyGenLayout->addWidget(RobotCombo);
 
 
@@ -230,45 +281,57 @@ stopGenWidget::stopGenWidget(QWidget * parent)
 {
     QVBoxLayout * stopGenLayout = new QVBoxLayout;
 
-    QStringList items;
-    items << tr("ROBOT_UNDEFINED") << tr("ROBOT_IRP6OT_M") << tr("ROBOT_IRP6P_M") << tr("ROBOT_FESTIVAL")
-            << tr("ROBOT_CONVEYOR") << tr(" ROBOT_SPEAKER") << tr("ROBOT_IRP6_MECHATRONIKA") << tr("ROBOT_ELECTRON")
-            << tr("ROBOT_HAND") << tr("ROBOT_SPEECHRECOGNITION");
+
 
     //buttons add+remove
 
-    QLabel *FirstSetLabel = new QLabel(tr("First Set:/nxxx"));
-    stopGenLayout->addWidget(FirstSetLabel);
-    //labels with setText
+    QLabel *FirstSetLabel = new QLabel(tr("First Set:"));
+    stopGenLayout->insertWidget(0,FirstSetLabel);
+
+    FirstRobotList = new QListWidget(this);
+    stopGenLayout->insertWidget(1,FirstRobotList);
 
     FirstRobotCombo = new QComboBox(this);
     FirstRobotCombo->setFixedWidth(200);
-    FirstRobotCombo->addItems(items);
-    stopGenLayout->addWidget(FirstRobotCombo);
+    FirstRobotCombo->addItems(getRobotTable());
+
+    stopGenLayout->insertWidget(2,FirstRobotCombo);
+
+
 
     QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
     QPushButton * addFirstButton = new QPushButton("Add");
+    connect(addFirstButton, SIGNAL(clicked()), this, SLOT(addFirst()));
     QPushButton * removeFirstButton = new QPushButton("Remove");
+    connect(removeFirstButton, SIGNAL(clicked()), this, SLOT(removeFirst()));
     firstButtonsLayout->addWidget(addFirstButton);
     firstButtonsLayout->addWidget(removeFirstButton);
-    stopGenLayout->addLayout(firstButtonsLayout);
+    stopGenLayout->insertLayout(3,firstButtonsLayout);
 
 
-    /*QLabel *SecondSetLabel = new QLabel("Second Set:");
-    stopGenLayout->addWidget(SecondSetLabel);
-
-    SecondRobotCombo = new QComboBox(this);
-    SecondRobotCombo->setFixedWidth(200);
-    SecondRobotCombo->addItems(items);
-    stopGenLayout->addWidget(FirstRobotCombo);
-    QHBoxLayout * secondButtonsLayout = new QHBoxLayout;
-    QPushButton * addSecondButton = new QPushButton("Add");
-    QPushButton * removeSecondButton = new QPushButton("Remove");
-    secondButtonsLayout->addWidget(addSecondButton);
-    secondButtonsLayout->addWidget(removeSecondButton);
-    stopGenLayout->addLayout(secondButtonsLayout);*/
 
      setLayout(stopGenLayout);
+}
+
+void stopGenWidget::addFirst()
+{
+    //FirstRobotList->selectedItems();
+    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+
+    }
+    else
+    {
+        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));
+    }
+}
+
+void stopGenWidget::removeFirst()
+{
+    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
+    }
 }
 
 //***************   SENSOR_INI_GEN   ***************//
@@ -278,8 +341,7 @@ iniSensorWidget::iniSensorWidget(QWidget * parent)
 {
     QVBoxLayout * iniSensorLayout = new QVBoxLayout;
 
-    QStringList items;
-    items << tr("SENSOR_CAMERA_ON_TRACK, SENSOR_CAMERA_SA");
+
 
     //buttons add+remove
 
@@ -289,20 +351,24 @@ iniSensorWidget::iniSensorWidget(QWidget * parent)
 
     SensorCombo = new QComboBox(this);
     SensorCombo->setFixedWidth(200);
-    SensorCombo->addItems(items);
+    SensorCombo->addItems(getSensorTable());
     iniSensorLayout->addWidget(SensorCombo);
 
 
      setLayout(iniSensorLayout);
 }
 
+//***************   GET_SENSOR_GEN   ***************//
 getSensorWidget::getSensorWidget(QWidget * parent)
     :QWidget(parent)
 {
     QVBoxLayout * getSensorLayout = new QVBoxLayout;
 
     QStringList items;
-    items << tr("SENSOR_CAMERA_ON_TRACK, SENSOR_CAMERA_SA");
+    for (int i=0;i<SENSORS_NUMBER;i++)
+    {
+        items<<QString().fromStdString(SENSOR_TABLE[i]);
+    }
 
     //buttons add+remove
 
@@ -312,10 +378,83 @@ getSensorWidget::getSensorWidget(QWidget * parent)
 
     SensorCombo = new QComboBox(this);
     SensorCombo->setFixedWidth(200);
-    SensorCombo->addItems(items);
+    SensorCombo->addItems(getSensorTable());
     getSensorLayout->addWidget(SensorCombo);
 
 
      setLayout(getSensorLayout);
 }
 
+
+
+//***************   POSE_DIALOG   ***************//
+
+PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
+{
+    setWindowTitle(tr("Pose"));
+    QGridLayout * mainLayout = new QGridLayout;
+
+    QLabel * CoordTypeLabel = new QLabel("Pose specification:");
+    mainLayout->addWidget(CoordTypeLabel,0,0,1,2);
+    coordTypeCombo = new QComboBox;
+    coordTypeCombo->addItems(getCoordTypeTable());
+    mainLayout->addWidget(coordTypeCombo, 1,0,1,2);
+    QLabel * MotionTypeLabel = new QLabel("Motion type:");
+    mainLayout->addWidget(MotionTypeLabel,2,0,1,2);
+    motionTypeCombo = new QComboBox;
+    motionTypeCombo->addItems(getMotionTypeTable());
+    mainLayout->addWidget(motionTypeCombo,3,0,1,2);
+
+    poseList = new QListWidget();
+    mainLayout->addWidget(poseList, 4, 0, 3, 2);
+
+    QPushButton * addPoseButt = new QPushButton("Add");
+    mainLayout->addWidget(addPoseButt, 7, 0);
+//connect
+    QPushButton * rmPoseButt = new QPushButton("Remove");
+    mainLayout->addWidget(rmPoseButt,7,1);
+//connect
+
+    QLabel * coordLabel = new QLabel("Coordinates");
+    mainLayout->addWidget(coordLabel, 0, 2);
+    QLabel * velocityLabel = new QLabel("Velocities");
+    mainLayout->addWidget(velocityLabel, 0, 3);
+    QLabel * accelerationLabel = new QLabel("Accelerations");
+    mainLayout->addWidget(accelerationLabel, 0, 4);
+
+    for (int i = 0;i<7;i++)
+    {
+        coordEdit.push_back(new QLineEdit);
+        coordEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,coordEdit[i]));
+        coordEdit[i]->setMaximumWidth(80);
+        mainLayout->addWidget(coordEdit[i], i+1, 2);
+
+
+        velEdit.push_back(new QLineEdit);
+        velEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,velEdit[i]));
+        velEdit[i]->setMaximumWidth(80);
+        mainLayout->addWidget(velEdit[i], i+1, 3);
+
+
+        accEdit.push_back(new QLineEdit);
+        accEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,accEdit[i]));
+        accEdit[i]->setMaximumWidth(80);
+        mainLayout->addWidget(accEdit[i], i+1, 4);
+    }
+
+    QPushButton * resetAllButton = new QPushButton ("Reset all poses");
+    connect(resetAllButton, SIGNAL(clicked()), this->parent(), SLOT(PosesReset()) );
+    mainLayout->addWidget(resetAllButton, 8, 0, 1, 2);
+
+
+    QPushButton * cancelButton = new QPushButton ("Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this->parent(), SLOT(PoseCancel()) );
+    mainLayout->addWidget(cancelButton, 8, 2);
+
+    QPushButton * addButton = new QPushButton ("OK");
+    connect(addButton, SIGNAL(clicked()), this->parent(), SLOT(PoseAdd()) );
+    mainLayout->addWidget(addButton, 8, 3, 1, 2);
+
+
+    this->setLayout(mainLayout);
+}

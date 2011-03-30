@@ -1,6 +1,11 @@
 #include "Graph.h"
 #include "globals.h"
 #include "States.h"
+#include "baseState.h"
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 #include <QDialog>
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateEditDialog.h'
 **
-** Created: Wed Mar 30 13:35:36 2011
+** Created: Wed Mar 30 18:24:11 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -4,6 +4,7 @@
 #include "respecta.h"
 #include "States.h"
 #include "globals.h"
+#include "Pose.h"
 
 #include <QDialog>
 
@@ -20,6 +21,7 @@ class QVBoxLayout;
 class QListWidget;
 class QListItemWidget;
 QT_END_NAMESPACE
+class PoseDialog;
 
 
 class sysIniWidget : public QWidget
@@ -39,12 +41,22 @@ public:
     runGenWidget(QWidget * parent);
 private:
     QComboBox * genTypeCombo;
+    QComboBox * robotCombo;
     QLineEdit * argsLineEdit;
     QLineEdit * speechLineEdit;
     QLabel * speechLabel;
     QLabel * argsLabel;
+    QListWidget * PoseList;
+    //
+    QLineEdit * trjFileName;
+    PoseDialog * poseDialog;
 private slots:
-    void addPoses();
+    void PoseCancel();
+    void PosesReset();
+    void PoseAdd();
+    void showAddPosesDialog();
+    void selectTrjFilePath();
+
 };
 
 class emptyGenForSetWidget : public QWidget
@@ -100,14 +112,15 @@ class stopGenWidget : public QWidget
 {
     Q_OBJECT
 public:
+    QListWidget * FirstRobotList;
     stopGenWidget(QWidget * parent);
 private:
 
     QComboBox * FirstRobotCombo;
-    QComboBox * SecondRobotCombo;
 
 private slots:
-
+    void addFirst();
+    void removeFirst();
 };
 
 class iniSensorWidget : public QWidget
@@ -137,6 +150,27 @@ private slots:
 
 };
 
+
+
+
+
+
+class PoseDialog:public QDialog
+{
+public:
+    PoseDialog(QWidget * parent);
+private:
+    QListWidget * poseList;
+    QComboBox * motionTypeCombo;
+    QComboBox * coordTypeCombo;
+    std::vector<QLineEdit *> coordEdit;
+    std::vector<QLineEdit *> velEdit;
+    std::vector<QLineEdit *> accEdit;
+
+private slots:
+
+
+};
 
 
 #endif // STATETYPEWIDGETS_H

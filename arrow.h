@@ -43,7 +43,7 @@
 
 #include <QGraphicsLineItem>
 
-#include "diagramitem.h"
+#include "baseState.h"
 
 QT_BEGIN_NAMESPACE
 class QGraphicsPolygonItem;
@@ -60,7 +60,7 @@ class Arrow : public QGraphicsLineItem
 public:
     enum { Type = UserType + 4 };
 
-    Arrow(DiagramItem *startItem, DiagramItem *endItem,
+    Arrow(BaseState *startItem, BaseState *endItem,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
     int type() const
@@ -69,9 +69,9 @@ public:
     QPainterPath shape() const;
     void setColor(const QColor &color)
         { myColor = color; }
-    DiagramItem *startItem() const
+    BaseState *startItem() const
         { return myStartItem; }
-    DiagramItem *endItem() const
+    BaseState *endItem() const
         { return myEndItem; }
 
 
@@ -83,8 +83,8 @@ protected:
                QWidget *widget = 0);
 
 private:
-    DiagramItem *myStartItem;
-    DiagramItem *myEndItem;
+    BaseState *myStartItem;
+    BaseState *myEndItem;
     QColor myColor;
     QPolygonF arrowHead;
 };

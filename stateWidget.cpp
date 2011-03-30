@@ -15,7 +15,7 @@
 StateWidget::StateWidget(QWidget *parent)
 : QWidget(parent)
 {
-
+this->setMaximumWidth(230);
     //creating Base of the widget (background)
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     mainLayout = new QVBoxLayout;
@@ -77,13 +77,10 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    StateLayout->addWidget(nameLabel);
    nameLabel->setBuddy(stateNameEdit);
    StateLayout->addWidget(stateNameEdit);
-    QStringList items;
-    items << tr("SYSTEM_INITIALIZATION") << tr("RUN_GENERATOR") << tr("EMPTY_GEN_FOR_SET") << tr("EMPTY_GEN") << tr("WAIT") <<
-            tr("STOP_GEN") << tr("INITIATE_SENSOR_READING") << tr("GET_SENSOR_READING");// <<
-           /* tr("CUBE_STATE_WRITING") << tr("CUBE_STATE_CHANGE") << tr("COMMUNICATE_WITH_SOLVER") <<
-            tr("MANIPULATION_SEQ_TRANSLATION") << tr("CUBE_STATE_INIT");*/
+
+
     stateTypeCombo = new QComboBox(this);
-    stateTypeCombo->addItems(items);
+    stateTypeCombo->addItems(getStateTypeTable());
     connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
    StateLayout->addWidget(stateTypeCombo);
    paramLabel = new QLabel("Parameters:");
@@ -93,7 +90,6 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    StateLayout->addWidget(paramEdit);
 
 
-   StateLayout->SetMinimumSize;
 
 
 

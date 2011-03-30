@@ -42,7 +42,7 @@
 #include <QLabel>
 
 #include "respecta.h"
-#include "diagramitem.h"
+#include "baseState.h"
 #include "diagramscene.h"
 #include "diagramtextitem.h"
 #include "arrow.h"
@@ -63,8 +63,8 @@ RESpecTa::RESpecTa()
 
     scene = new DiagramScene(itemMenu, this);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    connect(scene, SIGNAL(itemInserted(DiagramItem*)),
-            this, SLOT(itemInserted(DiagramItem*)));
+    connect(scene, SIGNAL(itemInserted(BaseState*)),
+            this, SLOT(itemInserted(BaseState*)));
     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
         this, SLOT(itemSelected(QGraphicsItem*)));
     createToolbars();
@@ -187,7 +187,7 @@ void RESpecTa::buttonGroupClicked(int id)
     if (id == InsertTextButton) {
         scene->setMode(DiagramScene::InsertText);
     } else {
-        //scene->setItemType(DiagramItem::DiagramType(id));
+        //scene->setItemType(BaseState::DiagramType(id));
         scene->setMode(DiagramScene::InsertItem);
     }
 }
@@ -207,8 +207,8 @@ void RESpecTa::deleteItem()
     }
 
     foreach (QGraphicsItem *item, scene->selectedItems()) {
-         if (item->type() == DiagramItem::Type) {
-             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+         if (item->type() == BaseState::Type) {
+             qgraphicsitem_cast<BaseState *>(item)->removeArrows();
          }
          scene->removeItem(item);
          delete item;
@@ -235,7 +235,7 @@ void RESpecTa::bringToFront()
     qreal zValue = 0;
     foreach (QGraphicsItem *item, overlapItems) {
         if (item->zValue() >= zValue &&
-            item->type() == DiagramItem::Type)
+            item->type() == BaseState::Type)
             zValue = item->zValue() + 0.1;
     }
     selectedItem->setZValue(zValue);
@@ -254,7 +254,7 @@ void RESpecTa::sendToBack()
     qreal zValue = 0;
     foreach (QGraphicsItem *item, overlapItems) {
         if (item->zValue() <= zValue &&
-            item->type() == DiagramItem::Type)
+            item->type() == BaseState::Type)
             zValue = item->zValue() - 0.1;
     }
     selectedItem->setZValue(zValue);
@@ -262,7 +262,7 @@ void RESpecTa::sendToBack()
 //! [6]
 
 //! [7]
-void RESpecTa::itemInserted(DiagramItem *item)
+void RESpecTa::itemInserted(BaseState *item)
 {
     //StateEditDialog editDialog;
     //editDialog.exec();
@@ -274,7 +274,7 @@ void RESpecTa::itemInserted(DiagramItem *item)
 //! [7]
 
 //! [8]
-/*void RESpecTa::textInsertedDiagramItem *(QGraphicsTextItem *)
+/*void RESpecTa::textInsertedBaseState *(QGraphicsTextItem *)
 {
     buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
@@ -407,10 +407,10 @@ void RESpecTa::createToolBox()
             this, SLOT(buttonGroupClicked(int)));
     QGridLayout *layout = new QGridLayout;
     //layout->addWidget(createCellWidget(tr("Conditional"),
-    //                           DiagramItem::Conditional), 0, 0);
+    //                           BaseState::Conditional), 0, 0);
     layout->addWidget(createCellWidget(tr("State")),0, 1);
     //layout->addWidget(createCellWidget(tr("Input/Output"),
-    //                  DiagramItem::Io), 1, 0);
+    //                  BaseState::Io), 1, 0);
 //! [21]
 
    /* QToolButton *textButton = new QToolButton;
@@ -615,7 +615,7 @@ QWidget *RESpecTa::createBackgroundCellWidget(const QString &text,
 QWidget *RESpecTa::createCellWidget(const QString &text)
 {
 
-    DiagramItem item( itemMenu);
+    BaseState item( itemMenu);
     QIcon icon(item.image());
 
     QToolButton *button = new QToolButton;

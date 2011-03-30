@@ -42,7 +42,7 @@
 #define DIAGRAMSCENE_H
 
 #include <QGraphicsScene>
-#include "diagramitem.h"
+#include "baseState.h"
 #include "diagramtextitem.h"
 #include "Graph.h"
 
@@ -82,11 +82,11 @@ public:
 
 public slots:
     void setMode(Mode mode);
-    //void setItemType(DiagramItem::DiagramType type);
+    //void setItemType(BaseState::DiagramType type);
     //void editorLostFocus(DiagramTextItem *item);
 
 signals:
-    void itemInserted(DiagramItem *item);
+    void itemInserted(BaseState *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
 
@@ -99,7 +99,7 @@ private:
     bool isItemChange(int type);
 
 
-    //DiagramItem::DiagramType myItemType;
+    //BaseState::DiagramType myItemType;
     QMenu *myItemMenu;
     Mode myMode;
     bool leftButtonDown;
