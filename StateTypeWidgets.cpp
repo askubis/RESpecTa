@@ -52,6 +52,7 @@ runGenWidget::runGenWidget(QWidget * parent)
     //connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
     argsLabel = new QLabel("Arguments:");
     argsLineEdit = new QLineEdit;
+    //argsLineEdit->setValidator(new QDoubleValidator(-99999.0, 99999.0, 5, argsLineEdit));//doesn't allow multiple doubles
     runGenLayout->addWidget(argsLabel);
     runGenLayout->addWidget(argsLineEdit);
     speechLabel = new QLabel("Speech:");
@@ -88,39 +89,95 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
             << tr("ROBOT_HAND") << tr("ROBOT_SPEECHRECOGNITION");
 
 
-    QLabel *FirstSetLabel = new QLabel(tr("First Set:/nxxx"));
+    QLabel *FirstSetLabel = new QLabel(tr("First Set:"));
     emptyGenLayout->insertWidget(0,FirstSetLabel);
-    //labels with setText
+
+    FirstRobotList = new QListWidget(this);
+    emptyGenLayout->insertWidget(1,FirstRobotList);
 
     FirstRobotCombo = new QComboBox(this);
     FirstRobotCombo->setFixedWidth(200);
     FirstRobotCombo->addItems(items);
-    emptyGenLayout->insertWidget(1,FirstRobotCombo);
+
+    emptyGenLayout->insertWidget(2,FirstRobotCombo);
+    FirstRobotCombo->setVisible(true);
+
 
     QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
     QPushButton * addFirstButton = new QPushButton("Add");
+    connect(addFirstButton, SIGNAL(clicked()), this, SLOT(addFirst()));
     QPushButton * removeFirstButton = new QPushButton("Remove");
+    connect(removeFirstButton, SIGNAL(clicked()), this, SLOT(removeFirst()));
     firstButtonsLayout->addWidget(addFirstButton);
     firstButtonsLayout->addWidget(removeFirstButton);
-    emptyGenLayout->insertLayout(2,firstButtonsLayout);
+    emptyGenLayout->insertLayout(3,firstButtonsLayout);
 
 
     QLabel *SecondSetLabel = new QLabel("Second Set:");
-    emptyGenLayout->insertWidget(3,SecondSetLabel);
+    emptyGenLayout->insertWidget(4,SecondSetLabel);
+
+    SecondRobotList = new QListWidget(this);
+    emptyGenLayout->insertWidget(5,SecondRobotList);
 
     SecondRobotCombo = new QComboBox(this);
     SecondRobotCombo->setFixedWidth(200);
     SecondRobotCombo->addItems(items);
-    emptyGenLayout->insertWidget(4,FirstRobotCombo);
+    emptyGenLayout->insertWidget(6,SecondRobotCombo);
+    FirstRobotCombo->setVisible(true);
+
     QHBoxLayout * secondButtonsLayout = new QHBoxLayout;
     QPushButton * addSecondButton = new QPushButton("Add");
+    connect(addSecondButton, SIGNAL(clicked()), this, SLOT(addSecond()));
     QPushButton * removeSecondButton = new QPushButton("Remove");
+    connect(removeSecondButton, SIGNAL(clicked()), this, SLOT(removeSecond()));
     secondButtonsLayout->addWidget(addSecondButton);
     secondButtonsLayout->addWidget(removeSecondButton);
-    emptyGenLayout->insertLayout(5,secondButtonsLayout);
+    emptyGenLayout->insertLayout(7,secondButtonsLayout);
 
      setLayout(emptyGenLayout);
 }
+
+
+void emptyGenForSetWidget::addFirst()
+{
+    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+
+    }
+    else
+    {
+        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));
+    }
+}
+
+void emptyGenForSetWidget::removeFirst()
+{
+    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
+    }
+}
+
+void emptyGenForSetWidget::addSecond()
+{
+    if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+
+    }
+    else
+    {
+        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));
+    }
+}
+
+void emptyGenForSetWidget::removeSecond()
+{
+    if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
+    }
+}
+
 
 //***************   EMPTY_GEN   ***************//
 

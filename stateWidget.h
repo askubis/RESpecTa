@@ -37,7 +37,8 @@ private:
 
     QLabel *nameLabel;
     QLineEdit *stateNameEdit;
-
+    QLabel *paramLabel;
+    QLineEdit *paramEdit;
 
     QPushButton *OKButton;
     QPushButton *InsertButton;

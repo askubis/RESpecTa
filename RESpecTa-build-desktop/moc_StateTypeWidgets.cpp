@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Sun Mar 27 21:32:40 2011
+** Created: Wed Mar 30 14:26:00 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -144,18 +144,25 @@ static const uint qt_meta_data_emptyGenForSetWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      22,   21,   21,   21, 0x08,
+      33,   21,   21,   21, 0x08,
+      47,   21,   21,   21, 0x08,
+      59,   21,   21,   21, 0x08,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_emptyGenForSetWidget[] = {
-    "emptyGenForSetWidget\0"
+    "emptyGenForSetWidget\0\0addFirst()\0"
+    "removeFirst()\0addSecond()\0removeSecond()\0"
 };
 
 const QMetaObject emptyGenForSetWidget::staticMetaObject = {
@@ -185,6 +192,16 @@ int emptyGenForSetWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: addFirst(); break;
+        case 1: removeFirst(); break;
+        case 2: addSecond(); break;
+        case 3: removeSecond(); break;
+        default: ;
+        }
+        _id -= 4;
+    }
     return _id;
 }
 static const uint qt_meta_data_emptyGenWidget[] = {

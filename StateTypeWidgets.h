@@ -17,6 +17,8 @@ class QLineEdit;
 class QPushButton;
 class QGridLayout;
 class QVBoxLayout;
+class QListWidget;
+class QListItemWidget;
 QT_END_NAMESPACE
 
 
@@ -52,10 +54,18 @@ public:
     emptyGenForSetWidget(QWidget * parent);
 private:
 
+    QListWidget * FirstRobotList;
+    QListWidget * SecondRobotList;
+
     QComboBox * FirstRobotCombo;
     QComboBox * SecondRobotCombo;
 
 private slots:
+    void addFirst();
+    void removeFirst();
+    void addSecond();
+    void removeSecond();
+
 
 };
 

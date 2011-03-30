@@ -40,8 +40,8 @@ StateWidget::StateWidget(QWidget *parent)
     //creating Default EditState options
     StateLayout = new QVBoxLayout;
 
-//subtask checkbox, subtask combobox, subtask Create button
-//argument floatEdit, string ParamEdit
+
+
 
 
 
@@ -86,6 +86,13 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
     stateTypeCombo->addItems(items);
     connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
    StateLayout->addWidget(stateTypeCombo);
+   paramLabel = new QLabel("Parameters:");
+   paramEdit = new QLineEdit;
+   //paramEdit->setValidator(new QDoubleValidator(-99999.0, 99999.0, 5, paramEdit));//doesn't allow multiple doubles
+   StateLayout->addWidget(paramLabel);
+   StateLayout->addWidget(paramEdit);
+
+
    StateLayout->SetMinimumSize;
 
 
