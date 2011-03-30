@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Wed Mar 30 21:15:48 2011
+** Created: Wed Mar 30 22:33:02 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_sysIniWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -33,13 +33,14 @@ static const uint qt_meta_data_sysIniWidget[] = {
  // slots: signature, parameters, type, tag, flags
       14,   13,   13,   13, 0x08,
       33,   13,   13,   13, 0x08,
+      52,   13,   13,   13, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_sysIniWidget[] = {
-    "sysIniWidget\0\0createECPSection()\0"
-    "createMPSection()\0"
+    "sysIniWidget\0\0removeECPSection()\0"
+    "createECPSection()\0changeMPSection()\0"
 };
 
 const QMetaObject sysIniWidget::staticMetaObject = {
@@ -71,11 +72,12 @@ int sysIniWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: createECPSection(); break;
-        case 1: createMPSection(); break;
+        case 0: removeECPSection(); break;
+        case 1: createECPSection(); break;
+        case 2: changeMPSection(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -469,6 +471,116 @@ int getSensorWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    return _id;
+}
+static const uint qt_meta_data_PoseDialog[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_PoseDialog[] = {
+    "PoseDialog\0"
+};
+
+const QMetaObject PoseDialog::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_PoseDialog,
+      qt_meta_data_PoseDialog, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &PoseDialog::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *PoseDialog::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *PoseDialog::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_PoseDialog))
+        return static_cast<void*>(const_cast< PoseDialog*>(this));
+    return QDialog::qt_metacast(_clname);
+}
+
+int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QDialog::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}
+static const uint qt_meta_data_ECPDialog[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       2,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: signature, parameters, type, tag, flags
+      11,   10,   10,   10, 0x08,
+      25,   10,   10,   10, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_ECPDialog[] = {
+    "ECPDialog\0\0removeFirst()\0addFirst()\0"
+};
+
+const QMetaObject ECPDialog::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_ECPDialog,
+      qt_meta_data_ECPDialog, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &ECPDialog::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *ECPDialog::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *ECPDialog::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_ECPDialog))
+        return static_cast<void*>(const_cast< ECPDialog*>(this));
+    return QDialog::qt_metacast(_clname);
+}
+
+int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QDialog::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: removeFirst(); break;
+        case 1: addFirst(); break;
+        default: ;
+        }
+        _id -= 2;
+    }
     return _id;
 }
 QT_END_MOC_NAMESPACE

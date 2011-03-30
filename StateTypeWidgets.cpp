@@ -10,26 +10,43 @@ sysIniWidget::sysIniWidget(QWidget * parent)
     :QWidget(parent)
 {
     QVBoxLayout * sysIniLayout = new QVBoxLayout;
+
+    robotsInitialized = new QListWidget;
+    sysIniLayout->addWidget(robotsInitialized);
+    QPushButton * removeRobotButton = new QPushButton("Remove Selected");
+    sysIniLayout->addWidget(removeRobotButton);
+    connect (removeRobotButton, SIGNAL(clicked()), this, SLOT(removeECPSection()));
+
     QPushButton * iniAddRobotButton = new QPushButton ("Create ECP section");
     connect (iniAddRobotButton, SIGNAL(clicked()), this, SLOT(createECPSection()));
- //connectButton with showing a dialog box
     sysIniLayout->addWidget(iniAddRobotButton);
 
-    QPushButton * iniAddMPButton = new QPushButton ("Create MP section");
-    connect (iniAddMPButton, SIGNAL(clicked()), this, SLOT(createMPSection()));
- //connectButton with showing a dialog box
+
+    QPushButton * iniAddMPButton = new QPushButton ("Change MP section");
+    connect (iniAddMPButton, SIGNAL(clicked()), this, SLOT(changeMPSection()));
     sysIniLayout->addWidget(iniAddMPButton);
 
     this->setLayout(sysIniLayout);
-
+    ecpDialog = new ECPDialog(this);
+    ecpDialog->setVisible(false);
 
 }
+void sysIniWidget::removeECPSection()
+{
+    QList<QListWidgetItem *> toDeleteItems = robotsInitialized->selectedItems();
+    int size = toDeleteItems.size();
+    for (int i=0;i<size;i++)
+    {
+        delete toDeleteItems[i];
+    }
 
+}
 void sysIniWidget::createECPSection()
 {
-    //show edit dialog with robot combobox and checkbox+label+intEdit for every generator.
+    ecpDialog->exec();
+    ecpDialog->setVisible(true);
 }
-void sysIniWidget::createMPSection()
+void sysIniWidget::changeMPSection()
 {
     //show edit dialog with things included in the MP section
 }
@@ -458,3 +475,63 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
 
     this->setLayout(mainLayout);
 }
+
+//***************   ECP_DIALOG   ***************//
+ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
+{
+    setWindowTitle(tr("ECPDialog"));
+    QGridLayout * mainLayout = new QGridLayout;
+
+    genTypeCombo = new QComboBox;
+    genTypeCombo->addItems(getGeneratorTypeTable());
+    mainLayout->addWidget(genTypeCombo,0,0,1,2);
+    QLabel * argLabel = new QLabel("Init argument:");
+    mainLayout->addWidget(argLabel, 1,0,1,2);
+    argLineEdit = new QLineEdit();
+    argLineEdit->setValidator(new QIntValidator(argLineEdit));
+    mainLayout->addWidget(argLineEdit,2,0,1,2);
+
+
+    QPushButton * addFirstButton = new QPushButton("Add");
+    connect(addFirstButton, SIGNAL(clicked()), this, SLOT(addFirst()));
+    QPushButton * removeFirstButton = new QPushButton("Remove");
+    connect(removeFirstButton, SIGNAL(clicked()), this, SLOT(removeFirst()));
+    mainLayout->addWidget(addFirstButton,3,0);
+    mainLayout->addWidget(removeFirstButton,3,1);
+
+
+    genList = new QListWidget();
+    mainLayout->addWidget(genList,4, 0, 3, 2);
+
+    QPushButton *OKButton = new QPushButton("OK");
+    mainLayout->addWidget(OKButton,7,0,1,2);
+
+
+    setLayout(mainLayout);
+
+
+
+
+}
+
+void ECPDialog::addFirst()
+{
+    if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+
+    }
+    else
+    {
+        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]));
+    }
+}
+
+void ECPDialog::removeFirst()
+{
+    if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+        delete (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()))[0];
+    }
+}
+
+

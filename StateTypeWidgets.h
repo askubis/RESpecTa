@@ -22,16 +22,21 @@ class QListWidget;
 class QListItemWidget;
 QT_END_NAMESPACE
 class PoseDialog;
-
+class ECPDialog;
 
 class sysIniWidget : public QWidget
 {
     Q_OBJECT
 public:
+
     sysIniWidget(QWidget * parent);
+private:
+    QListWidget * robotsInitialized;
+    ECPDialog * ecpDialog;
 private slots:
+    void removeECPSection();
     void createECPSection();
-    void createMPSection();
+    void changeMPSection();
 };
 
 class runGenWidget : public QWidget
@@ -157,6 +162,7 @@ private slots:
 
 class PoseDialog:public QDialog
 {
+    Q_OBJECT
 public:
     PoseDialog(QWidget * parent);
 private:
@@ -169,6 +175,23 @@ private:
 
 private slots:
 
+
+};
+
+class ECPDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    ECPDialog(QWidget * parent);
+private:
+    QListWidget * genList;
+    QComboBox * genTypeCombo;
+    QLineEdit * argLineEdit;
+
+
+private slots:
+    void removeFirst();
+    void addFirst();
 
 };
 

@@ -117,7 +117,7 @@ private:
 struct genInit
 {
     Robot robot;
-    int args[GENERATORS_NUMBER];
+    std::vector < std::pair<GeneratorType, int> > init_values;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
