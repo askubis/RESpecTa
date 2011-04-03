@@ -13,15 +13,12 @@ sysIniWidget::sysIniWidget(QWidget * parent)
 
     robotsInitialized = new QListWidget;
     sysIniLayout->addWidget(robotsInitialized);
-
     QPushButton * removeRobotButton = new QPushButton("Remove Selected");
     sysIniLayout->addWidget(removeRobotButton);
     connect (removeRobotButton, SIGNAL(clicked()), this, SLOT(removeECPSection()));
-
     QPushButton * iniAddRobotButton = new QPushButton ("Create ECP section");
     connect (iniAddRobotButton, SIGNAL(clicked()), this, SLOT(createECPSection()));
     sysIniLayout->addWidget(iniAddRobotButton);
-
 
     QPushButton * iniAddMPButton = new QPushButton ("Change MP section");
     connect (iniAddMPButton, SIGNAL(clicked()), this, SLOT(changeMPSection()));
@@ -99,16 +96,8 @@ runGenWidget::runGenWidget(QWidget * parent)
     trjFileName=new QLineEdit();
     runGenLayout->addWidget(trjFileName);
 
-
-
-
-
-
-
-
     QPushButton * runGenAddPoseButton = new QPushButton (tr("Add Pose"));
     connect(runGenAddPoseButton, SIGNAL(clicked()), this, SLOT(showAddPosesDialog()));
- //connectButton with dialog box
     runGenLayout->addWidget(runGenAddPoseButton);
     setLayout(runGenLayout);
 
@@ -135,11 +124,8 @@ void runGenWidget::selectTrjFilePath()
 
 void runGenWidget::showAddPosesDialog()
 {
-
-    //poseDialog->show();
     poseDialog->setVisible(true);
     poseDialog->exec();
-    //create a dialog with poses.
 }
 
 void runGenWidget::PoseAdd()
@@ -173,8 +159,6 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
-
-
     QLabel *FirstSetLabel = new QLabel(tr("First Set:"));
     emptyGenLayout->insertWidget(0,FirstSetLabel);
 
@@ -184,10 +168,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
     FirstRobotCombo = new QComboBox(this);
     FirstRobotCombo->setFixedWidth(200);
     FirstRobotCombo->addItems(getRobotTable());
-
     emptyGenLayout->insertWidget(2,FirstRobotCombo);
-
-
 
     QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
     QPushButton * addFirstButton = new QPushButton("Add");
@@ -197,7 +178,6 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
     firstButtonsLayout->addWidget(addFirstButton);
     firstButtonsLayout->addWidget(removeFirstButton);
     emptyGenLayout->insertLayout(3,firstButtonsLayout);
-
 
     QLabel *SecondSetLabel = new QLabel("Second Set:");
     emptyGenLayout->insertWidget(4,SecondSetLabel);
@@ -209,7 +189,6 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
     SecondRobotCombo->setFixedWidth(200);
     SecondRobotCombo->addItems(getRobotTable());
     emptyGenLayout->insertWidget(6,SecondRobotCombo);
-
 
     QHBoxLayout * secondButtonsLayout = new QHBoxLayout;
     QPushButton * addSecondButton = new QPushButton("Add");
@@ -223,100 +202,102 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
      setLayout(emptyGenLayout);
 }
 
-
 void emptyGenForSetWidget::addFirst()
 {
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-
-    }
+    {        /*display present*/    }
     else
-    {
-        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));
-    }
+    {        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));    }
 }
 
 void emptyGenForSetWidget::removeFirst()
 {
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
-    }
+    {        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
+    else
+    {        /*display not present*/    }
 }
 
 void emptyGenForSetWidget::addSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-
-    }
+    {        /*display present*/    }
     else
-    {
-        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));
-    }
+    {        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));    }
 }
 
 void emptyGenForSetWidget::removeSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
-    }
+    {        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
+    else
+    {        /*display not present*/    }
 }
 
 BaseState * emptyGenForSetWidget::getStateObject()
 {
+    RobotSet tmp;
+    tmp = this->State->getSet();
+    tmp.first.clear();
+    tmp.second.clear();
+    for (int i=0;i<ROBOTS_NUMBER;i++)
+    {
+        if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
+        {
+            tmp.first.push_back(Robot(i));
+        }
+        if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
+        {
+            tmp.second.push_back(Robot(i));
+        }
+    }
+    this->State->setSet(tmp);
     return new EmptyGenForSetState(*State);
 }
 
 //***************   EMPTY_GEN   ***************//
-
 
 emptyGenWidget::emptyGenWidget(QWidget * parent)
     :MyTypeWidget(parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
-
-
-
-    QLabel *FirstSetLabel = new QLabel(tr("Robot:"));
-    emptyGenLayout->addWidget(FirstSetLabel);
-
+    QLabel *SetLabel = new QLabel(tr("Robot:"));
+    emptyGenLayout->addWidget(SetLabel);
 
     RobotCombo = new QComboBox(this);
     RobotCombo->setFixedWidth(200);
     RobotCombo->addItems(getRobotTable());
     emptyGenLayout->addWidget(RobotCombo);
 
-
-     setLayout(emptyGenLayout);
+    setLayout(emptyGenLayout);
 }
 
 BaseState * emptyGenWidget::getStateObject()
 {
+    this->State->setRobot(Robot(RobotCombo->currentIndex()));
     return new EmptyGenState(*State);
 }
 
-
 //***************   WAIT_GEN   ***************//
-
 
 waitStateWidget::waitStateWidget(QWidget * parent)
     :MyTypeWidget(parent)
 {
     QVBoxLayout * waitLayout = new QVBoxLayout;
 
-
     QLabel *TimeLabel = new QLabel(tr("TimeSpan"));
     timeSpan = new QLineEdit;
+    timeSpan->setValidator(new QIntValidator(timeSpan));
     waitLayout->addWidget(TimeLabel);
     waitLayout->addWidget(timeSpan);
-     setLayout(waitLayout);
+
+    setLayout(waitLayout);
 }
 
 BaseState * waitStateWidget::getStateObject()
 {
+    this->State->setTimespan(timeSpan->text().toLongLong());
     return new WaitState(*State);
 }
 
@@ -327,61 +308,58 @@ stopGenWidget::stopGenWidget(QWidget * parent)
 {
     QVBoxLayout * stopGenLayout = new QVBoxLayout;
 
+    QLabel *SetLabel = new QLabel(tr("First Set:"));
+    stopGenLayout->insertWidget(0,SetLabel);
 
+    RobotList = new QListWidget(this);
+    stopGenLayout->insertWidget(1,RobotList);
 
-    //buttons add+remove
+    RobotCombo = new QComboBox(this);
+    RobotCombo->setFixedWidth(200);
+    RobotCombo->addItems(getRobotTable());
+    stopGenLayout->insertWidget(2,RobotCombo);
 
-    QLabel *FirstSetLabel = new QLabel(tr("First Set:"));
-    stopGenLayout->insertWidget(0,FirstSetLabel);
-
-    FirstRobotList = new QListWidget(this);
-    stopGenLayout->insertWidget(1,FirstRobotList);
-
-    FirstRobotCombo = new QComboBox(this);
-    FirstRobotCombo->setFixedWidth(200);
-    FirstRobotCombo->addItems(getRobotTable());
-
-    stopGenLayout->insertWidget(2,FirstRobotCombo);
-
-
-
-    QHBoxLayout * firstButtonsLayout = new QHBoxLayout;
-    QPushButton * addFirstButton = new QPushButton("Add");
-    connect(addFirstButton, SIGNAL(clicked()), this, SLOT(addFirst()));
-    QPushButton * removeFirstButton = new QPushButton("Remove");
-    connect(removeFirstButton, SIGNAL(clicked()), this, SLOT(removeFirst()));
-    firstButtonsLayout->addWidget(addFirstButton);
-    firstButtonsLayout->addWidget(removeFirstButton);
-    stopGenLayout->insertLayout(3,firstButtonsLayout);
-
-
+    QHBoxLayout * buttonsLayout = new QHBoxLayout;
+    QPushButton * addButton = new QPushButton("Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
+    QPushButton * removeButton = new QPushButton("Remove");
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+    buttonsLayout->addWidget(addButton);
+    buttonsLayout->addWidget(removeButton);
+    stopGenLayout->insertLayout(3,buttonsLayout);
 
      setLayout(stopGenLayout);
 }
 
-void stopGenWidget::addFirst()
+void stopGenWidget::add()
 {
-    //FirstRobotList->selectedItems();
-    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-
-    }
+    if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {        /*DISPLAY info "present"*/    }
     else
-    {
-        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));
-    }
+    {        RobotList->addItem(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]));    }
 }
 
-void stopGenWidget::removeFirst()
+void stopGenWidget::remove()
 {
-    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
-    }
-
+    if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {        delete (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
+    else
+    {        /*DISPLAY info "not present"*/    }
 }
+
 BaseState * stopGenWidget::getStateObject()
 {
+    RobotSet tmp;
+    tmp = this->State->getSet();
+    tmp.first.clear();
+    for (int i=0;i<ROBOTS_NUMBER;i++)
+    {
+        if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
+        {
+            tmp.first.push_back(Robot(i));
+        }
+    }
+    this->State->setSet(tmp);
     return new StopGenState(*State);
 }
 
@@ -392,57 +370,44 @@ iniSensorWidget::iniSensorWidget(QWidget * parent)
 {
     QVBoxLayout * iniSensorLayout = new QVBoxLayout;
 
-
-
-    //buttons add+remove
-
-    QLabel *FirstSetLabel = new QLabel(tr("Sensor:"));
-    iniSensorLayout->addWidget(FirstSetLabel);
-
+    QLabel *sensorLabel = new QLabel(tr("Sensor:"));
+    iniSensorLayout->addWidget(sensorLabel);
 
     SensorCombo = new QComboBox(this);
     SensorCombo->setFixedWidth(200);
     SensorCombo->addItems(getSensorTable());
     iniSensorLayout->addWidget(SensorCombo);
 
-
-     setLayout(iniSensorLayout);
+    setLayout(iniSensorLayout);
 }
 
 BaseState * iniSensorWidget::getStateObject()
 {
+    this->State->setSensor(Sensor(SensorCombo->currentIndex()));
     return new InitiateSensorState(*State);
 }
 
 //***************   GET_SENSOR_GEN   ***************//
+
 getSensorWidget::getSensorWidget(QWidget * parent)
     :MyTypeWidget(parent)
 {
     QVBoxLayout * getSensorLayout = new QVBoxLayout;
 
-    QStringList items;
-    for (int i=0;i<SENSORS_NUMBER;i++)
-    {
-        items<<QString().fromStdString(SENSOR_TABLE[i]);
-    }
-
-    //buttons add+remove
-
-    QLabel *FirstSetLabel = new QLabel(tr("Sensor:"));
-    getSensorLayout->addWidget(FirstSetLabel);
-
+    QLabel *sensorLabel = new QLabel(tr("Sensor:"));
+    getSensorLayout->addWidget(sensorLabel);
 
     SensorCombo = new QComboBox(this);
     SensorCombo->setFixedWidth(200);
     SensorCombo->addItems(getSensorTable());
     getSensorLayout->addWidget(SensorCombo);
 
-
-     setLayout(getSensorLayout);
+    setLayout(getSensorLayout);
 }
 
 BaseState * getSensorWidget::getStateObject()
 {
+    this->State->setSensor(Sensor(SensorCombo->currentIndex()));
     return new GetSensorState(*State);
 }
 
@@ -570,21 +535,17 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
 void ECPDialog::add()
 {
     if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-
-    }
+    {   /*display present*/    }
     else
-    {
-        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]));
-    }
+    {        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]));    }
 }
 
 void ECPDialog::remove()
 {
     if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-        delete (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()))[0];
-    }
+    {        delete (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
+    else
+    {   /*display not tresent*/ }
 }
 
 
@@ -625,19 +586,15 @@ MPDialog::MPDialog(QWidget * parent): QDialog(parent)
 void MPDialog::add()
 {
     if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-
-    }
+    {   /*display present*/    }
     else
-    {
-        sensorList->addItem(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]));
-    }
+    {        sensorList->addItem(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]));    }
 }
 
 void MPDialog::remove()
 {
     if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {
-        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];
-    }
+    {        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
+    else
+    {   /*display not present*/ }
 }

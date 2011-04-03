@@ -47,7 +47,6 @@
 #include "diagramtextitem.h"
 #include "arrow.h"
 
-//#include "StateEditDialog.h"
 #include "editWidget.h"
 
 const int InsertTextButton = 10;
@@ -264,8 +263,6 @@ void RESpecTa::sendToBack()
 //! [7]
 void RESpecTa::itemInserted(BaseState *item)
 {
-    //StateEditDialog editDialog;
-    //editDialog.exec();
 
     pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));

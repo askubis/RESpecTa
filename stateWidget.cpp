@@ -203,9 +203,6 @@ void StateWidget::InsertState()
 void StateWidget::createNewSubtask()
 {
     std::string newSubtaskName = taskNameEdit->text().toStdString();
-    RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
-    std::map<std::string, MyGraphType *> * subtasks = x->getSubtasks();
-
 
     bool mark = false;
     for (std::map<std::string, MyGraphType *>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)

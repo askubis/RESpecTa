@@ -6,14 +6,12 @@
 
 #ifndef ROBOTSET_H
 #define ROBOTSET_H
-class RobotSet
+struct RobotSet
 {
 
-public:
-
-private:
     std::vector<Robot> first;
     std::vector<Robot> second;
+
 };
 
 #endif // ROBOTSET_H

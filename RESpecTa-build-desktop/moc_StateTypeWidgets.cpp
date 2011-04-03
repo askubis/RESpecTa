@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Sun Apr 3 15:04:56 2011
+** Created: Sun Apr 3 16:20:57 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -378,13 +378,13 @@ static const uint qt_meta_data_stopGenWidget[] = {
 
  // slots: signature, parameters, type, tag, flags
       15,   14,   14,   14, 0x08,
-      26,   14,   14,   14, 0x08,
+      21,   14,   14,   14, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_stopGenWidget[] = {
-    "stopGenWidget\0\0addFirst()\0removeFirst()\0"
+    "stopGenWidget\0\0add()\0remove()\0"
 };
 
 const QMetaObject stopGenWidget::staticMetaObject = {
@@ -416,8 +416,8 @@ int stopGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: addFirst(); break;
-        case 1: removeFirst(); break;
+        case 0: add(); break;
+        case 1: remove(); break;
         default: ;
         }
         _id -= 2;

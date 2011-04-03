@@ -43,7 +43,6 @@
 
 #include "diagramscene.h"
 #include "arrow.h"
-#include "StateEditDialog.h"
 
 //! [0]
 DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)

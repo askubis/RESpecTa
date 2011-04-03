@@ -50,7 +50,7 @@ private:
 
 
 
-
+    std::map<std::string, MyGraphType *> * xsubtasks;
 
 
 private slots:

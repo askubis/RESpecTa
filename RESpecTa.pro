@@ -39,7 +39,8 @@ HEADERS  += respecta.h \
     transWidget.h \
     GraphFunctions.h \
     StateTypeWidgets.h \
-    baseState.h
+    baseState.h \
+    StateEditDialog.h
 
 FORMS    += respecta.ui
 

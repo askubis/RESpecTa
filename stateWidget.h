@@ -58,9 +58,9 @@ private:
 
     std::map<std::string, MyGraphType *> * xsubtasks;
 
+
 private slots:
     void setStateSubclass(int chosen);
-
     void createNewSubtask();
 
     void lengthSubtaskChanged(QString newString);

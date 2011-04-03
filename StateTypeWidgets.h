@@ -141,11 +141,11 @@ public:
 private:
     StopGenState * State;
 
-    QListWidget * FirstRobotList;
-    QComboBox * FirstRobotCombo;
+    QListWidget * RobotList;
+    QComboBox * RobotCombo;
 private slots:
-    void addFirst();
-    void removeFirst();
+    void add();
+    void remove();
 };
 
 class iniSensorWidget : public MyTypeWidget
