@@ -29,7 +29,7 @@ class TransWidget : public QWidget
 public:
     TransWidget(QWidget *parent);
 
-
+    void refreshData();
 private:
     QVBoxLayout *TransitionLayout;
 

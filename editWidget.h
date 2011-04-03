@@ -34,7 +34,8 @@ private:
     QTabWidget * tabWidget;
     TransWidget * transWidget;
     StateWidget * stateWidget;
-
+private slots:
+    void refreshWidget(int);
 
 
 

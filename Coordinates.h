@@ -13,6 +13,14 @@ class Coordinates
 {
 public:
     Coordinates(){}
+    Coordinates(Coordinates& old)
+    {
+        this->coordType=old.coordType;
+        this->filePath=old.filePath;
+        this->motionType=old.motionType;
+        this->poses=old.poses;
+    }
+
 private:
     std::string filePath;
     CoordType coordType;

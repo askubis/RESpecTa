@@ -99,44 +99,44 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
 
 
-   sysIni = new sysIniWidget(this);
+   sysIniWidget* sysIni = new sysIniWidget(this);
    mainLayout->addWidget(sysIni);
    tmpWidget = 0;
    StateWidgets[0]=sysIni;
 
 
-   runGen = new runGenWidget(this);
+   runGenWidget* runGen = new runGenWidget(this);
    mainLayout->addWidget(runGen);
    runGen->setVisible(false);
    StateWidgets[1]=runGen;
 
 
-   emptyForSet = new emptyGenForSetWidget(this);
+   emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this);
    mainLayout->addWidget(emptyForSet);
    emptyForSet->setVisible(false);
    StateWidgets[2]=emptyForSet;
 
-   emptyGen = new emptyGenWidget(this);
+   emptyGenWidget* emptyGen = new emptyGenWidget(this);
    mainLayout->addWidget(emptyGen);
    emptyGen->setVisible(false);
    StateWidgets[3]=emptyGen;
 
-   waitGen = new waitStateWidget(this);
+   waitStateWidget* waitGen = new waitStateWidget(this);
    mainLayout->addWidget(waitGen);
    waitGen->setVisible(false);
    StateWidgets[4]=waitGen;
 
-   stopGen = new stopGenWidget(this);
+   stopGenWidget* stopGen = new stopGenWidget(this);
    mainLayout->addWidget(stopGen);
    stopGen->setVisible(false);
    StateWidgets[5]=stopGen;
 
-   initSensor = new iniSensorWidget(this);
+   iniSensorWidget* initSensor = new iniSensorWidget(this);
    mainLayout->addWidget(initSensor);
    initSensor->setVisible(false);
    StateWidgets[6]=initSensor;
 
-   getSensorReading = new getSensorWidget(this);
+   getSensorWidget* getSensorReading = new getSensorWidget(this);
    mainLayout->addWidget(getSensorReading);
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
@@ -210,20 +210,17 @@ void StateWidget::createNewSubtask()
     bool mark = false;
     for (std::map<std::string, MyGraphType *>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
     {
-//exit(7);
         if((*it).first==newSubtaskName) mark = true;
 
     }
 
     if(mark)
     {
-        exit(1);
         //display error msg
         return;
     }
     else
     {
-        //exit(2);
         MyGraphType * tmpGraph = new MyGraphType();
         (*xsubtasks)[newSubtaskName]= tmpGraph;
         QString newSubtask = taskNameEdit->text();
@@ -231,4 +228,9 @@ void StateWidget::createNewSubtask()
 
     }
     return;//*/
+}
+
+void StateWidget::refreshData()
+{
+
 }

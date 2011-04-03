@@ -109,3 +109,8 @@ void TransWidget::InsertTrans()
 
 
 }
+
+void TransWidget::refreshData()
+{
+
+}

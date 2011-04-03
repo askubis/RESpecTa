@@ -27,6 +27,8 @@ class StateWidget : public QWidget
     Q_OBJECT
 public:
     StateWidget(QWidget * w);
+
+    void refreshData();
 private:
     QVBoxLayout *topLayout;
     QVBoxLayout *StateLayout;
@@ -49,15 +51,8 @@ private:
     QComboBox *stateTypeCombo;
     QComboBox *subtaskCombo;
 
-    QWidget * sysIni;
-    QWidget * runGen;
-    QWidget * emptyForSet;
-    QWidget * emptyGen;
-    QWidget * waitGen;
-    QWidget * stopGen;
-    QWidget * initSensor;
-    QWidget * getSensorReading;
-    QWidget* StateWidgets[STATE_TYPES_NUMBER];
+
+    MyTypeWidget* StateWidgets[STATE_TYPES_NUMBER];
 
     int tmpWidget;
 

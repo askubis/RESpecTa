@@ -86,6 +86,8 @@ public:
 
     BaseState(){}
 
+    BaseState(BaseState& old);
+
     BaseState( QMenu *contextMenu,
         QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 

@@ -7,12 +7,13 @@
 //***************   SYS_INITIALIZATION   ***************//
 
 sysIniWidget::sysIniWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * sysIniLayout = new QVBoxLayout;
 
     robotsInitialized = new QListWidget;
     sysIniLayout->addWidget(robotsInitialized);
+
     QPushButton * removeRobotButton = new QPushButton("Remove Selected");
     sysIniLayout->addWidget(removeRobotButton);
     connect (removeRobotButton, SIGNAL(clicked()), this, SLOT(removeECPSection()));
@@ -29,6 +30,8 @@ sysIniWidget::sysIniWidget(QWidget * parent)
     this->setLayout(sysIniLayout);
     ecpDialog = new ECPDialog(this);
     ecpDialog->setVisible(false);
+    mpDialog = new MPDialog(this);
+    mpDialog->setVisible(false);
 
 }
 void sysIniWidget::removeECPSection()
@@ -48,7 +51,14 @@ void sysIniWidget::createECPSection()
 }
 void sysIniWidget::changeMPSection()
 {
+    mpDialog->exec();
+    mpDialog->setVisible(true);
     //show edit dialog with things included in the MP section
+}
+
+BaseState * sysIniWidget::getStateObject()
+{
+    return new sysInitState(*State);
 }
 
 
@@ -56,7 +66,7 @@ void sysIniWidget::changeMPSection()
 //***************   RUN_GENERATOR   ***************//
 
 runGenWidget::runGenWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * runGenLayout = new QVBoxLayout;
     robotCombo = new QComboBox(this);
@@ -149,12 +159,17 @@ void runGenWidget::PoseCancel()
 
 }
 
+BaseState * runGenWidget::getStateObject()
+{
+    return new RunGenState(*State);
+}
+
 
 //***************   EMPTY_GEN_FOR_SET   ***************//
 
 
 emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
@@ -249,12 +264,16 @@ void emptyGenForSetWidget::removeSecond()
     }
 }
 
+BaseState * emptyGenForSetWidget::getStateObject()
+{
+    return new EmptyGenForSetState(*State);
+}
 
 //***************   EMPTY_GEN   ***************//
 
 
 emptyGenWidget::emptyGenWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
@@ -274,12 +293,17 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
      setLayout(emptyGenLayout);
 }
 
+BaseState * emptyGenWidget::getStateObject()
+{
+    return new EmptyGenState(*State);
+}
+
 
 //***************   WAIT_GEN   ***************//
 
 
 waitStateWidget::waitStateWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * waitLayout = new QVBoxLayout;
 
@@ -291,10 +315,15 @@ waitStateWidget::waitStateWidget(QWidget * parent)
      setLayout(waitLayout);
 }
 
+BaseState * waitStateWidget::getStateObject()
+{
+    return new WaitState(*State);
+}
+
 //***************   STOP_GEN   ***************//
 
 stopGenWidget::stopGenWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * stopGenLayout = new QVBoxLayout;
 
@@ -349,12 +378,17 @@ void stopGenWidget::removeFirst()
     {
         delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];
     }
+
+}
+BaseState * stopGenWidget::getStateObject()
+{
+    return new StopGenState(*State);
 }
 
 //***************   SENSOR_INI_GEN   ***************//
 
 iniSensorWidget::iniSensorWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * iniSensorLayout = new QVBoxLayout;
 
@@ -375,9 +409,14 @@ iniSensorWidget::iniSensorWidget(QWidget * parent)
      setLayout(iniSensorLayout);
 }
 
+BaseState * iniSensorWidget::getStateObject()
+{
+    return new InitiateSensorState(*State);
+}
+
 //***************   GET_SENSOR_GEN   ***************//
 getSensorWidget::getSensorWidget(QWidget * parent)
-    :QWidget(parent)
+    :MyTypeWidget(parent)
 {
     QVBoxLayout * getSensorLayout = new QVBoxLayout;
 
@@ -401,6 +440,16 @@ getSensorWidget::getSensorWidget(QWidget * parent)
 
      setLayout(getSensorLayout);
 }
+
+BaseState * getSensorWidget::getStateObject()
+{
+    return new GetSensorState(*State);
+}
+
+
+
+//***********************************************   DIALOGS   ***********************************************//
+
 
 
 
@@ -482,29 +531,33 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
     setWindowTitle(tr("ECPDialog"));
     QGridLayout * mainLayout = new QGridLayout;
 
+    robotCombo = new QComboBox;
+    robotCombo->addItems(getRobotTable());
+    mainLayout->addWidget(robotCombo, 0,0,1,2);
+
     genTypeCombo = new QComboBox;
     genTypeCombo->addItems(getGeneratorTypeTable());
-    mainLayout->addWidget(genTypeCombo,0,0,1,2);
+    mainLayout->addWidget(genTypeCombo,1,0,1,2);
     QLabel * argLabel = new QLabel("Init argument:");
-    mainLayout->addWidget(argLabel, 1,0,1,2);
+    mainLayout->addWidget(argLabel, 2,0,1,2);
     argLineEdit = new QLineEdit();
     argLineEdit->setValidator(new QIntValidator(argLineEdit));
-    mainLayout->addWidget(argLineEdit,2,0,1,2);
+    mainLayout->addWidget(argLineEdit,3,0,1,2);
 
 
-    QPushButton * addFirstButton = new QPushButton("Add");
-    connect(addFirstButton, SIGNAL(clicked()), this, SLOT(addFirst()));
-    QPushButton * removeFirstButton = new QPushButton("Remove");
-    connect(removeFirstButton, SIGNAL(clicked()), this, SLOT(removeFirst()));
-    mainLayout->addWidget(addFirstButton,3,0);
-    mainLayout->addWidget(removeFirstButton,3,1);
+    QPushButton * addButton = new QPushButton("Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
+    QPushButton * removeButton = new QPushButton("Remove");
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+    mainLayout->addWidget(addButton,4,0);
+    mainLayout->addWidget(removeButton,4,1);
 
 
     genList = new QListWidget();
-    mainLayout->addWidget(genList,4, 0, 3, 2);
+    mainLayout->addWidget(genList,5, 0, 3, 2);
 
     QPushButton *OKButton = new QPushButton("OK");
-    mainLayout->addWidget(OKButton,7,0,1,2);
+    mainLayout->addWidget(OKButton,8,0,1,2);
 
 
     setLayout(mainLayout);
@@ -514,7 +567,7 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
 
 }
 
-void ECPDialog::addFirst()
+void ECPDialog::add()
 {
     if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
     {
@@ -526,7 +579,7 @@ void ECPDialog::addFirst()
     }
 }
 
-void ECPDialog::removeFirst()
+void ECPDialog::remove()
 {
     if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
     {
@@ -535,3 +588,56 @@ void ECPDialog::removeFirst()
 }
 
 
+//***************   MP_DIALOG   ***************//
+MPDialog::MPDialog(QWidget * parent): QDialog(parent)
+{
+    setWindowTitle(tr("MPDialog"));
+    QGridLayout * mainLayout = new QGridLayout;
+
+    transmitterCombo = new QComboBox;
+    transmitterCombo->addItems(getTransmitterTable());
+    transmitterCombo->addItem("None");
+    mainLayout->addWidget(transmitterCombo, 0,0,1,2);
+
+    sensorCombo = new QComboBox;
+    sensorCombo->addItems(getSensorTable());
+    mainLayout->addWidget(sensorCombo,1,0,1,2);
+
+    QPushButton * addButton = new QPushButton("Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
+    QPushButton * removeButton = new QPushButton("Remove");
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+    mainLayout->addWidget(addButton,4,0);
+    mainLayout->addWidget(removeButton,4,1);
+
+
+    sensorList = new QListWidget();
+    mainLayout->addWidget(sensorList,5, 0, 3, 2);
+
+    QPushButton *OKButton = new QPushButton("OK");
+    mainLayout->addWidget(OKButton,8,0,1,2);
+
+
+    setLayout(mainLayout);
+
+}
+
+void MPDialog::add()
+{
+    if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+
+    }
+    else
+    {
+        sensorList->addItem(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]));
+    }
+}
+
+void MPDialog::remove()
+{
+    if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
+    {
+        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];
+    }
+}

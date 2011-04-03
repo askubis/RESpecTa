@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Wed Mar 30 22:33:02 2011
+** Created: Sun Apr 3 15:04:56 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -17,6 +17,55 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+static const uint qt_meta_data_MyTypeWidget[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_MyTypeWidget[] = {
+    "MyTypeWidget\0"
+};
+
+const QMetaObject MyTypeWidget::staticMetaObject = {
+    { &QWidget::staticMetaObject, qt_meta_stringdata_MyTypeWidget,
+      qt_meta_data_MyTypeWidget, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &MyTypeWidget::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *MyTypeWidget::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *MyTypeWidget::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_MyTypeWidget))
+        return static_cast<void*>(const_cast< MyTypeWidget*>(this));
+    return QWidget::qt_metacast(_clname);
+}
+
+int MyTypeWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QWidget::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}
 static const uint qt_meta_data_sysIniWidget[] = {
 
  // content:
@@ -44,7 +93,7 @@ static const char qt_meta_stringdata_sysIniWidget[] = {
 };
 
 const QMetaObject sysIniWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_sysIniWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_sysIniWidget,
       qt_meta_data_sysIniWidget, 0 }
 };
 
@@ -62,12 +111,12 @@ void *sysIniWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_sysIniWidget))
         return static_cast<void*>(const_cast< sysIniWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int sysIniWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -111,7 +160,7 @@ static const char qt_meta_stringdata_runGenWidget[] = {
 };
 
 const QMetaObject runGenWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_runGenWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_runGenWidget,
       qt_meta_data_runGenWidget, 0 }
 };
 
@@ -129,12 +178,12 @@ void *runGenWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_runGenWidget))
         return static_cast<void*>(const_cast< runGenWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int runGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -178,7 +227,7 @@ static const char qt_meta_stringdata_emptyGenForSetWidget[] = {
 };
 
 const QMetaObject emptyGenForSetWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_emptyGenForSetWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_emptyGenForSetWidget,
       qt_meta_data_emptyGenForSetWidget, 0 }
 };
 
@@ -196,12 +245,12 @@ void *emptyGenForSetWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_emptyGenForSetWidget))
         return static_cast<void*>(const_cast< emptyGenForSetWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int emptyGenForSetWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -237,7 +286,7 @@ static const char qt_meta_stringdata_emptyGenWidget[] = {
 };
 
 const QMetaObject emptyGenWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_emptyGenWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_emptyGenWidget,
       qt_meta_data_emptyGenWidget, 0 }
 };
 
@@ -255,12 +304,12 @@ void *emptyGenWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_emptyGenWidget))
         return static_cast<void*>(const_cast< emptyGenWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int emptyGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;
@@ -286,7 +335,7 @@ static const char qt_meta_stringdata_waitStateWidget[] = {
 };
 
 const QMetaObject waitStateWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_waitStateWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_waitStateWidget,
       qt_meta_data_waitStateWidget, 0 }
 };
 
@@ -304,12 +353,12 @@ void *waitStateWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_waitStateWidget))
         return static_cast<void*>(const_cast< waitStateWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int waitStateWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;
@@ -339,7 +388,7 @@ static const char qt_meta_stringdata_stopGenWidget[] = {
 };
 
 const QMetaObject stopGenWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_stopGenWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_stopGenWidget,
       qt_meta_data_stopGenWidget, 0 }
 };
 
@@ -357,12 +406,12 @@ void *stopGenWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_stopGenWidget))
         return static_cast<void*>(const_cast< stopGenWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int stopGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -396,7 +445,7 @@ static const char qt_meta_stringdata_iniSensorWidget[] = {
 };
 
 const QMetaObject iniSensorWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_iniSensorWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_iniSensorWidget,
       qt_meta_data_iniSensorWidget, 0 }
 };
 
@@ -414,12 +463,12 @@ void *iniSensorWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_iniSensorWidget))
         return static_cast<void*>(const_cast< iniSensorWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int iniSensorWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;
@@ -445,7 +494,7 @@ static const char qt_meta_stringdata_getSensorWidget[] = {
 };
 
 const QMetaObject getSensorWidget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_getSensorWidget,
+    { &MyTypeWidget::staticMetaObject, qt_meta_stringdata_getSensorWidget,
       qt_meta_data_getSensorWidget, 0 }
 };
 
@@ -463,12 +512,12 @@ void *getSensorWidget::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_getSensorWidget))
         return static_cast<void*>(const_cast< getSensorWidget*>(this));
-    return QWidget::qt_metacast(_clname);
+    return MyTypeWidget::qt_metacast(_clname);
 }
 
 int getSensorWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = MyTypeWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;
@@ -537,13 +586,13 @@ static const uint qt_meta_data_ECPDialog[] = {
 
  // slots: signature, parameters, type, tag, flags
       11,   10,   10,   10, 0x08,
-      25,   10,   10,   10, 0x08,
+      20,   10,   10,   10, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ECPDialog[] = {
-    "ECPDialog\0\0removeFirst()\0addFirst()\0"
+    "ECPDialog\0\0remove()\0add()\0"
 };
 
 const QMetaObject ECPDialog::staticMetaObject = {
@@ -575,8 +624,69 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: removeFirst(); break;
-        case 1: addFirst(); break;
+        case 0: remove(); break;
+        case 1: add(); break;
+        default: ;
+        }
+        _id -= 2;
+    }
+    return _id;
+}
+static const uint qt_meta_data_MPDialog[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       2,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: signature, parameters, type, tag, flags
+      10,    9,    9,    9, 0x08,
+      19,    9,    9,    9, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_MPDialog[] = {
+    "MPDialog\0\0remove()\0add()\0"
+};
+
+const QMetaObject MPDialog::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_MPDialog,
+      qt_meta_data_MPDialog, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &MPDialog::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *MPDialog::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *MPDialog::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_MPDialog))
+        return static_cast<void*>(const_cast< MPDialog*>(this));
+    return QDialog::qt_metacast(_clname);
+}
+
+int MPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QDialog::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: remove(); break;
+        case 1: add(); break;
         default: ;
         }
         _id -= 2;

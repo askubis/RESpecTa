@@ -5,10 +5,25 @@
 #include "arrow.h"
 
 
-BaseState & BaseState::operator=(const BaseState &)
+BaseState & BaseState::operator=(const BaseState &other)
 {
+    if (this->stateName==other.stateName) return *this;//TODO:askubis check if not wrong with that condition
+    this->argument=other.argument;
+    this->stateName=other.stateName;
+    this->stateType=other.stateType;
+    this->parameters=other.parameters;
+    this->arrows=other.arrows;
+    this->myContextMenu=other.myContextMenu;
+    this->myPolygon=other.myPolygon;
+    return *this;
+}
 
-
+BaseState::BaseState(BaseState& old)
+{
+    this->argument=old.argument;
+    this->stateName=old.stateName;
+    this->stateType=old.stateType;
+    this->parameters=old.parameters;
 }
 
 //! [0]
