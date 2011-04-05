@@ -46,10 +46,13 @@ class sysIniWidget : public MyTypeWidget
 public:
     sysIniWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    sysInitState * getState(){return State;}
+    void setState(sysInitState * newState){State = newState;}
+    QListWidget * robotsInitialized;
 private:
     sysInitState * State;
 
-    QListWidget * robotsInitialized;
     ECPDialog * ecpDialog;
     MPDialog * mpDialog;
 private slots:
@@ -64,6 +67,9 @@ class runGenWidget : public MyTypeWidget
 public:
     runGenWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    RunGenState * getState(){return State;}
+    void setState(RunGenState * newState){State = newState;}
 private:
     RunGenState * State;
 
@@ -90,6 +96,9 @@ class emptyGenForSetWidget : public MyTypeWidget
 public:
     emptyGenForSetWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    EmptyGenForSetState * getState(){return State;}
+    void setState(EmptyGenForSetState * newState){State = newState;}
 private:
     EmptyGenForSetState * State;
 
@@ -110,6 +119,9 @@ class emptyGenWidget : public MyTypeWidget
 public:
     emptyGenWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    EmptyGenState * getState(){return State;}
+    void setState(EmptyGenState * newState){State = newState;}
 private:
     EmptyGenState * State;
 
@@ -124,6 +136,9 @@ class waitStateWidget : public MyTypeWidget
 public:
     waitStateWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    WaitState * getState(){return State;}
+    void setState(WaitState * newState){State = newState;}
 private:
     WaitState * State;
 
@@ -138,6 +153,9 @@ class stopGenWidget : public MyTypeWidget
 public:
     stopGenWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    StopGenState * getState(){return State;}
+    void setState(StopGenState * newState){State = newState;}
 private:
     StopGenState * State;
 
@@ -154,6 +172,9 @@ class iniSensorWidget : public MyTypeWidget
 public:
     iniSensorWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    InitiateSensorState * getState(){return State;}
+    void setState(InitiateSensorState * newState){State = newState;}
 private:
     InitiateSensorState * State;
 
@@ -169,6 +190,9 @@ class getSensorWidget : public MyTypeWidget
 public:
     getSensorWidget(QWidget * parent);
     BaseState * getStateObject();
+
+    GetSensorState * getState(){return State;}
+    void setState(GetSensorState * newState){State = newState;}
 private:
     GetSensorState * State;
 
@@ -188,6 +212,9 @@ class PoseDialog:public QDialog
     Q_OBJECT
 public:
     PoseDialog(QWidget * parent);
+
+    Coordinates * getCoords(){return coords;}
+    void setCoords(Coordinates * newCoords){coords = newCoords;}
 private:
     QListWidget * poseList;
     QComboBox * motionTypeCombo;
@@ -195,7 +222,14 @@ private:
     std::vector<QLineEdit *> coordEdit;
     std::vector<QLineEdit *> velEdit;
     std::vector<QLineEdit *> accEdit;
+
+    Coordinates * coords;
 private slots:
+    void AddPose();
+    void RemovePose();
+    void PoseOK();
+    void PoseCancel();
+    void PosesReset();
 
 };
 
@@ -209,10 +243,14 @@ private:
     QComboBox * genTypeCombo;
     QLineEdit * argLineEdit;
     QComboBox * robotCombo;
+    genInit genInitObj;
+    sysIniWidget * parentx;
+    sysInitState * tmpState;
 
 private slots:
     void remove();
     void add();
+    void OKPressed();
 
 };
 
@@ -229,6 +267,7 @@ private:
 private slots:
     void remove();
     void add();
+    void OKPressed();
 
 };
 

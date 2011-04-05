@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Sun Apr 3 16:20:57 2011
+** Created: Tue Apr 5 12:36:13 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -528,18 +528,26 @@ static const uint qt_meta_data_PoseDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      12,   11,   11,   11, 0x08,
+      22,   11,   11,   11, 0x08,
+      35,   11,   11,   11, 0x08,
+      44,   11,   11,   11, 0x08,
+      57,   11,   11,   11, 0x08,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_PoseDialog[] = {
-    "PoseDialog\0"
+    "PoseDialog\0\0AddPose()\0RemovePose()\0"
+    "PoseOK()\0PoseCancel()\0PosesReset()\0"
 };
 
 const QMetaObject PoseDialog::staticMetaObject = {
@@ -569,6 +577,17 @@ int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QDialog::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: AddPose(); break;
+        case 1: RemovePose(); break;
+        case 2: PoseOK(); break;
+        case 3: PoseCancel(); break;
+        case 4: PosesReset(); break;
+        default: ;
+        }
+        _id -= 5;
+    }
     return _id;
 }
 static const uint qt_meta_data_ECPDialog[] = {
@@ -577,7 +596,7 @@ static const uint qt_meta_data_ECPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -587,12 +606,13 @@ static const uint qt_meta_data_ECPDialog[] = {
  // slots: signature, parameters, type, tag, flags
       11,   10,   10,   10, 0x08,
       20,   10,   10,   10, 0x08,
+      26,   10,   10,   10, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ECPDialog[] = {
-    "ECPDialog\0\0remove()\0add()\0"
+    "ECPDialog\0\0remove()\0add()\0OKPressed()\0"
 };
 
 const QMetaObject ECPDialog::staticMetaObject = {
@@ -626,9 +646,10 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: remove(); break;
         case 1: add(); break;
+        case 2: OKPressed(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -638,7 +659,7 @@ static const uint qt_meta_data_MPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -648,12 +669,13 @@ static const uint qt_meta_data_MPDialog[] = {
  // slots: signature, parameters, type, tag, flags
       10,    9,    9,    9, 0x08,
       19,    9,    9,    9, 0x08,
+      25,    9,    9,    9, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MPDialog[] = {
-    "MPDialog\0\0remove()\0add()\0"
+    "MPDialog\0\0remove()\0add()\0OKPressed()\0"
 };
 
 const QMetaObject MPDialog::staticMetaObject = {
@@ -687,9 +709,10 @@ int MPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: remove(); break;
         case 1: add(); break;
+        case 2: OKPressed(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }

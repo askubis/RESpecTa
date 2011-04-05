@@ -159,7 +159,7 @@ public:
     Transmitter getTransmitter() {return transmitter;}
     void setTransmitter(Transmitter newTrans) {transmitter=newTrans;}
     std::vector<Sensor> getSensors() {return sensors;}
-    void setSensor(std::vector<Sensor> newSensors) {sensors=newSensors;}
+    void setSensors(std::vector<Sensor> newSensors) {sensors=newSensors;}
 private:
     std::vector<genInit> inits;//wektor, bo w jednym stanie inicjalizacji moze sie znajdowac wiele robotów
     Transmitter transmitter;

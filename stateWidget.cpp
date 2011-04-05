@@ -69,6 +69,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
     subtaskCombo->addItems(subtaskList);
     StateLayout->addLayout(taskLayout);
+
     StateLayout->addWidget(subtaskCombo);
 
     nameLabel = new QLabel(tr("State Name:"));
@@ -95,6 +96,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
 
    mainLayout->addLayout(StateLayout);
+   mainLayout->addStretch();
 
 
 
@@ -104,12 +106,10 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    tmpWidget = 0;
    StateWidgets[0]=sysIni;
 
-
    runGenWidget* runGen = new runGenWidget(this);
    mainLayout->addWidget(runGen);
    runGen->setVisible(false);
    StateWidgets[1]=runGen;
-
 
    emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this);
    mainLayout->addWidget(emptyForSet);
@@ -140,17 +140,6 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    mainLayout->addWidget(getSensorReading);
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
-
-
-
-
-
-   //topLayout=new QVBoxLayout;
-   //topLayout->addItem(StateLayout);
-
-
-
-
 
 
    mainLayout->addLayout(bottomLayout);
