@@ -61,12 +61,14 @@ QT_END_NAMESPACE
 #include "RobotSet.h"
 #include "Coordinates.h"
 
-class Arrow;
+class Transition;
 
 //! [0]
 class BaseState : public QGraphicsPolygonItem
 {
 public:
+
+    enum { Type = UserType + 15 };
 
     StateType getType() {return stateType;}
     void setType(StateType newType) {stateType=newType;}
@@ -79,7 +81,7 @@ public:
 
 
 
-    enum { Type = UserType + 15 };
+
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
 
     BaseState & operator =(const BaseState &);
@@ -91,13 +93,13 @@ public:
     BaseState( QMenu *contextMenu,
         QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
-    void removeArrow(Arrow *arrow);
-    void removeArrows();
+    void removeTransition(Transition *transition);
+    void removeTransitions();
    /* DiagramType diagramType() const
         { return myDiagramType; }*/
     QPolygonF polygon() const
         { return myPolygon; }
-    void addArrow(Arrow *arrow);
+    void addTransition(Transition *transition);
     QPixmap image() const;
     int type() const
         { return Type;}
@@ -110,7 +112,7 @@ private:
    // DiagramType myDiagramType;
     QPolygonF myPolygon;
     QMenu *myContextMenu;
-    QList<Arrow *> arrows;
+    QList<Transition *> Transitions;
 
 
     std::string stateName;

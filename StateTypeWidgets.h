@@ -83,9 +83,6 @@ private:
     QLineEdit * trjFileName;
     PoseDialog * poseDialog;
 private slots:
-    void PoseCancel();
-    void PosesReset();
-    void PoseAdd();
     void showAddPosesDialog();
     void selectTrjFilePath();
 };
@@ -251,6 +248,7 @@ private slots:
     void remove();
     void add();
     void OKPressed();
+    void CancelPressed();
 
 };
 
@@ -268,6 +266,7 @@ private slots:
     void remove();
     void add();
     void OKPressed();
+    void CancelPressed();
 
 };
 

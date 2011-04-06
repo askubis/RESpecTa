@@ -46,7 +46,7 @@
 const qreal Pi = 3.14;
 
 //! [0]
-Arrow::Arrow(BaseState *startItem, BaseState *endItem,
+Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
@@ -59,7 +59,7 @@ Arrow::Arrow(BaseState *startItem, BaseState *endItem,
 //! [0]
 
 //! [1]
-QRectF Arrow::boundingRect() const
+QRectF Transition::boundingRect() const
 {
     qreal extra = (pen().width() + 20) / 2.0;
 
@@ -71,16 +71,16 @@ QRectF Arrow::boundingRect() const
 //! [1]
 
 //! [2]
-QPainterPath Arrow::shape() const
+QPainterPath Transition::shape() const
 {
     QPainterPath path = QGraphicsLineItem::shape();
-    path.addPolygon(arrowHead);
+    path.addPolygon(TransitionHead);
     return path;
 }
 //! [2]
 
 //! [3]
-void Arrow::updatePosition()
+void Transition::updatePosition()
 {
     QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
     setLine(line);
@@ -88,7 +88,7 @@ void Arrow::updatePosition()
 //! [3]
 
 //! [4]
-void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
+void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
           QWidget *)
 {
     if (myStartItem->collidesWithItem(myEndItem))
@@ -96,7 +96,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
     QPen myPen = pen();
     myPen.setColor(myColor);
-    qreal arrowSize = 20;
+    qreal TransitionSize = 20;
     painter->setPen(myPen);
     painter->setBrush(myColor);
 //! [4] //! [5]
@@ -124,16 +124,16 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     if (line().dy() >= 0)
         angle = (Pi * 2) - angle;
 
-        QPointF arrowP1 = line().p1() + QPointF(sin(angle + Pi / 3) * arrowSize,
-                                        cos(angle + Pi / 3) * arrowSize);
-        QPointF arrowP2 = line().p1() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
-                                        cos(angle + Pi - Pi / 3) * arrowSize);
+        QPointF TransitionP1 = line().p1() + QPointF(sin(angle + Pi / 3) * TransitionSize,
+                                        cos(angle + Pi / 3) * TransitionSize);
+        QPointF TransitionP2 = line().p1() + QPointF(sin(angle + Pi - Pi / 3) * TransitionSize,
+                                        cos(angle + Pi - Pi / 3) * TransitionSize);
 
-        arrowHead.clear();
-        arrowHead << line().p1() << arrowP1 << arrowP2;
+        TransitionHead.clear();
+        TransitionHead << line().p1() << TransitionP1 << TransitionP2;
 //! [6] //! [7]
         painter->drawLine(line());
-        painter->drawPolygon(arrowHead);
+        painter->drawPolygon(TransitionHead);
         if (isSelected()) {
             painter->setPen(QPen(myColor, 1, Qt::DashLine));
         QLineF myLine = line();

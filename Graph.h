@@ -6,7 +6,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include "States.h"
-#include "Transition.h"
+#include "arrow.h"
 
 #ifndef GRAPH_H
 #define GRAPH_H

@@ -196,18 +196,18 @@ void RESpecTa::buttonGroupClicked(int id)
 void RESpecTa::deleteItem()
 {
     foreach (QGraphicsItem *item, scene->selectedItems()) {
-        if (item->type() == Arrow::Type) {
+        if (item->type() == Transition::Type) {
             scene->removeItem(item);
-            Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
-            arrow->startItem()->removeArrow(arrow);
-            arrow->endItem()->removeArrow(arrow);
+            Transition *transition = qgraphicsitem_cast<Transition *>(item);
+            transition->startItem()->removeTransition(transition);
+            transition->endItem()->removeTransition(transition);
             delete item;
         }
     }
 
     foreach (QGraphicsItem *item, scene->selectedItems()) {
          if (item->type() == BaseState::Type) {
-             qgraphicsitem_cast<BaseState *>(item)->removeArrows();
+             qgraphicsitem_cast<BaseState *>(item)->removeTransitions();
          }
          scene->removeItem(item);
          delete item;

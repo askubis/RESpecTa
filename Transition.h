@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-
+/*
 class Transition;
 
 #ifndef TRANSITION_H
 #define TRANSITION_H
-#include "Graph.h"
+
 
 
 class Transition
@@ -25,3 +25,4 @@ private:
 };
 
 #endif // TRANSITION_H
+*/

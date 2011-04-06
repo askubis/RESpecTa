@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'editWidget.h'
 **
-** Created: Tue Apr 5 12:36:08 2011
+** Created: Wed Apr 6 13:41:39 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

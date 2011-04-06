@@ -21,11 +21,32 @@ public:
         this->poses=old.poses;
     }
 
+    ~Coordinates()
+    {
+        for(int i = 0;i<poses.size();i++)
+        {
+            delete poses[i];
+        }
+    }
+
+    std::string getFilePath() {return filePath;}
+    void setFilePath(std::string newPath) {filePath=newPath;}
+
+    CoordType getCoordType() {return coordType;}
+    void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
+
+    MotionType getMotionType() {return motionType;}
+    void setMotionType(MotionType newMotionType) {motionType=newMotionType;}
+
+    std::vector<Pose *> getPoses(){return poses;}
+    void setPoses(std::vector<Pose *> newPoses){poses=newPoses;}
+
+
 private:
     std::string filePath;
     CoordType coordType;
     MotionType motionType;
-    std::vector<Pose> poses;
+    std::vector<Pose *> poses;
 
 
 };

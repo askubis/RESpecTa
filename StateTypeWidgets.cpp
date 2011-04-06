@@ -65,8 +65,8 @@ void sysIniWidget::createECPSection()
 }
 void sysIniWidget::changeMPSection()
 {
-    //mpDialog->exec();
-    mpDialog->setVisible(true);
+    mpDialog->exec();
+    //mpDialog->setVisible(true);
     //show edit dialog with things included in the MP section
 }
 
@@ -143,29 +143,15 @@ void runGenWidget::selectTrjFilePath()
 
 void runGenWidget::showAddPosesDialog()
 {
-    poseDialog->setVisible(true);
-    //poseDialog->exec();
-}
-
-void runGenWidget::PoseAdd()
-{
-    poseDialog->setVisible(false);
-}
-
-
-
-void runGenWidget::PosesReset()
-{
-
-}
-
-void runGenWidget::PoseCancel()
-{
-
+    //poseDialog->setVisible(true);
+    poseDialog->exec();
 }
 
 BaseState * runGenWidget::getStateObject()
 {
+    Coordinates * tmp = State->getCoords();
+    tmp->setFilePath(trjFileName->text().toStdString());
+    State->setCoords(tmp);
     return new RunGenState(*State);
 }
 
@@ -472,9 +458,9 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
     mainLayout->addWidget(addPoseButt, 7, 0);
     connect(addPoseButt, SIGNAL(clicked()), this, SLOT(AddPose()) );
 
-    QPushButton * rmPoseButt = new QPushButton("Remove");
+    /*QPushButton * rmPoseButt = new QPushButton("Remove");
     mainLayout->addWidget(rmPoseButt,7,1);
-    connect(addPoseButt, SIGNAL(clicked()), this, SLOT(RemovePose()) );
+    connect(addPoseButt, SIGNAL(clicked()), this, SLOT(RemovePose()) );*/
 
     QLabel * coordLabel = new QLabel("Coordinates");
     mainLayout->addWidget(coordLabel, 0, 2);
@@ -485,17 +471,17 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
 
     for (int i = 0;i<7;i++)
     {
-        coordEdit.push_back(new QLineEdit);
+        coordEdit.push_back(new QLineEdit(this));
         coordEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,coordEdit[i]));
         coordEdit[i]->setMaximumWidth(80);
         mainLayout->addWidget(coordEdit[i], i+1, 2);
 
-        velEdit.push_back(new QLineEdit);
+        velEdit.push_back(new QLineEdit(this));
         velEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,velEdit[i]));
         velEdit[i]->setMaximumWidth(80);
         mainLayout->addWidget(velEdit[i], i+1, 3);
 
-        accEdit.push_back(new QLineEdit);
+        accEdit.push_back(new QLineEdit(this));
         accEdit[i]->setValidator(new QDoubleValidator(-99999.0,99999.0, 5,accEdit[i]));
         accEdit[i]->setMaximumWidth(80);
         mainLayout->addWidget(accEdit[i], i+1, 4);
@@ -512,37 +498,80 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
     QPushButton * addButton = new QPushButton ("OK");
     connect(addButton, SIGNAL(clicked()), this, SLOT(PoseOK()) );
     mainLayout->addWidget(addButton, 8, 3, 1, 2);
-    connect(this, SIGNAL(rejected()), this, SLOT(PoseOK()) );
+    connect(this, SIGNAL(rejected()), this, SLOT(PoseCancel()) );
+
+    coords = new Coordinates();
 
     this->setLayout(mainLayout);
 }
 
 void PoseDialog::AddPose()
 {
-
+    Pose * tmp = new Pose();
+    std::vector<int> a, v, c;
+    int i = 0;
+    for (;i<7;i++)
+    {
+        if(coordEdit[i]->text().isEmpty() || velEdit[i]->text().isEmpty() || accEdit[i]->text().isEmpty())
+        {
+            break;
+        }
+        else
+        {
+            a.push_back(accEdit[i]->text().toInt());
+            v.push_back(velEdit[i]->text().toInt());
+            c.push_back(coordEdit[i]->text().toInt());
+        }
+    }
+    if(i!=0)
+    {
+        tmp->setA(a);
+        tmp->setV(v);
+        tmp->setC(c);
+        std::vector<Pose *> pos_vec= coords->getPoses();
+        pos_vec.push_back(tmp);
+        coords->setPoses(pos_vec);
+        poseList->addItem(QString().fromStdString("kopytko"));
+    }
 }
 
 void PoseDialog::RemovePose()
-{
+{/*
+    QList<QListWidgetItem *> toDeleteItems = poseList->selectedItems();
+    for (int i=0;i<toDeleteItems.size();i++)
+    {
+        poseList->find(toDeleteItems[i]);
+    }
+    for (int i = 0; i<poseList->sel; i++)
+    {
+        ;
+    }
 
+    //*/
 }
 
 void PoseDialog::PoseOK()
 {
+    coords->setCoordType(CoordType(coordTypeCombo->currentIndex()));
+    coords->setMotionType(MotionType(motionTypeCombo->currentIndex()));
     runGenWidget * parent_widg =(runGenWidget *) this->parent();
     RunGenState * tmpState = (RunGenState *) parent_widg->getState();
     Coordinates * toDelete = tmpState->getCoords();
     delete toDelete;
     tmpState->setCoords(new Coordinates (*(this->coords)));
+    this->setVisible(false);
 }
 
 void PoseDialog::PoseCancel()
 {
-
+    this->setVisible(false);
 }
 
 void PoseDialog::PosesReset()
 {
+    poseList->clear();
+    delete coords;
+    coords = new Coordinates();
 
 }
 
@@ -554,33 +583,42 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
 
     robotCombo = new QComboBox;
     robotCombo->addItems(getRobotTable());
-    mainLayout->addWidget(robotCombo, 0,0,1,2);
+    mainLayout->addWidget(robotCombo, 0,0,1,3);
 
     genTypeCombo = new QComboBox;
     genTypeCombo->addItems(getGeneratorTypeTable());
-    mainLayout->addWidget(genTypeCombo,1,0,1,2);
+    mainLayout->addWidget(genTypeCombo,1,0,1,3);
     QLabel * argLabel = new QLabel("Init argument:");
-    mainLayout->addWidget(argLabel, 2,0,1,2);
+    mainLayout->addWidget(argLabel, 2,0,1,3);
     argLineEdit = new QLineEdit();
     argLineEdit->setValidator(new QIntValidator(argLineEdit));
-    mainLayout->addWidget(argLineEdit,3,0,1,2);
+    mainLayout->addWidget(argLineEdit,3,0,1,3);
 
     QPushButton * addButton = new QPushButton("Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
-    QPushButton * removeButton = new QPushButton("Remove");
+    QPushButton * removeButton = new QPushButton("Remove selected");
     connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
     mainLayout->addWidget(addButton,4,0);
-    mainLayout->addWidget(removeButton,4,1);
+    mainLayout->addWidget(removeButton,4,1, 1, 2);
 
     genList = new QListWidget();
-    mainLayout->addWidget(genList,5, 0, 3, 2);
+    mainLayout->addWidget(genList,5, 0, 3, 3);
 
     QPushButton *OKButton = new QPushButton("OK");
     connect (OKButton, SIGNAL(clicked()), this, SLOT(OKPressed()));
-    mainLayout->addWidget(OKButton,8,0,1,2);
-    connect (this, SIGNAL(rejected()), this, SLOT(OKPressed()));
+    mainLayout->addWidget(OKButton,8,1,1,2);
+
+    QPushButton *CancelButton = new QPushButton("Cancel");
+    connect (CancelButton, SIGNAL(clicked()), this, SLOT(CancelPressed()));
+    mainLayout->addWidget(CancelButton,8,0,1,1);
+    connect (this, SIGNAL(rejected()), this, SLOT(CancelPressed()));
 
     setLayout(mainLayout);
+}
+
+void ECPDialog::CancelPressed()
+{
+    this->setVisible(false);
 }
 
 void ECPDialog::OKPressed()
@@ -590,7 +628,6 @@ void ECPDialog::OKPressed()
     std::vector<genInit> genIniVector;
 
     genIniVector = tmpState->getInits();
-    //exit(17);
     genInitObj.robot = Robot(robotCombo->currentIndex());
     bool was = false;
     for (std::vector<genInit>::iterator it=genIniVector.begin(); it!=genIniVector.end(); it++)
@@ -620,27 +657,27 @@ void ECPDialog::add()
     {   /*display present*/    }
     else
     {
-        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]));
+        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]).append(" ").append(argLineEdit->text()));
         genInitObj.init_values.push_back(std::make_pair(GeneratorType(genTypeCombo->currentIndex()), argLineEdit->text().toInt()));
     }
 }
 
 void ECPDialog::remove()
 {
-    if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
+    QList<QListWidgetItem *> toDeleteItems = genList->selectedItems();
+    for (int i=0;i<toDeleteItems.size();i++)
     {
-        delete (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()))[0];
-        for (std::vector < std::pair<GeneratorType, int> >::iterator it=genInitObj.init_values.begin(); it!=genInitObj.init_values.end(); it++)
+        for (std::vector < std::pair<GeneratorType, int> >::iterator iter = genInitObj.init_values.begin(); iter!=genInitObj.init_values.end();iter++)
         {
-            if((*it).first==GeneratorType(genTypeCombo->currentIndex()))
+            if (toDeleteItems[i]->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[(*iter).first]), Qt::CaseSensitive))
             {
-                genInitObj.init_values.erase(it);
+                genInitObj.init_values.erase(iter);
                 break;
             }
         }
+        delete toDeleteItems[i];
     }
-    else
-    {   /*display not present*/ }
+
 }
 
 
@@ -673,10 +710,15 @@ MPDialog::MPDialog(QWidget * parent): QDialog(parent)
     mainLayout->addWidget(OKButton,8,0,1,2);
     connect (OKButton, SIGNAL(clicked()), this, SLOT(OKPressed()));
 
-    connect (this, SIGNAL(rejected()), this, SLOT(OKPressed()));
+    connect (this, SIGNAL(rejected()), this, SLOT(CancelPressed()));
     setLayout(mainLayout);
 
 
+}
+
+void MPDialog::CancelPressed()
+{
+    this->setVisible(false);
 }
 
 void MPDialog::OKPressed()

@@ -38,12 +38,13 @@
 **
 ****************************************************************************/
 
-#ifndef ARROW_H
-#define ARROW_H
+#ifndef Transition_H
+#define Transition_H
 
 #include <QGraphicsLineItem>
 
 #include "baseState.h"
+#include "Graph.h"
 
 QT_BEGIN_NAMESPACE
 class QGraphicsPolygonItem;
@@ -55,12 +56,12 @@ class QPainterPath;
 QT_END_NAMESPACE
 
 //! [0]
-class Arrow : public QGraphicsLineItem
+class Transition : public QGraphicsLineItem
 {
 public:
     enum { Type = UserType + 4 };
 
-    Arrow(BaseState *startItem, BaseState *endItem,
+    Transition(BaseState *startItem, BaseState *endItem,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
     int type() const
@@ -74,6 +75,12 @@ public:
     BaseState *endItem() const
         { return myEndItem; }
 
+    std::string getCondition() {return condition;}
+    void setCondition(std::string newCondition) {condition=newCondition;}
+    MyGraphType* getSubtask() {return subtask;}
+    void setSubtask(MyGraphType* newSubtask) {subtask=newSubtask;}
+
+
 
 public slots:
     void updatePosition();
@@ -86,7 +93,11 @@ private:
     BaseState *myStartItem;
     BaseState *myEndItem;
     QColor myColor;
-    QPolygonF arrowHead;
+    QPolygonF TransitionHead;
+
+    std::string condition;
+    //std::string subtask;//@TODO:askubis change to a pointer
+    MyGraphType *subtask;
 };
 //! [0]
 

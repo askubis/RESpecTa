@@ -12,7 +12,7 @@ BaseState & BaseState::operator=(const BaseState &other)
     this->stateName=other.stateName;
     this->stateType=other.stateType;
     this->parameters=other.parameters;
-    this->arrows=other.arrows;
+    this->Transitions=other.Transitions;
     this->myContextMenu=other.myContextMenu;
     this->myPolygon=other.myPolygon;
     return *this;
@@ -35,9 +35,9 @@ BaseState::BaseState( QMenu *contextMenu,
     myContextMenu = contextMenu;
 
     //QPainterPath path;
-            myPolygon << QPointF(-100, -100) << QPointF(100, -100)
-                      << QPointF(100, 100) << QPointF(-100, 100)
-                      << QPointF(-100, -100);
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
     setPolygon(myPolygon);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -46,31 +46,31 @@ BaseState::BaseState( QMenu *contextMenu,
 //! [0]
 
 //! [1]
-void BaseState::removeArrow(Arrow *arrow)
+void BaseState::removeTransition(Transition *Transition)
 {
-    int index = arrows.indexOf(arrow);
+    int index = Transitions.indexOf(Transition);
 
     if (index != -1)
-        arrows.removeAt(index);
+        Transitions.removeAt(index);
 }
 //! [1]
 
 //! [2]
-void BaseState::removeArrows()
+void BaseState::removeTransitions()
 {
-    foreach (Arrow *arrow, arrows) {
-        arrow->startItem()->removeArrow(arrow);
-        arrow->endItem()->removeArrow(arrow);
-        scene()->removeItem(arrow);
-        delete arrow;
+    foreach (Transition *Transition, Transitions) {
+        Transition->startItem()->removeTransition(Transition);
+        Transition->endItem()->removeTransition(Transition);
+        scene()->removeItem(Transition);
+        delete Transition;
     }
 }
 //! [2]
 
 //! [3]
-void BaseState::addArrow(Arrow *arrow)
+void BaseState::addTransition(Transition *Transition)
 {
-    arrows.append(arrow);
+    Transitions.append(Transition);
 }
 //! [3]
 
@@ -102,8 +102,8 @@ QVariant BaseState::itemChange(GraphicsItemChange change,
                      const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionChange) {
-        foreach (Arrow *arrow, arrows) {
-            arrow->updatePosition();
+        foreach (Transition *Transition, Transitions) {
+            Transition->updatePosition();
         }
     }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Tue Apr 5 12:36:13 2011
+** Created: Wed Apr 6 13:41:47 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -136,7 +136,7 @@ static const uint qt_meta_data_runGenWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -145,17 +145,13 @@ static const uint qt_meta_data_runGenWidget[] = {
 
  // slots: signature, parameters, type, tag, flags
       14,   13,   13,   13, 0x08,
-      27,   13,   13,   13, 0x08,
-      40,   13,   13,   13, 0x08,
-      50,   13,   13,   13, 0x08,
-      71,   13,   13,   13, 0x08,
+      35,   13,   13,   13, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_runGenWidget[] = {
-    "runGenWidget\0\0PoseCancel()\0PosesReset()\0"
-    "PoseAdd()\0showAddPosesDialog()\0"
+    "runGenWidget\0\0showAddPosesDialog()\0"
     "selectTrjFilePath()\0"
 };
 
@@ -188,14 +184,11 @@ int runGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: PoseCancel(); break;
-        case 1: PosesReset(); break;
-        case 2: PoseAdd(); break;
-        case 3: showAddPosesDialog(); break;
-        case 4: selectTrjFilePath(); break;
+        case 0: showAddPosesDialog(); break;
+        case 1: selectTrjFilePath(); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 2;
     }
     return _id;
 }
@@ -596,7 +589,7 @@ static const uint qt_meta_data_ECPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -607,12 +600,14 @@ static const uint qt_meta_data_ECPDialog[] = {
       11,   10,   10,   10, 0x08,
       20,   10,   10,   10, 0x08,
       26,   10,   10,   10, 0x08,
+      38,   10,   10,   10, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ECPDialog[] = {
     "ECPDialog\0\0remove()\0add()\0OKPressed()\0"
+    "CancelPressed()\0"
 };
 
 const QMetaObject ECPDialog::staticMetaObject = {
@@ -647,9 +642,10 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: remove(); break;
         case 1: add(); break;
         case 2: OKPressed(); break;
+        case 3: CancelPressed(); break;
         default: ;
         }
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
@@ -659,7 +655,7 @@ static const uint qt_meta_data_MPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -670,12 +666,14 @@ static const uint qt_meta_data_MPDialog[] = {
       10,    9,    9,    9, 0x08,
       19,    9,    9,    9, 0x08,
       25,    9,    9,    9, 0x08,
+      37,    9,    9,    9, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MPDialog[] = {
     "MPDialog\0\0remove()\0add()\0OKPressed()\0"
+    "CancelPressed()\0"
 };
 
 const QMetaObject MPDialog::staticMetaObject = {
@@ -710,9 +708,10 @@ int MPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: remove(); break;
         case 1: add(); break;
         case 2: OKPressed(); break;
+        case 3: CancelPressed(); break;
         default: ;
         }
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
