@@ -14,21 +14,20 @@ SOURCES += main.cpp\
         respecta.cpp \
     diagramscene.cpp \
     diagramtextitem.cpp \
-    arrow.cpp \
     editWidget.cpp \
     stateWidget.cpp \
     transWidget.cpp \
     GraphFunctions.cpp \
     StateTypeWidgets.cpp \
-    baseState.cpp
+    baseState.cpp \
+    Transition.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
-    arrow.h \
+    Transition.h \
     diagramtextitem.h \
     Graph.h \
     globals.h \
-    Transition.h \
     Coordinates.h \
     Pose.h \
     sysInitNode.h \

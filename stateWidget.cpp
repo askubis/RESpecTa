@@ -61,12 +61,11 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
     subtaskList<<tr("MAIN");
     RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
     std::map<std::string, MyGraphType *> * subtasks = x->getSubtasks();
-    xsubtasks = subtasks;
     for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
     {
         subtaskList<<(*it).first.c_str();
     }
-
+    connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(SubtaskIndexChanged(QString)));
     subtaskCombo->addItems(subtaskList);
     StateLayout->addLayout(taskLayout);
 
@@ -168,6 +167,11 @@ void StateWidget::lengthSubtaskChanged(QString newString)
     {        createTaskButton->setDisabled(true);    }
 }
 
+void StateWidget::SubtaskIndexChanged(QString newString)
+{
+    emit selectedSubtaskName(newString);
+}
+
 void StateWidget::AcceptState()
 {
 
@@ -184,36 +188,28 @@ void StateWidget::setStateSubclass(int chosen)
 
 void StateWidget::InsertState()
 {
-
-
+    //RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
+    //if(res!=x) exit(78);
+    //res->insertClicked();
+    BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
+    toInsertState->setName(this->stateNameEdit->text().toStdString());
+    toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
+    emit InsertState(toInsertState);
 
 }
 
 void StateWidget::createNewSubtask()
 {
-    std::string newSubtaskName = taskNameEdit->text().toStdString();
 
-    bool mark = false;
-    for (std::map<std::string, MyGraphType *>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
+    if(subtaskCombo->findText(taskNameEdit->text())!=-1)
     {
-        if((*it).first==newSubtaskName) mark = true;
-
+        //display exists
     }
+    subtaskCombo->addItem(taskNameEdit->text());
+    //std::string newSubtaskName = taskNameEdit->text().toStdString();
+    emit SubtaskInserted(taskNameEdit->text());
 
-    if(mark)
-    {
-        //display error msg
-        return;
-    }
-    else
-    {
-        MyGraphType * tmpGraph = new MyGraphType();
-        (*xsubtasks)[newSubtaskName]= tmpGraph;
-        QString newSubtask = taskNameEdit->text();
-        subtaskCombo->addItem(newSubtask);
 
-    }
-    return;//*/
 }
 
 void StateWidget::refreshData()

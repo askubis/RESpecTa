@@ -40,7 +40,7 @@
 
 #include <QtGui>
 
-#include "arrow.h"
+#include "Transition.h"
 #include <math.h>
 
 const qreal Pi = 3.14;

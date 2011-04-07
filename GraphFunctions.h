@@ -22,6 +22,8 @@ QT_END_NAMESPACE
 
 #include <QtGui>
 
+#include <fstream>
+
 
 #ifndef GRAPHFUNCTIONS_H
 #define GRAPHFUNCTIONS_H
@@ -30,6 +32,14 @@ QT_END_NAMESPACE
 
 template <class VertexIter, class theGraph>
 QStringList getStateNames(VertexIter first, VertexIter last, const theGraph &G);
+
+template <class VertexIter, class theGraph>
+void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string fileName);
+
+
+
+template <class VertexIter, class theGraph>
+bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &G);
 
 
 

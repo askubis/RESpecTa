@@ -16,6 +16,16 @@ transWidget = new TransWidget(tabWidget);
     //tabWidget->setTabEnabled(1, false);
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
 
+    connect(stateWidget, SIGNAL(SubtaskInserted(QString)), transWidget, SLOT(SubtaskInserted(QString)));
+    connect(stateWidget, SIGNAL(SubtaskInserted(QString)), (RESpecTa *)this->parentWidget(), SLOT(NewSubtaskInserted(QString)));
+
+    connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
+    connect (stateWidget, SIGNAL(selectedSubtaskName(QString)), (RESpecTa *)this->parentWidget(),SLOT(selectedSubtaskName(QString)));
+
+
+
+
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
     setLayout(mainLayout);

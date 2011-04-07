@@ -59,6 +59,8 @@ private slots:
     void removeECPSection();
     void createECPSection();
     void changeMPSection();
+    void InsertECP(genInit newInit);
+    void InsertMP (std::vector<Sensor> sensors, Transmitter trans);
 };
 
 class runGenWidget : public MyTypeWidget
@@ -83,6 +85,7 @@ private:
     QLineEdit * trjFileName;
     PoseDialog * poseDialog;
 private slots:
+    void CoordsInsert(Coordinates * newCoords);
     void showAddPosesDialog();
     void selectTrjFilePath();
 };
@@ -221,6 +224,9 @@ private:
     std::vector<QLineEdit *> accEdit;
 
     Coordinates * coords;
+
+signals:
+    void InsertCoords(Coordinates * newCoords);
 private slots:
     void AddPose();
     void RemovePose();
@@ -244,6 +250,9 @@ private:
     sysIniWidget * parentx;
     sysInitState * tmpState;
 
+signals:
+    void InsertECP(genInit newInit);
+
 private slots:
     void remove();
     void add();
@@ -261,6 +270,9 @@ private:
     QListWidget * sensorList;
     QComboBox * sensorCombo;
     QComboBox * transmitterCombo;
+
+signals:
+    void InsertMP (std::vector<Sensor> sensors, Transmitter trans);
 
 private slots:
     void remove();

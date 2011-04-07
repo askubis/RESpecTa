@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Wed Apr 6 13:41:47 2011
+** Created: Fri Apr 8 00:14:31 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -72,7 +72,7 @@ static const uint qt_meta_data_sysIniWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -83,6 +83,8 @@ static const uint qt_meta_data_sysIniWidget[] = {
       14,   13,   13,   13, 0x08,
       33,   13,   13,   13, 0x08,
       52,   13,   13,   13, 0x08,
+      78,   70,   13,   13, 0x08,
+     111,   97,   13,   13, 0x08,
 
        0        // eod
 };
@@ -90,6 +92,8 @@ static const uint qt_meta_data_sysIniWidget[] = {
 static const char qt_meta_stringdata_sysIniWidget[] = {
     "sysIniWidget\0\0removeECPSection()\0"
     "createECPSection()\0changeMPSection()\0"
+    "newInit\0InsertECP(genInit)\0sensors,trans\0"
+    "InsertMP(std::vector<Sensor>,Transmitter)\0"
 };
 
 const QMetaObject sysIniWidget::staticMetaObject = {
@@ -124,9 +128,11 @@ int sysIniWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: removeECPSection(); break;
         case 1: createECPSection(); break;
         case 2: changeMPSection(); break;
+        case 3: InsertECP((*reinterpret_cast< genInit(*)>(_a[1]))); break;
+        case 4: InsertMP((*reinterpret_cast< std::vector<Sensor>(*)>(_a[1])),(*reinterpret_cast< Transmitter(*)>(_a[2]))); break;
         default: ;
         }
-        _id -= 3;
+        _id -= 5;
     }
     return _id;
 }
@@ -136,7 +142,7 @@ static const uint qt_meta_data_runGenWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -144,15 +150,17 @@ static const uint qt_meta_data_runGenWidget[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      14,   13,   13,   13, 0x08,
-      35,   13,   13,   13, 0x08,
+      24,   14,   13,   13, 0x08,
+      51,   13,   13,   13, 0x08,
+      72,   13,   13,   13, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_runGenWidget[] = {
-    "runGenWidget\0\0showAddPosesDialog()\0"
-    "selectTrjFilePath()\0"
+    "runGenWidget\0\0newCoords\0"
+    "CoordsInsert(Coordinates*)\0"
+    "showAddPosesDialog()\0selectTrjFilePath()\0"
 };
 
 const QMetaObject runGenWidget::staticMetaObject = {
@@ -184,11 +192,12 @@ int runGenWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: showAddPosesDialog(); break;
-        case 1: selectTrjFilePath(); break;
+        case 0: CoordsInsert((*reinterpret_cast< Coordinates*(*)>(_a[1]))); break;
+        case 1: showAddPosesDialog(); break;
+        case 2: selectTrjFilePath(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -521,26 +530,30 @@ static const uint qt_meta_data_PoseDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      22,   12,   11,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x08,
-      22,   11,   11,   11, 0x08,
-      35,   11,   11,   11, 0x08,
-      44,   11,   11,   11, 0x08,
-      57,   11,   11,   11, 0x08,
+      49,   11,   11,   11, 0x08,
+      59,   11,   11,   11, 0x08,
+      72,   11,   11,   11, 0x08,
+      81,   11,   11,   11, 0x08,
+      94,   11,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_PoseDialog[] = {
-    "PoseDialog\0\0AddPose()\0RemovePose()\0"
-    "PoseOK()\0PoseCancel()\0PosesReset()\0"
+    "PoseDialog\0\0newCoords\0InsertCoords(Coordinates*)\0"
+    "AddPose()\0RemovePose()\0PoseOK()\0"
+    "PoseCancel()\0PosesReset()\0"
 };
 
 const QMetaObject PoseDialog::staticMetaObject = {
@@ -572,16 +585,24 @@ int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: AddPose(); break;
-        case 1: RemovePose(); break;
-        case 2: PoseOK(); break;
-        case 3: PoseCancel(); break;
-        case 4: PosesReset(); break;
+        case 0: InsertCoords((*reinterpret_cast< Coordinates*(*)>(_a[1]))); break;
+        case 1: AddPose(); break;
+        case 2: RemovePose(); break;
+        case 3: PoseOK(); break;
+        case 4: PoseCancel(); break;
+        case 5: PosesReset(); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
+}
+
+// SIGNAL 0
+void PoseDialog::InsertCoords(Coordinates * _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 static const uint qt_meta_data_ECPDialog[] = {
 
@@ -589,25 +610,28 @@ static const uint qt_meta_data_ECPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      19,   11,   10,   10, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      11,   10,   10,   10, 0x08,
-      20,   10,   10,   10, 0x08,
-      26,   10,   10,   10, 0x08,
       38,   10,   10,   10, 0x08,
+      47,   10,   10,   10, 0x08,
+      53,   10,   10,   10, 0x08,
+      65,   10,   10,   10, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ECPDialog[] = {
-    "ECPDialog\0\0remove()\0add()\0OKPressed()\0"
-    "CancelPressed()\0"
+    "ECPDialog\0\0newInit\0InsertECP(genInit)\0"
+    "remove()\0add()\0OKPressed()\0CancelPressed()\0"
 };
 
 const QMetaObject ECPDialog::staticMetaObject = {
@@ -639,15 +663,23 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: remove(); break;
-        case 1: add(); break;
-        case 2: OKPressed(); break;
-        case 3: CancelPressed(); break;
+        case 0: InsertECP((*reinterpret_cast< genInit(*)>(_a[1]))); break;
+        case 1: remove(); break;
+        case 2: add(); break;
+        case 3: OKPressed(); break;
+        case 4: CancelPressed(); break;
         default: ;
         }
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
+}
+
+// SIGNAL 0
+void ECPDialog::InsertECP(genInit _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 static const uint qt_meta_data_MPDialog[] = {
 
@@ -655,25 +687,29 @@ static const uint qt_meta_data_MPDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      24,   10,    9,    9, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      10,    9,    9,    9, 0x08,
-      19,    9,    9,    9, 0x08,
-      25,    9,    9,    9, 0x08,
-      37,    9,    9,    9, 0x08,
+      66,    9,    9,    9, 0x08,
+      75,    9,    9,    9, 0x08,
+      81,    9,    9,    9, 0x08,
+      93,    9,    9,    9, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MPDialog[] = {
-    "MPDialog\0\0remove()\0add()\0OKPressed()\0"
-    "CancelPressed()\0"
+    "MPDialog\0\0sensors,trans\0"
+    "InsertMP(std::vector<Sensor>,Transmitter)\0"
+    "remove()\0add()\0OKPressed()\0CancelPressed()\0"
 };
 
 const QMetaObject MPDialog::staticMetaObject = {
@@ -705,14 +741,22 @@ int MPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: remove(); break;
-        case 1: add(); break;
-        case 2: OKPressed(); break;
-        case 3: CancelPressed(); break;
+        case 0: InsertMP((*reinterpret_cast< std::vector<Sensor>(*)>(_a[1])),(*reinterpret_cast< Transmitter(*)>(_a[2]))); break;
+        case 1: remove(); break;
+        case 2: add(); break;
+        case 3: OKPressed(); break;
+        case 4: CancelPressed(); break;
         default: ;
         }
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
+}
+
+// SIGNAL 0
+void MPDialog::InsertMP(std::vector<Sensor> _t1, Transmitter _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_END_MOC_NAMESPACE

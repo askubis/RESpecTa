@@ -22,7 +22,7 @@ TransWidget::TransWidget(QWidget *parent)
 
    RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
    QStringList subtaskList;
-   xsubtasks = x->getSubtasks();
+   std::map<std::string, MyGraphType *> * xsubtasks = x->getSubtasks();
    for (std::map<std::string, MyGraphType*>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
    {
        subtaskList<<(*it).first.c_str();
@@ -95,14 +95,12 @@ void TransWidget::InsertTrans()
 
 }
 
+void TransWidget::SubtaskInserted(QString newName)
+{
+    this->subtaskCombo->addItem(newName);
+}
+
 void TransWidget::refreshData()
 {
-    QStringList subtaskList;
-    for (std::map<std::string, MyGraphType*>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
-    {
-        subtaskList<<(*it).first.c_str();
-    }
-    subtaskCombo->clear();
-    subtaskCombo->addItem("None");
-    subtaskCombo->addItems(subtaskList);
+
 }

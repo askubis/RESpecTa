@@ -71,10 +71,16 @@ class RESpecTa : public QMainWindow
 
 public:
    RESpecTa();
+   void setCurrentSubtask(std::string newSubtask){currentSubtask = newSubtask;}
    MyGraphType * getGraph (){return myGraph;}
    std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
 
+
 private slots:
+    void save();
+    void selectedSubtaskName(QString newString);
+    void InsertState(BaseState * newState);
+    void NewSubtaskInserted(QString newName);
     //void backgroundButtonGroupClicked(QAbstractButton *button);
     void buttonGroupClicked(int id);
     void deleteItem();
@@ -106,10 +112,9 @@ private:
 
 
 
-
     MyGraphType * myGraph;
     std::map<std::string, MyGraphType *> * subtasks;
-
+    std::string currentSubtask;
 
     QWidget *editWidget;
 
@@ -125,6 +130,8 @@ private:
     QGraphicsView *view;
 
     QAction *exitAction;
+    QAction *saveAction;
+    QAction *loadAction;
     QAction *addAction;
     QAction *deleteAction;
 

@@ -3,7 +3,7 @@
 #include <QtGui>
 
 #include "diagramscene.h"
-#include "arrow.h"
+#include "Transition.h"
 
 //! [0]
 DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
@@ -17,6 +17,7 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     myItemColor = Qt::white;
     myTextColor = Qt::black;
     myLineColor = Qt::black;
+    //toInsert = new BaseState();
 }
 //! [0]
 
@@ -106,11 +107,11 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     switch (myMode) {
         case InsertItem:
             //
-            item = new BaseState( myItemMenu);
-            item->setBrush(myItemColor);
-            addItem(item);
-            item->setPos(mouseEvent->scenePos());
-            emit itemInserted(item);
+            toInsert->setMenu(myItemMenu);
+            toInsert->setBrush(myItemColor);
+            addItem(toInsert);
+            toInsert->setPos(mouseEvent->scenePos());
+            emit itemInserted(toInsert);
             break;
 //! [6] //! [7]
         case InsertLine:

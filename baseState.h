@@ -60,6 +60,8 @@ QT_END_NAMESPACE
 
 #include "RobotSet.h"
 #include "Coordinates.h"
+#include <fstream>
+
 
 class Transition;
 
@@ -86,12 +88,11 @@ public:
 
     BaseState & operator =(const BaseState &);
 
-    BaseState(){}
+    BaseState();
 
     BaseState(BaseState& old);
 
-    BaseState( QMenu *contextMenu,
-        QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+    void setMenu( QMenu *contextMenu);
 
     void removeTransition(Transition *transition);
     void removeTransitions();
@@ -103,6 +104,17 @@ public:
     QPixmap image() const;
     int type() const
         { return Type;}
+
+    virtual std::string Print()
+    {
+        std::string x;
+        x+="\nName ";
+        x+=this->getName();
+        x+="\nStateType: ";
+        x+=STATE_TYPE_TABLE[this->getType()];
+        x+="\nParameters ";
+        x+=this->getParameters();
+    }
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);

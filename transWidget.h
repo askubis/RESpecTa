@@ -50,13 +50,13 @@ private:
 
 
 
-    std::map<std::string, MyGraphType *> * xsubtasks;
 
 
 private slots:
     void lengthChanged(QString newString);
     void AcceptTrans();
     void InsertTrans();
+    void SubtaskInserted(QString);
 
 };
 

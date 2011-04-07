@@ -32,7 +32,32 @@ sysIniWidget::sysIniWidget(QWidget * parent)
 
     State = new sysInitState();
 
+    connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
+    connect(mpDialog, SIGNAL(InsertMP(std::vector<Sensor>,Transmitter)), this, SLOT(InsertMP(std::vector<Sensor>,Transmitter)));
 }
+
+void sysIniWidget::InsertMP (std::vector<Sensor> sensors, Transmitter trans)
+{
+    this->State->setSensors(sensors);
+    this->State->setTransmitter(trans);
+}
+
+void sysIniWidget::InsertECP(genInit newInit)
+{
+    std::vector<genInit> inits = this->State->getInits();
+    for (std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+    {
+        if((*it).robot == newInit.robot)
+        {
+            //display exists
+            return;
+        }
+    }
+    inits.push_back(newInit);
+    this->State->setInits(inits);
+    this->robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[newInit.robot]));
+}
+
 void sysIniWidget::removeECPSection()
 {
     QList<QListWidgetItem *> toDeleteItems = robotsInitialized->selectedItems();
@@ -123,6 +148,15 @@ runGenWidget::runGenWidget(QWidget * parent)
 
     State = new RunGenState();
 
+    connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
+
+}
+
+void runGenWidget::CoordsInsert(Coordinates * newCoords)
+{
+    Coordinates * toDelete = this->State->getCoords();
+    delete toDelete;
+    this->State->setCoords(newCoords);
 }
 
 void runGenWidget::selectTrjFilePath()
@@ -150,6 +184,9 @@ void runGenWidget::showAddPosesDialog()
 BaseState * runGenWidget::getStateObject()
 {
     Coordinates * tmp = State->getCoords();
+    State->setArgs(argsLineEdit->text().toStdString());
+    State->setSpeech(speechLineEdit->text().toStdString());
+    State->setGenType(GeneratorType(genTypeCombo->currentIndex()));
     tmp->setFilePath(trjFileName->text().toStdString());
     State->setCoords(tmp);
     return new RunGenState(*State);
@@ -302,6 +339,7 @@ waitStateWidget::waitStateWidget(QWidget * parent)
     waitLayout->addWidget(timeSpan);
 
     setLayout(waitLayout);
+    State = new WaitState();
 }
 
 BaseState * waitStateWidget::getStateObject()
@@ -554,11 +592,7 @@ void PoseDialog::PoseOK()
 {
     coords->setCoordType(CoordType(coordTypeCombo->currentIndex()));
     coords->setMotionType(MotionType(motionTypeCombo->currentIndex()));
-    runGenWidget * parent_widg =(runGenWidget *) this->parent();
-    RunGenState * tmpState = (RunGenState *) parent_widg->getState();
-    Coordinates * toDelete = tmpState->getCoords();
-    delete toDelete;
-    tmpState->setCoords(new Coordinates (*(this->coords)));
+    emit InsertCoords(new Coordinates(*coords));
     this->setVisible(false);
 }
 
@@ -623,37 +657,19 @@ void ECPDialog::CancelPressed()
 
 void ECPDialog::OKPressed()
 {
-    sysIniWidget * x = dynamic_cast<sysIniWidget *> (this->parent());
-    sysInitState * tmpState = x->getState();
-    std::vector<genInit> genIniVector;
-
-    genIniVector = tmpState->getInits();
-    genInitObj.robot = Robot(robotCombo->currentIndex());
-    bool was = false;
-    for (std::vector<genInit>::iterator it=genIniVector.begin(); it!=genIniVector.end(); it++)
-    {
-        if((*it).robot==Robot(robotCombo->currentIndex()))//exists init section for that robot
-        {
-               was=true;
-        }
-    }
-    if(was)
-    {
-        //display message
-    }
-    else
-    {
-        genIniVector.push_back(genInitObj);
-        tmpState->setInits(genIniVector);
-        x->setState(tmpState);
-        this->setVisible(false);
-        x->robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[robotCombo->currentIndex()]));
-    }
+    genInitObj.robot=Robot(robotCombo->currentIndex());
+    emit InsertECP(genInitObj);
+    this->setVisible(false);
 }
 
 void ECPDialog::add()
 {
-    if (genList->findItems(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::MatchFlags()).size())
+bool mark=false;
+for (int i=0;i<genList->count();i++)
+{
+    if(genList->item(i)->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::CaseInsensitive))mark=true;
+}
+    if (mark)
     {   /*display present*/    }
     else
     {
@@ -669,7 +685,7 @@ void ECPDialog::remove()
     {
         for (std::vector < std::pair<GeneratorType, int> >::iterator iter = genInitObj.init_values.begin(); iter!=genInitObj.init_values.end();iter++)
         {
-            if (toDeleteItems[i]->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[(*iter).first]), Qt::CaseSensitive))
+            if (toDeleteItems[i]->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[(*iter).first]), Qt::CaseInsensitive))
             {
                 genInitObj.init_values.erase(iter);
                 break;
@@ -723,13 +739,6 @@ void MPDialog::CancelPressed()
 
 void MPDialog::OKPressed()
 {
-    sysIniWidget * x =(sysIniWidget *) this->parent();
-    sysInitState * stateTmp = x->getState();
-
-    if (transmitterCombo->currentIndex()<TRANSMITTERS_NUMBER)
-    {
-            (stateTmp->setTransmitter(Transmitter(transmitterCombo->currentIndex())));
-    }
     std::vector<Sensor> tmp;
     for (int i=0;i<SENSORS_NUMBER;i++)
     {
@@ -738,8 +747,7 @@ void MPDialog::OKPressed()
             tmp.push_back(Sensor(i));
         }
     }
-    stateTmp->setSensors(tmp);
-    //x->setState(stateTmp);
+    emit InsertMP(tmp, Transmitter(transmitterCombo->currentIndex()));
     this->setVisible(false);
 }
 

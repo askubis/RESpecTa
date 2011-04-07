@@ -56,12 +56,17 @@ private:
 
     int tmpWidget;
 
-    std::map<std::string, MyGraphType *> * xsubtasks;
+signals:
+    void SubtaskInserted(QString newSubtaskName);
+    void InsertState(BaseState * newState);
+    void selectedSubtaskName(QString newString);
+
 
 
 private slots:
     void setStateSubclass(int chosen);
     void createNewSubtask();
+    void SubtaskIndexChanged(QString);
 
     void lengthSubtaskChanged(QString newString);
     void lengthChanged(QString text);

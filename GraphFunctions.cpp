@@ -30,5 +30,28 @@ QStringList getStateNames(VertexIter first, VertexIter last, const theGraph &G)
 }
 
 
+template <class VertexIter, class theGraph>
+void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string FileName)
+{
+    typedef typename property_map<theGraph, state_t>::const_type StateMap;
+       StateMap stateMap = get(state_t(), G);
+
+       //typedef typename property_traits<StateMap>::value_type StateType;
+       //StateType st;
+
+       BaseState * State;
+       std::ofstream f(FileName.c_str());
+       while (first != last)
+       {
+         State = boost::get(stateMap, *first);
+         f<<State->Print();
+         f<<"\n";
+         ++first;
+       }
+       f.close();
+
+}
+
+
 
 

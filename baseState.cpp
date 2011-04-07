@@ -2,8 +2,19 @@
 #include <QtGui>
 
 #include "baseState.h"
-#include "arrow.h"
+#include "Transition.h"
 
+
+BaseState::BaseState()
+{
+    myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+              << QPointF(50, 50) << QPointF(-50, 50)
+              << QPointF(-50, -50);
+    setPolygon(myPolygon);
+    setFlag(QGraphicsItem::ItemIsMovable, true);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+}
 
 BaseState & BaseState::operator=(const BaseState &other)
 {
@@ -15,6 +26,9 @@ BaseState & BaseState::operator=(const BaseState &other)
     this->Transitions=other.Transitions;
     this->myContextMenu=other.myContextMenu;
     this->myPolygon=other.myPolygon;
+    setFlag(QGraphicsItem::ItemIsMovable, true);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     return *this;
 }
 
@@ -24,24 +38,21 @@ BaseState::BaseState(BaseState& old)
     this->stateName=old.stateName;
     this->stateType=old.stateType;
     this->parameters=old.parameters;
-}
-
-//! [0]
-BaseState::BaseState( QMenu *contextMenu,
-             QGraphicsItem *parent, QGraphicsScene *scene)
-    : QGraphicsPolygonItem(parent, scene)
-{
-    //myDiagramType = diagramType;
-    myContextMenu = contextMenu;
-
-    //QPainterPath path;
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
+    myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+              << QPointF(50, 50) << QPointF(-50, 50)
+              << QPointF(-50, -50);
     setPolygon(myPolygon);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+}
+
+//! [0]
+void BaseState::setMenu( QMenu *contextMenu)
+
+{
+    myContextMenu = contextMenu;
+
 }
 //! [0]
 
@@ -110,3 +121,6 @@ QVariant BaseState::itemChange(GraphicsItemChange change,
     return value;
 }
 //! [6]
+
+
+

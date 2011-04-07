@@ -79,6 +79,7 @@ public:
     void setTextColor(const QColor &color);
     void setItemColor(const QColor &color);
     void setFont(const QFont &font);
+    void setToInsertState (BaseState * newState){toInsert = newState;}
 
 public slots:
     void setMode(Mode mode);
@@ -98,7 +99,7 @@ protected:
 private:
     bool isItemChange(int type);
 
-
+    BaseState * toInsert;
     //BaseState::DiagramType myItemType;
     QMenu *myItemMenu;
     Mode myMode;
