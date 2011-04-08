@@ -50,7 +50,8 @@ private:
 
 
 
-
+signals:
+    void insertTransition(std::pair<std::string,std::string>);
 
 private slots:
     void lengthChanged(QString newString);

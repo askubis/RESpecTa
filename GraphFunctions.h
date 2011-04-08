@@ -23,6 +23,7 @@ QT_END_NAMESPACE
 #include <QtGui>
 
 #include <fstream>
+//#include "Graph.h"
 
 
 #ifndef GRAPHFUNCTIONS_H
@@ -40,6 +41,13 @@ void printStates(VertexIter first, VertexIter last, const theGraph &G, std::stri
 
 template <class VertexIter, class theGraph>
 bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &G);
+
+
+
+boost::graph_traits<MyGraphType>::vertex_iterator findVertex ( MyGraphType * graph, BaseState * toFind);
+
+boost::graph_traits<MyGraphType>::edge_iterator findEdge ( MyGraphType * graph, Transition * toFind);
+
 
 
 

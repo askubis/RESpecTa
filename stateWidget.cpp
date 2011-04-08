@@ -2,8 +2,8 @@
 #include <QtGui>
 #include <QObject>
 
-#include "GraphFunctions.h"
-#include "GraphFunctions.cpp"
+//#include "GraphFunctions.h"
+//#include "GraphFunctions.cpp"
 
 
 

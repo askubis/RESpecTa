@@ -22,6 +22,8 @@ transWidget = new TransWidget(tabWidget);
     connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
     connect (stateWidget, SIGNAL(selectedSubtaskName(QString)), (RESpecTa *)this->parentWidget(),SLOT(selectedSubtaskName(QString)));
 
+    connect (transWidget, SIGNAL(insertTransition(std::pair<std::string,std::string>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<std::string,std::string>)));
+
 
 
 

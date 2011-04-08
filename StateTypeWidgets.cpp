@@ -31,6 +31,7 @@ sysIniWidget::sysIniWidget(QWidget * parent)
     mpDialog->setVisible(false);
 
     State = new sysInitState();
+    State->setTransmitter(Transmitter(TRANSMITTERS_NUMBER));
 
     connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
     connect(mpDialog, SIGNAL(InsertMP(std::vector<Sensor>,Transmitter)), this, SLOT(InsertMP(std::vector<Sensor>,Transmitter)));

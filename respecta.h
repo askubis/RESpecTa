@@ -77,6 +77,8 @@ public:
 
 
 private slots:
+    bool lineInserted(Transition *line);
+    void insertTransition(std::pair<std::string,std::string>);
     void save();
     void selectedSubtaskName(QString newString);
     void InsertState(BaseState * newState);

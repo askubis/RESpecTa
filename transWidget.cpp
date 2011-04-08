@@ -1,7 +1,7 @@
 #include "transWidget.h"
 #include <QtGui>
-#include "GraphFunctions.h"
-#include "GraphFunctions.cpp"
+//#include "GraphFunctions.h"
+//#include "GraphFunctions.cpp"
 
 
 
@@ -91,7 +91,8 @@ void TransWidget::lengthChanged(QString newString)
 
 void TransWidget::InsertTrans()
 {
-
+    std::pair<std::string, std::string> thePair = std::make_pair(conditionLineEdit->text().toStdString(), subtaskCombo->currentText().toStdString());
+    emit insertTransition(thePair);
 
 }
 

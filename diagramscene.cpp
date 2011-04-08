@@ -103,7 +103,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
-    BaseState *item;
+    //BaseState *item;
     switch (myMode) {
         case InsertItem:
             //
@@ -169,6 +169,8 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         delete line;
 //! [11] //! [12]
 
+
+
         if (startItems.count() > 0 && endItems.count() > 0 &&
             startItems.first()->type() == BaseState::Type &&
             endItems.first()->type() == BaseState::Type &&
@@ -178,12 +180,23 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             BaseState *endItem =
                 qgraphicsitem_cast<BaseState *>(endItems.first());
             Transition *transition = new Transition(startItem, endItem);
-            transition->setColor(myLineColor);
-            startItem->addTransition(transition);
-            endItem->addTransition(transition);
-            transition->setZValue(-1000.0);
-            addItem(transition);
-            transition->updatePosition();
+            bool test = emit lineInserted(transition);
+            if(test)
+            {
+                transition->setCondition(transitionAttributes.first);
+                //transition->setSubtask(transitionAttributes.second);//to be changed
+                transition->setColor(myLineColor);
+                startItem->addTransition(transition);
+                endItem->addTransition(transition);
+                transition->setZValue(-1000.0);
+                addItem(transition);
+                transition->updatePosition();
+            }
+            else
+            {
+                delete transition;
+            }
+
         }
     }
 //! [12] //! [13]

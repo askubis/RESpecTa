@@ -105,6 +105,8 @@ public:
     int type() const
         { return Type;}
 
+    QList<Transition *> getTransitions (){return Transitions;}
+
     virtual std::string Print()
     {
         std::string x;

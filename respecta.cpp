@@ -32,10 +32,9 @@ RESpecTa::RESpecTa()
 
     scene = new DiagramScene(itemMenu, this);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    connect(scene, SIGNAL(itemInserted(BaseState*)),
-            this, SLOT(itemInserted(BaseState*)));
-    connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
-        this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scene, SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
+    connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scene, SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     createToolbars();
 
     myGraph = new MyGraphType();
@@ -118,12 +117,13 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::save()
 {
-    printStates(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph), std::string("TEST.txt"));
+    printStates(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph), std::string("MAIN.txt"));
     for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         printStates(vertices((*tmp)).first, vertices((*tmp)).second, (*tmp), std::string((*it).first+".txt"));
     }
+
 }
 
 void RESpecTa::createHelpMenu()
@@ -183,23 +183,70 @@ void RESpecTa::buttonGroupClicked(int id)
 //! [3]
 void RESpecTa::deleteItem()
 {
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-        if (item->type() == Transition::Type) {
+    foreach (QGraphicsItem *item, scene->selectedItems())
+    {
+        if (item->type() == Transition::Type)
+        {
             scene->removeItem(item);
             Transition *transition = qgraphicsitem_cast<Transition *>(item);
+
+            if((findEdge(myGraph, transition) )!=edges(*myGraph).second)
+                boost::remove_edge((*(findEdge(myGraph, transition))), (*myGraph));
+
+            for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+            {
+                MyGraphType * tmp = (*it).second;
+                if((findEdge(tmp, transition) )!=edges(*tmp).second)
+                    boost::remove_edge((*(findEdge(tmp, transition))), (*tmp));
+            }
+
+
+
             transition->startItem()->removeTransition(transition);
             transition->endItem()->removeTransition(transition);
+
+
+
+            scene->removeItem(item);
             delete item;
         }
     }
 
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-         if (item->type() == BaseState::Type) {
+    foreach (QGraphicsItem *item, scene->selectedItems())
+    {
+         if (item->type() == BaseState::Type)
+         {
+             foreach(Transition * transition, qgraphicsitem_cast<BaseState *>(item)->getTransitions())
+             {
+                 if((findEdge(myGraph, transition) )!=edges(*myGraph).second)
+                     boost::remove_edge((*(findEdge(myGraph, transition))), (*myGraph));
+
+                 for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+                 {
+                     MyGraphType * tmp = (*it).second;
+                     if((findEdge(tmp, transition) )!=edges(*tmp).second)
+                         boost::remove_edge((*(findEdge(tmp, transition))), (*tmp));
+                 }
+             }
+
+
              qgraphicsitem_cast<BaseState *>(item)->removeTransitions();
+
+             if((findVertex(myGraph, qgraphicsitem_cast<BaseState *>(item)) )!=vertices(*myGraph).second)
+                 boost::remove_vertex((*(findVertex(myGraph, qgraphicsitem_cast<BaseState *>(item)))), (*myGraph));
+
+             for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+             {
+                 MyGraphType * tmp = (*it).second;
+                 if((findVertex(tmp, qgraphicsitem_cast<BaseState *>(item)) )!=vertices(*tmp).second)
+                     boost::remove_vertex((*(findVertex(tmp, qgraphicsitem_cast<BaseState *>(item)))), (*tmp));
+
+             }
+
+             scene->removeItem(item);
+
+             delete item;
          }
-         scene->removeItem(item);
-         //boost::remove_vertex(qgraphicsitem_cast<BaseState *>(item), (*myGraph));
-         delete item;
      }
 }
 //! [3]
@@ -281,6 +328,28 @@ void RESpecTa::itemInserted(BaseState *item)
     //buttonGroup->button(int(item->diagramType()))->setChecked(false);
 }
 //! [7]
+
+bool RESpecTa::lineInserted(Transition *line)
+{
+    if (((findVertex(myGraph, line->startItem()) )!=vertices(*myGraph).second) && ((findVertex(myGraph, line->endItem()) )!=vertices(*myGraph).second ))
+    {
+        boost::add_edge( (*(findVertex(myGraph, line->startItem()))), (*(findVertex(myGraph, line->endItem()))), line, (*myGraph) );
+        return true;
+    }
+    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    {
+        MyGraphType * tmp = (*it).second;
+        if (((findVertex(tmp, line->startItem()) )!=vertices(*tmp).second) && ((findVertex(tmp, line->endItem()) )!=vertices(*tmp).second ))
+        {
+            boost::add_edge( (*(findVertex(tmp, line->startItem()))), (*(findVertex(tmp, line->endItem()))), line, (*tmp) );
+            return true;
+        }
+    }
+    return false;
+    //show error msg cannot create between subtasks
+
+    //boost::add_edge()
+}
 
 //! [8]
 /*void RESpecTa::textInsertedBaseState *(QGraphicsTextItem *)
@@ -704,6 +773,13 @@ void RESpecTa::InsertState(BaseState * newState)
     scene->setMode(DiagramScene::InsertItem);
     scene->setToInsertState(newState);
 }
+
+void RESpecTa::insertTransition(std::pair<std::string,std::string> thePair)
+{
+    scene->setMode(DiagramScene::InsertLine);
+    scene->setTransitionAttributes(thePair);
+}
+
 
 void RESpecTa::NewSubtaskInserted(QString newName)
 {

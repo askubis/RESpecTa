@@ -81,6 +81,15 @@ public:
     void setSubtask(MyGraphType* newSubtask) {subtask=newSubtask;}
 
 
+    std::string Print()
+    {
+        std::string toRet;
+        toRet+="\nCondition: ";
+        toRet+=condition;
+        toRet+=" Subtask address ";
+        toRet+=" ";
+        return toRet;
+    }
 
 public slots:
     void updatePosition();
