@@ -332,7 +332,7 @@ public:
         x+=this->getParameters();
         x+="\nTimespan ";
         char buf[20];
-        sprintf(buf,"%d",Timespan);
+        sprintf(buf,"%lld",Timespan);
         x+=buf;
         return x;
     }

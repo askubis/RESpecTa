@@ -46,6 +46,7 @@ RESpecTa::RESpecTa()
 
 
     editWidget = new EditWidget(this);
+    connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
    // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
     editWidget->resize(10,800);
 
@@ -345,10 +346,8 @@ bool RESpecTa::lineInserted(Transition *line)
             return true;
         }
     }
+    reportError(QString("Cannot create a transition between\nstates in different tasks"));
     return false;
-    //show error msg cannot create between subtasks
-
-    //boost::add_edge()
 }
 
 //! [8]
@@ -770,8 +769,25 @@ QIcon RESpecTa::createColorIcon(QColor color)
 void RESpecTa::InsertState(BaseState * newState)
 {
 
-    scene->setMode(DiagramScene::InsertItem);
-    scene->setToInsertState(newState);
+    bool abort = false;
+    if (!checkStateNameAvailable(vertices(*myGraph).first,vertices(*myGraph).second, (*myGraph), newState->getName()))abort=true;
+    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    {
+        MyGraphType * tmp = (*it).second;
+        if (!checkStateNameAvailable(vertices(*tmp).first,vertices(*tmp).second, (*tmp), newState->getName()))
+        {
+           abort = true;
+        }
+    }
+    if(abort)
+    {
+        reportError(QString("State with that name already exists"));
+    }
+    else
+    {
+        scene->setMode(DiagramScene::InsertItem);
+        scene->setToInsertState(newState);
+    }
 }
 
 void RESpecTa::insertTransition(std::pair<std::string,std::string> thePair)
@@ -790,4 +806,9 @@ void RESpecTa::NewSubtaskInserted(QString newName)
 void RESpecTa::selectedSubtaskName(QString newString)
 {
     currentSubtask=newString.toStdString();
+}
+
+void RESpecTa::reportError(QString msgString)
+{
+    QMessageBox::information(this, QString().fromStdString("Error"), msgString);
 }

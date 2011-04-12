@@ -34,8 +34,11 @@ private:
     QTabWidget * tabWidget;
     TransWidget * transWidget;
     StateWidget * stateWidget;
+signals:
+    void reportError(QString msgString);
 private slots:
     void refreshWidget(int);
+    void forwardError(QString msgString){emit reportError(msgString);}
 
 
 

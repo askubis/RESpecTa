@@ -24,6 +24,7 @@ QT_END_NAMESPACE
 class PoseDialog;
 class ECPDialog;
 class MPDialog;
+class StateWidget;
 
 
 
@@ -55,12 +56,15 @@ private:
 
     ECPDialog * ecpDialog;
     MPDialog * mpDialog;
+signals:
+    void reportError(QString msgString);
 private slots:
     void removeECPSection();
     void createECPSection();
     void changeMPSection();
     void InsertECP(genInit newInit);
     void InsertMP (std::vector<Sensor> sensors, Transmitter trans);
+    void forwardError(QString msgString){emit reportError(msgString);}
 };
 
 class runGenWidget : public MyTypeWidget
@@ -84,10 +88,13 @@ private:
     QListWidget * PoseList;
     QLineEdit * trjFileName;
     PoseDialog * poseDialog;
+signals:
+    void reportError(QString msgString);
 private slots:
     void CoordsInsert(Coordinates * newCoords);
     void showAddPosesDialog();
     void selectTrjFilePath();
+    void forwardError(QString msgString){emit reportError(msgString);}
 };
 
 class emptyGenForSetWidget : public MyTypeWidget
@@ -106,6 +113,8 @@ private:
     QListWidget * SecondRobotList;
     QComboBox * FirstRobotCombo;
     QComboBox * SecondRobotCombo;
+signals:
+    void reportError(QString msgString);
 private slots:
     void addFirst();
     void removeFirst();
@@ -161,6 +170,8 @@ private:
 
     QListWidget * RobotList;
     QComboBox * RobotCombo;
+signals:
+    void reportError(QString msgString);
 private slots:
     void add();
     void remove();
@@ -227,6 +238,7 @@ private:
 
 signals:
     void InsertCoords(Coordinates * newCoords);
+    void reportError(QString msgString);
 private slots:
     void AddPose();
     void RemovePose();
@@ -252,6 +264,7 @@ private:
 
 signals:
     void InsertECP(genInit newInit);
+    void reportError(QString msgString);
 
 private slots:
     void remove();
@@ -273,6 +286,7 @@ private:
 
 signals:
     void InsertMP (std::vector<Sensor> sensors, Transmitter trans);
+    void reportError(QString msgString);
 
 private slots:
     void remove();

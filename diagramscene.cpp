@@ -194,6 +194,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             }
             else
             {
+
                 delete transition;
             }
 

@@ -34,7 +34,13 @@ sysIniWidget::sysIniWidget(QWidget * parent)
     State->setTransmitter(Transmitter(TRANSMITTERS_NUMBER));
 
     connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
+    connect (ecpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
+    connect (mpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
+    //connect(ecpDialog, SIGNAL(forwardError(QString)), (StateWidget *)(this->parentWidget()), SLOT(forwardError(QString)));
+
     connect(mpDialog, SIGNAL(InsertMP(std::vector<Sensor>,Transmitter)), this, SLOT(InsertMP(std::vector<Sensor>,Transmitter)));
+
+    //connect(mpDialog, SIGNAL(forwardError(QString)), (StateWidget *)this->parentWidget(), SLOT(forwardError(QString)));
 }
 
 void sysIniWidget::InsertMP (std::vector<Sensor> sensors, Transmitter trans)
@@ -50,7 +56,7 @@ void sysIniWidget::InsertECP(genInit newInit)
     {
         if((*it).robot == newInit.robot)
         {
-            //display exists
+            emit forwardError(QString("Robot exists:").append(QString().fromStdString(ROBOT_TABLE[newInit.robot])));
             return;
         }
     }
@@ -150,6 +156,7 @@ runGenWidget::runGenWidget(QWidget * parent)
     State = new RunGenState();
 
     connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
+    connect(poseDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
 }
 
@@ -250,7 +257,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
 void emptyGenForSetWidget::addFirst()
 {
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        /*display present*/    }
+    {        emit reportError(QString().fromStdString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
     else
     {        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));    }
 }
@@ -260,13 +267,13 @@ void emptyGenForSetWidget::removeFirst()
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        /*display not present*/    }
+    {        emit reportError(QString().fromStdString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
 }
 
 void emptyGenForSetWidget::addSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        /*display present*/    }
+    {        emit reportError(QString().fromStdString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
     else
     {        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));    }
 }
@@ -276,7 +283,7 @@ void emptyGenForSetWidget::removeSecond()
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        /*display not present*/    }
+    {        emit reportError(QString().fromStdString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
 }
 
 BaseState * emptyGenForSetWidget::getStateObject()
@@ -384,7 +391,7 @@ stopGenWidget::stopGenWidget(QWidget * parent)
 void stopGenWidget::add()
 {
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        /*DISPLAY info "present"*/    }
+    {        emit reportError(QString().fromStdString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
     else
     {        RobotList->addItem(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]));    }
 }
@@ -394,7 +401,7 @@ void stopGenWidget::remove()
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        /*DISPLAY info "not present"*/    }
+    {        emit reportError(QString().fromStdString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
 }
 
 BaseState * stopGenWidget::getStateObject()
@@ -671,7 +678,7 @@ for (int i=0;i<genList->count();i++)
     if(genList->item(i)->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::CaseInsensitive))mark=true;
 }
     if (mark)
-    {   /*display present*/    }
+    {   emit reportError(QString("This generator is already initialized: ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()])));    }
     else
     {
         genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]).append(" ").append(argLineEdit->text()));
@@ -755,7 +762,7 @@ void MPDialog::OKPressed()
 void MPDialog::add()
 {
     if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {   /*display present*/    }
+    {   emit reportError(QString("This sensor is already initialized: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()])));}
     else
     {        sensorList->addItem(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]));    }
 }
@@ -765,5 +772,5 @@ void MPDialog::remove()
     if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {   /*display not present*/ }
+    {   emit reportError(QString("This sensor is not initialized\nyou cannot remove it: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]))); }
 }

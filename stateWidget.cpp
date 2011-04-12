@@ -1,4 +1,4 @@
-#include "stateWidget.h"
+ #include "stateWidget.h"
 #include <QtGui>
 #include <QObject>
 
@@ -39,9 +39,6 @@ this->setMaximumWidth(230);
 
     //creating Default EditState options
     StateLayout = new QVBoxLayout;
-
-
-
 
 
 
@@ -104,6 +101,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    mainLayout->addWidget(sysIni);
    tmpWidget = 0;
    StateWidgets[0]=sysIni;
+   connect(sysIni, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
    runGenWidget* runGen = new runGenWidget(this);
    mainLayout->addWidget(runGen);
@@ -203,11 +201,13 @@ void StateWidget::createNewSubtask()
 
     if(subtaskCombo->findText(taskNameEdit->text())!=-1)
     {
-        //display exists
+        emit reportError(taskNameEdit->text().append(" is a name already\ntaken for a subtask"));
     }
-    subtaskCombo->addItem(taskNameEdit->text());
-    //std::string newSubtaskName = taskNameEdit->text().toStdString();
-    emit SubtaskInserted(taskNameEdit->text());
+    else
+    {
+        subtaskCombo->addItem(taskNameEdit->text());
+        emit SubtaskInserted(taskNameEdit->text());
+    }
 
 
 }
@@ -216,3 +216,5 @@ void StateWidget::refreshData()
 {
 
 }
+
+

@@ -40,7 +40,7 @@ void printStates(VertexIter first, VertexIter last, const theGraph &G, std::stri
 
 
 template <class VertexIter, class theGraph>
-bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &G);
+bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &G, std::string given);
 
 
 
