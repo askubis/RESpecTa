@@ -305,7 +305,7 @@ void RESpecTa::itemInserted(BaseState *item)
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
     //Vertex v_new;
     MyGraphType::vertex_descriptor v_new;
-
+    item->setSubtaskName(currentSubtask);
     if(currentSubtask!="MAIN")
     {
         v_new = boost::add_vertex(item, (*(*subtasks)[currentSubtask]));
@@ -332,6 +332,7 @@ void RESpecTa::itemInserted(BaseState *item)
 
 bool RESpecTa::lineInserted(Transition *line)
 {
+
     if (((findVertex(myGraph, line->startItem()) )!=vertices(*myGraph).second) && ((findVertex(myGraph, line->endItem()) )!=vertices(*myGraph).second ))
     {
         boost::add_edge( (*(findVertex(myGraph, line->startItem()))), (*(findVertex(myGraph, line->endItem()))), line, (*myGraph) );

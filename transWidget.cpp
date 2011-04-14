@@ -55,13 +55,13 @@ TransWidget::TransWidget(QWidget *parent)
    OKButton = new QPushButton(tr("&OK"));
    OKButton->setChecked(false);
    connect(OKButton, SIGNAL(clicked()), this, SLOT(AcceptTrans()));
-   OKButton->setDown(true);
+   OKButton->setDisabled(true);
    bottomLayout->addWidget(OKButton);
 
    InsertButton = new QPushButton(tr("&Insert"));
    InsertButton->setChecked(false);
    connect(InsertButton, SIGNAL(clicked()), this, SLOT(InsertTrans()));
-   InsertButton->setDown(true);
+   InsertButton->setDisabled(true);
    bottomLayout->addWidget(InsertButton);
 
    TransitionLayout->addLayout(bottomLayout);
@@ -78,13 +78,13 @@ void TransWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        OKButton->setDown(false);
-        InsertButton->setDown(false);
+        OKButton->setDisabled(false);
+        InsertButton->setDisabled(false);
     }
     else
     {
-        OKButton->setDown(true);
-        InsertButton->setDown(true);
+        OKButton->setDisabled(true);
+        InsertButton->setDisabled(true);
     }
 }
 

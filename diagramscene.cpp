@@ -102,7 +102,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
-
+    QGraphicsTextItem * textItem;
     //BaseState *item;
     switch (myMode) {
         case InsertItem:
@@ -111,7 +111,13 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             toInsert->setBrush(myItemColor);
             addItem(toInsert);
             toInsert->setPos(mouseEvent->scenePos());
+
             emit itemInserted(toInsert);
+
+            textItem = toInsert->getNameTextItem();
+            addItem(textItem);
+            toInsert->updateTextPositions();
+            //textItem->setPos(mouseEvent->scenePos().x()-50, mouseEvent->scenePos().y()-50);
             break;
 //! [6] //! [7]
         case InsertLine:
@@ -150,6 +156,14 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
         line->setLine(newLine);
     } else if (myMode == MoveItem) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
+        foreach (QGraphicsItem *item, this->selectedItems())
+        {
+            if (item->type() == BaseState::Type)
+            {
+                BaseState * tmp = (BaseState *)item;
+                tmp->updateTextPositions();
+            }
+        }
     }
 }
 //! [10]
@@ -157,6 +171,7 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [11]
 void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+
     if (line != 0 && myMode == InsertLine) {
         QList<QGraphicsItem *> startItems = items(line->line().p1());
         if (startItems.count() && startItems.first() == line)
@@ -169,12 +184,25 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         delete line;
 //! [11] //! [12]
 
+        //std::cout<<startItems.count()<<" "<<endItems.count()<<" "<<(startItems.first()->type() == BaseState::Type)<<" "
+          //      <<(endItems.first()->type() == BaseState::Type)<<" "<<(startItems.first() != endItems.first())<<std::endl;
+        while(startItems.count()>1 && startItems.first()->type() != BaseState::Type)
+        {
+            startItems.removeFirst();
+        }
+        while(endItems.count()>1 && endItems.first()->type() != BaseState::Type)
+        {
+            endItems.removeFirst();
+        }
 
+        //std::cout<<startItems.count()<<" "<<endItems.count()<<" "<<(startItems.first()->type() == BaseState::Type)<<" "
+          //      <<(endItems.first()->type() == BaseState::Type)<<" "<<(startItems.first() != endItems.first())<<std::endl;
 
         if (startItems.count() > 0 && endItems.count() > 0 &&
             startItems.first()->type() == BaseState::Type &&
             endItems.first()->type() == BaseState::Type &&
             startItems.first() != endItems.first()) {
+
             BaseState *startItem =
                 qgraphicsitem_cast<BaseState *>(startItems.first());
             BaseState *endItem =

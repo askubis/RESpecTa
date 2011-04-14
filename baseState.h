@@ -34,15 +34,21 @@ public:
     enum { Type = UserType + 15 };
 
     StateType getType() {return stateType;}
-    void setType(StateType newType) {stateType=newType;}
+    void setType(StateType newType){stateType=newType;}
     std::string getName() {return stateName;}
-    void setName(std::string newName) {stateName=newName;}
+    void setName(std::string newName);
     int getArgument() {return argument;}
     void setArgument(int newArg){argument = newArg;}
     std::string getParameters() {return parameters;}
     void setParameters(std::string newParams){parameters = newParams;}
+    QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
+    void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
+    void setSubtaskName (std::string newSubName){ subtaskName = newSubName;updateSize();}
 
-
+    void updateTextPositions()
+    {
+        nameTextItem->setPos(this->pos().x()-50,this->pos().y()-50);
+    }
 
 
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
@@ -52,6 +58,8 @@ public:
     BaseState();
 
     BaseState(BaseState& old);
+
+    ~BaseState(){delete nameTextItem;}
 
     void setMenu( QMenu *contextMenu);
 
@@ -84,6 +92,8 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
+    void updateSize();
+
    // DiagramType myDiagramType;
     QPolygonF myPolygon;
     QMenu *myContextMenu;
@@ -91,9 +101,12 @@ private:
 
 
     std::string stateName;
+    std::string subtaskName;
     StateType stateType;
     int argument;
     std::string parameters;
+
+    QGraphicsTextItem * nameTextItem;
 
 
 
@@ -101,3 +114,4 @@ private:
 //! [0]
 
 #endif
+

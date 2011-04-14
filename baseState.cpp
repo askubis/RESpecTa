@@ -5,6 +5,41 @@
 #include "Transition.h"
 
 
+
+void BaseState::setName(std::string newName)
+ {
+    stateName=newName;
+    updateSize();
+ }
+void BaseState::updateSize()
+{
+    QString x;
+    QString y;
+    int fontSize = 17;
+    do
+    {
+        y = (QString().fromStdString(this->stateName).append(QString().fromStdString("\n"+this->subtaskName)));
+        nameTextItem->setPlainText(y);
+        QFont tmp = nameTextItem->font();
+        tmp.setPixelSize(--fontSize);
+        nameTextItem->setFont(tmp);
+        while(nameTextItem->boundingRect().width()>100)
+        {
+            x=y;
+            int size = x.size();
+            while (nameTextItem->boundingRect().width()>100)
+            {
+                size--;
+                x.truncate(size);
+                nameTextItem->setPlainText(x);
+            }
+        y.insert(size, QString().fromStdString("\n"));
+        nameTextItem->setPlainText(y);
+        }
+    }
+    while ((nameTextItem->boundingRect().height()>100));
+}
+
 BaseState::BaseState()
 {
     myPolygon << QPointF(-50, -50) << QPointF(50, -50)
@@ -14,18 +49,20 @@ BaseState::BaseState()
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    nameTextItem = new QGraphicsTextItem(this);
 }
 
 BaseState & BaseState::operator=(const BaseState &other)
 {
     if (this->stateName==other.stateName) return *this;//TODO:askubis check if not wrong with that condition
     this->argument=other.argument;
-    this->stateName=other.stateName;
+    this->setName(other.stateName);
     this->stateType=other.stateType;
     this->parameters=other.parameters;
     this->Transitions=other.Transitions;
     this->myContextMenu=other.myContextMenu;
     this->myPolygon=other.myPolygon;
+    nameTextItem = new QGraphicsTextItem(other.nameTextItem);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
@@ -34,8 +71,9 @@ BaseState & BaseState::operator=(const BaseState &other)
 
 BaseState::BaseState(BaseState& old)
 {
+    nameTextItem = new QGraphicsTextItem(old.nameTextItem);
     this->argument=old.argument;
-    this->stateName=old.stateName;
+    this->setName(old.stateName);
     this->stateType=old.stateType;
     this->parameters=old.parameters;
     myPolygon << QPointF(-50, -50) << QPointF(50, -50)
@@ -45,6 +83,7 @@ BaseState::BaseState(BaseState& old)
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    //nameTextItem->setPlainText(QString().fromStdString(this->stateName));
 }
 
 //! [0]
