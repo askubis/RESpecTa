@@ -18,7 +18,12 @@ public:
         this->coordType=old.coordType;
         this->filePath=old.filePath;
         this->motionType=old.motionType;
-        this->poses=old.poses;
+        Pose * x;
+        for(int i=0;i<old.poses.size();i++)
+        {
+            x=new Pose(*(old.poses[i]));
+            this->poses.push_back(x);
+        }
     }
 
     ~Coordinates()

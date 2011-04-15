@@ -112,6 +112,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    mainLayout->addWidget(emptyForSet);
    emptyForSet->setVisible(false);
    StateWidgets[2]=emptyForSet;
+   connect(emptyForSet, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
    emptyGenWidget* emptyGen = new emptyGenWidget(this);
    mainLayout->addWidget(emptyGen);
@@ -127,6 +128,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    mainLayout->addWidget(stopGen);
    stopGen->setVisible(false);
    StateWidgets[5]=stopGen;
+   connect(stopGen, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
    iniSensorWidget* initSensor = new iniSensorWidget(this);
    mainLayout->addWidget(initSensor);
@@ -190,8 +192,11 @@ void StateWidget::InsertState()
     //if(res!=x) exit(78);
     //res->insertClicked();
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
+    if(toInsertState==NULL)
+        return;
     toInsertState->setName(this->stateNameEdit->text().toStdString());
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
+    toInsertState->setParameters(paramEdit->text().toStdString());
     emit InsertState(toInsertState);
 
 }

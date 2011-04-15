@@ -154,6 +154,8 @@ runGenWidget::runGenWidget(QWidget * parent)
     poseDialog->setVisible(false);
 
     State = new RunGenState();
+    State->getCoords()->setMotionType(MotionType(0));
+    State->getCoords()->setCoordType(CoordType(0));
 
     connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
     connect(poseDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
@@ -195,6 +197,7 @@ BaseState * runGenWidget::getStateObject()
     State->setArgs(argsLineEdit->text().toStdString());
     State->setSpeech(speechLineEdit->text().toStdString());
     State->setGenType(GeneratorType(genTypeCombo->currentIndex()));
+    State->setRobot(Robot(robotCombo->currentIndex()));
     tmp->setFilePath(trjFileName->text().toStdString());
     State->setCoords(tmp);
     return new RunGenState(*State);
@@ -304,6 +307,11 @@ BaseState * emptyGenForSetWidget::getStateObject()
         }
     }
     this->State->setSet(tmp);
+    if(tmp.first.size()==0||tmp.second.size()==0)
+    {
+        reportError(QString().fromStdString("None of the sets can be empty\nin EmptyGenForSet state"));
+        return NULL;
+    }
     return new EmptyGenForSetState(*State);
 }
 
@@ -417,6 +425,11 @@ BaseState * stopGenWidget::getStateObject()
         }
     }
     this->State->setSet(tmp);
+    if(tmp.first.size()==0)
+    {
+        reportError(QString().fromStdString("The set cannot be empty\nin StopGen state"));
+        return NULL;
+    }
     return new StopGenState(*State);
 }
 
@@ -554,7 +567,7 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
 void PoseDialog::AddPose()
 {
     Pose * tmp = new Pose();
-    std::vector<int> a, v, c;
+    std::vector<double> a, v, c;
     int i = 0;
     for (;i<7;i++)
     {
@@ -564,11 +577,12 @@ void PoseDialog::AddPose()
         }
         else
         {
-            a.push_back(accEdit[i]->text().toInt());
-            v.push_back(velEdit[i]->text().toInt());
-            c.push_back(coordEdit[i]->text().toInt());
+            a.push_back(accEdit[i]->text().toDouble());
+            v.push_back(velEdit[i]->text().toDouble());
+            c.push_back(coordEdit[i]->text().toDouble());
         }
     }
+
     if(i!=0)
     {
         tmp->setA(a);
@@ -600,7 +614,8 @@ void PoseDialog::PoseOK()
 {
     coords->setCoordType(CoordType(coordTypeCombo->currentIndex()));
     coords->setMotionType(MotionType(motionTypeCombo->currentIndex()));
-    emit InsertCoords(new Coordinates(*coords));
+    Coordinates * tmp = new Coordinates(*coords);
+    emit InsertCoords(tmp);
     this->setVisible(false);
 }
 
@@ -673,6 +688,11 @@ void ECPDialog::OKPressed()
 void ECPDialog::add()
 {
 bool mark=false;
+if(argLineEdit->text().size()==0)
+{
+    reportError(QString().fromStdString("Generator needs to have arguments"));
+    return;
+}
 for (int i=0;i<genList->count();i++)
 {
     if(genList->item(i)->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::CaseInsensitive))mark=true;
@@ -774,3 +794,4 @@ void MPDialog::remove()
     else
     {   emit reportError(QString("This sensor is not initialized\nyou cannot remove it: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]))); }
 }
+

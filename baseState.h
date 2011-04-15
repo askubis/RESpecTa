@@ -83,8 +83,11 @@ public:
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(parameters.size()>0)
+        {
+            x+="\nParameters ";
+            x+=this->getParameters();
+        }
     }
 
 protected:

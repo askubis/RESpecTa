@@ -13,9 +13,13 @@ public:
     Pose(){}
     Pose(const Pose& other)
     {
-        this->a=other.a;
-        this->v=other.v;
-        this->coordinates=other.coordinates;
+        for(int i=0; i<other.a.size();i++)
+        {
+            this->a.push_back(other.a[i]);
+            this->v.push_back(other.v[i]);
+            this->coordinates.push_back(other.coordinates[i]);
+        }
+
     }
 
     /*bool operator == (Pose other)
@@ -40,19 +44,19 @@ public:
         return true;
     }*/
 
-    std::vector<int> getA(){return a;}
-    void setA(std::vector<int> newA){a=newA;}
+    std::vector<double> getA(){return a;}
+    void setA(std::vector<double> newA){a=newA;}
 
-    std::vector<int> getV(){return v;}
-    void setV(std::vector<int> newV){v=newV;}
+    std::vector<double> getV(){return v;}
+    void setV(std::vector<double> newV){v=newV;}
 
-    std::vector<int> getC(){return coordinates;}
-    void setC(std::vector<int> newC){coordinates=newC;}
+    std::vector<double> getC(){return coordinates;}
+    void setC(std::vector<double> newC){coordinates=newC;}
 
 private:
-    std::vector<int> a;
-    std::vector<int> v;
-    std::vector<int> coordinates;
+    std::vector<double> a;
+    std::vector<double> v;
+    std::vector<double> coordinates;
 };
 
 #endif // POSE_H

@@ -314,6 +314,8 @@ void RESpecTa::itemInserted(BaseState *item)
     {
         v_new = boost::add_vertex(item, (*myGraph));
     }
+    item->setToolTip(QString().fromStdString(item->Print()));
+    //item->setStatusTip(item->Print());
 
 
     //boost::remove_vertex(v_new, (*myGraph));

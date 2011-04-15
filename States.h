@@ -41,12 +41,15 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->getParameters();
+        }
         x+="\nFIRST SET:";
         for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
         {
@@ -82,12 +85,15 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->getParameters();
+        }
         x+="\nROBOT: ";
         x+=ROBOT_TABLE[robot];
         return x;
@@ -112,11 +118,14 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
-        x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->getParameters();
+        }
         x+=this->getParameters();
         x+="\nSENSOR: ";
         x+=SENSOR_TABLE[sensor];
@@ -142,12 +151,15 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters ";
+            x+=this->getParameters();
+        }
         x+="\nSENSOR: ";
         x+=SENSOR_TABLE[sensor];
         return x;
@@ -184,14 +196,77 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->getParameters();
+        }
+        x+="\nROBOT: ";
+        x+=ROBOT_TABLE[robot];
+        x+="\nGENERATOR: ";
+        x+=GENERATOR_TYPE_TABLE[genType];
+        if(this->speech.size()>0)
+        {
+            x+="Speech: ";
+            x+=this->speech;
+        }
+        if(this->genArgs.size()>0)
+        {
+            x+="\nGenArgs: ";
+            x+=this->genArgs;
+        }
+        x+="\nFilePath:";
+        x+=coords->getFilePath();
+        x+="\nMotion Type:";
+        x+=MOTION_TYPE_TABLE[coords->getMotionType()];
+        x+="\nCoord Type:";
+        x+=COORD_TYPE_TABLE[coords->getCoordType()];
+        std::vector<Pose *>::iterator it;
+        char  w[12];
+        std::vector<Pose *> posesCopy = this->coords->getPoses();
+        for(it = posesCopy.begin(); it!=posesCopy.end();it++)
+        //for (int i=0;i<this->coords->getPoses().size();i++)
+        {
+            //if((*(it)) != (*(this->coords->getPoses().begin())))exit(13);
+
+            //std::vector<double> tmp = (*(this->coords->getPoses().begin()))->getA();
+            std::vector<double> tmp = (*(it))->getA();
+            x+="\nPOSE:";
+            x+="\nAccelerations: ";
+            for (int i=0;i<tmp.size();i++)
+            {
+                sprintf(w, "%lf", tmp[i]);
+                x+=w;
+                x+=" ";
+            }
+            //tmp = (*(this->coords->getPoses().begin()))->getV();
+            tmp = (*(it))->getV();
+            x+="\nVelocities: ";
+            for (int i=0;i<tmp.size();i++)
+            {
+                sprintf(w, "%lf", tmp[i]);
+                x+=w;
+                x+=" ";
+            }
+            //tmp = (*(this->coords->getPoses().begin()))->getC();
+            tmp = (*(it))->getC();
+            x+="\nCoords: ";
+            for (int i=0;i<tmp.size();i++)
+            {
+                sprintf(w, "%lf", tmp[i]);
+                x+=w;
+                x+=" ";
+            }
+
+        }
+
         return x;
     }
+
 private:
     Robot robot;
     GeneratorType genType;
@@ -216,20 +291,17 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters ";
+            x+=this->getParameters();
+        }
         x+="\nFIRST SET:";
         for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
-        {
-            x+="\nROBOT: ";
-            x+=ROBOT_TABLE[(*it)];
-        }
-        x+="\nSECOND SET:";
-        for(std::vector<Robot>::iterator it = set.second.begin();it!=set.second.end();it++)
         {
             x+="\nROBOT: ";
             x+=ROBOT_TABLE[(*it)];
@@ -269,33 +341,48 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
-        x+="\nMP";
-        x+="\ntransmitter";
-        x+=TRANSMITTER_TABLE[transmitter];
-        for(std::vector<Sensor>::iterator it = sensors.begin();it!=sensors.end();it++)
+        if(this->getParameters().size()>0)
         {
-            x+="\nSENSOR: ";
-            x+=SENSOR_TABLE[(*it)];
+            x+="\nParameters: ";
+            x+=this->getParameters();
         }
-        for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+        if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
         {
-            x+="\nECP: ";
-            x+="\nROBOT: ";
-            x+=ROBOT_TABLE[(*it).robot];
-            for(std::vector < std::pair<GeneratorType, int> >::iterator iter = (*it).init_values.begin(); iter!=(*it).init_values.end(); iter++)
+            x+="\nMP";
+            if(transmitter<TRANSMITTERS_NUMBER)
             {
-                x+="\nGENERATOR: ";
-                x+=GENERATOR_TYPE_TABLE[(*iter).first];
-                char tmp[20];
-                sprintf(tmp, "%d", (*iter).second);
-                x+=" ";
-                x+=tmp;
+                x+="\ntransmitter: ";
+                x+=TRANSMITTER_TABLE[transmitter];
+            }
+            if(sensors.size()>0)
+            {
+                for(std::vector<Sensor>::iterator it = sensors.begin();it!=sensors.end();it++)
+                {
+                    x+="\nSENSOR: ";
+                    x+=SENSOR_TABLE[(*it)];
+                }
+            }
+        }
+        if(inits.size()>0)
+        {
+            for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+            {
+                x+="\nECP: ";
+                x+="\nROBOT: ";
+                x+=ROBOT_TABLE[(*it).robot];
+                for(std::vector < std::pair<GeneratorType, int> >::iterator iter = (*it).init_values.begin(); iter!=(*it).init_values.end(); iter++)
+                {
+                    x+="\nGENERATOR: ";
+                    x+=GENERATOR_TYPE_TABLE[(*iter).first];
+                    char tmp[20];
+                    sprintf(tmp, "%d", (*iter).second);
+                    x+=" ";
+                    x+=tmp;
+                }
             }
         }
 
@@ -324,13 +411,16 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="\nName: ";
         x+=this->getName();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
-        x+="\nParameters ";
-        x+=this->getParameters();
-        x+="\nTimespan ";
+        if(this->getParameters().size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->getParameters();
+        }
+        x+="\nTimespan: ";
         char buf[20];
         sprintf(buf,"%lld",Timespan);
         x+=buf;
