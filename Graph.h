@@ -26,7 +26,7 @@ struct transition_t {
 
 typedef property<state_t, BaseState *> VertexProperty;
 typedef property<transition_t, Transition *> EdgeProperty;
-//typedef property<graph_title_t, std::string> GraphProperty;
+//typedef property<graph_title_t, QString> GraphProperty;
 
 //typedef adjacency_list<listS, listS, directedS, VertexProperty, EdgeProperty, GraphProperty> MyGraphType;
 typedef adjacency_list<vecS, vecS, directedS, VertexProperty, EdgeProperty> MyGraphType;

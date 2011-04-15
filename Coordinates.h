@@ -34,8 +34,8 @@ public:
         }
     }
 
-    std::string getFilePath() {return filePath;}
-    void setFilePath(std::string newPath) {filePath=newPath;}
+    QString getFilePath() {return filePath;}
+    void setFilePath(QString newPath) {filePath=newPath;}
 
     CoordType getCoordType() {return coordType;}
     void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
@@ -48,7 +48,7 @@ public:
 
 
 private:
-    std::string filePath;
+    QString filePath;
     CoordType coordType;
     MotionType motionType;
     std::vector<Pose *> poses;
@@ -57,3 +57,5 @@ private:
 };
 
 #endif // COORDINATES_H
+
+

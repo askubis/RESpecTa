@@ -10,8 +10,8 @@ enum StateType {SYSTEM_INITIALIZATION, RUN_GENERATOR, EMPTY_GEN_FOR_SET, EMPTY_G
                 //CUBE_STATE_INIT, CUBE_STATE_WRITING, CUBE_STATE_CHANGE, COMMUNICATE_WITH_SOLVER, MANIPULATION_SEQ_TRANSLATION,
             STATE_TYPES_NUMBER };
 static std::string STATE_TYPE_TABLE[STATE_TYPES_NUMBER+1] =
-        {"SYSTEM_INITIALIZATION","RUN_GENERATOR","EMPTY_GEN_FOR_SET","EMPTY_GEN","WAIT","STOP_GEN",
-         "INITIATE_SENSOR_READING","GET_SENSOR_READING",""};
+        {"systemInitialization","runGenerator","emptyGenForSet","emptyGen","wait","stopGen",
+         "initiateSensorReading","getSensorReading",""};
 static QStringList getStateTypeTable()
 {
     QStringList items;
@@ -25,10 +25,16 @@ static QStringList getStateTypeTable()
 //***************   GENERATOR TYPES   ***************//
 enum GeneratorType {ECP_GEN_TEACH_IN, ECP_GEN_NEWSMOOTH, ECP_GEN_WEIGHT_MEASURE, ECP_GEN_TRANSPARENT, ECP_GEN_TFF_NOSE_RUN,
      ECP_GEN_BIAS_EDP_FORCE, ECP_GEN_TFF_RUBIK_GRAB, ECP_GEN_TFF_RUBIK_FACE_ROTATE, ECP_ST_GRIPPER_OPENING,
+     ECP_GRIPPER_APPROACH_GEN,
                 GENERATORS_NUMBER};
 static std::string GENERATOR_TYPE_TABLE[GENERATORS_NUMBER+1] =
         {"ECP_GEN_TEACH_IN","ECP_GEN_NEWSMOOTH","ECP_GEN_WEIGHT_MEASURE","ECP_GEN_TRANSPARENT","ECP_GEN_TFF_NOSE_RUN",
-         "ECP_GEN_BIAS_EDP_FORCE","ECP_GEN_TFF_RUBIK_GRAB","ECP_GEN_TFF_RUBIK_FACE_ROTATE","ECP_ST_GRIPPER_OPENING",""};
+         "ECP_GEN_BIAS_EDP_FORCE","ECP_GEN_TFF_RUBIK_GRAB","ECP_GEN_TFF_RUBIK_FACE_ROTATE","ECP_ST_GRIPPER_OPENING",
+         "ECP_GIRPPER_APPROACH_GEN",""};
+static std::string GENERATOR_TYPE_TABLE2[GENERATORS_NUMBER+1] =
+        {"ecp_teach_in_gen","ecp_smooth_gen","weight_measure_gen","ecp_gen_t","ecp_tff_nose_run_gen",
+         "bias_edp_force_gen","ecp_tff_rubik_grab_gen","ecp_tff_rubik_face_rotate_gen","gripper_opening",
+         "ecp_tff_gripper_approach_gen",""};
 static QStringList getGeneratorTypeTable()
 {
     QStringList items;

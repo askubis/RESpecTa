@@ -75,17 +75,19 @@ public:
     BaseState *endItem() const
         { return myEndItem; }
 
-    std::string getCondition() {return condition;}
-    void setCondition(std::string newCondition) {condition=newCondition;}
+    QString getCondition() {return condition;}
+    void setCondition(QString newCondition) {condition=newCondition;}
     MyGraphType* getSubtask() {return subtask;}
     void setSubtask(MyGraphType* newSubtask) {subtask=newSubtask;}
 
+    BaseState* getSub() {return sub;}
+    void setSub(BaseState* newSubtask) {sub=newSubtask;}
 
     std::string Print()
     {
         std::string toRet;
         toRet+="\nCondition: ";
-        toRet+=condition;
+        toRet+=condition.toStdString();
         toRet+=" Subtask address ";
         toRet+=" ";
         return toRet;
@@ -104,9 +106,10 @@ private:
     QColor myColor;
     QPolygonF TransitionHead;
 
-    std::string condition;
-    //std::string subtask;//@TODO:askubis change to a pointer
+    QString condition;
+    //QString subtask;//@TODO:askubis change to a pointer
     MyGraphType *subtask;
+    BaseState * sub;
 };
 //! [0]
 

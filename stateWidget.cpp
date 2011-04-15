@@ -194,9 +194,9 @@ void StateWidget::InsertState()
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
     if(toInsertState==NULL)
         return;
-    toInsertState->setName(this->stateNameEdit->text().toStdString());
+    toInsertState->setName(this->stateNameEdit->text());
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
-    toInsertState->setParameters(paramEdit->text().toStdString());
+    toInsertState->setParameters(paramEdit->text());
     emit InsertState(toInsertState);
 
 }

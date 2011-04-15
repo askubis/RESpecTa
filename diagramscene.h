@@ -41,7 +41,7 @@ public:
     void setItemColor(const QColor &color);
     void setFont(const QFont &font);
     void setToInsertState (BaseState * newState){toInsert = newState;}
-    void setTransitionAttributes(std::pair<std::string,std::string> thePair){transitionAttributes=thePair;}
+    void setTransitionAttributes(std::pair<QString,QString> thePair){transitionAttributes=thePair;}
 
 public slots:
     void setMode(Mode mode);
@@ -62,7 +62,7 @@ protected:
 private:
     bool isItemChange(int type);
 
-    std::pair<std::string,std::string> transitionAttributes;
+    std::pair<QString,QString> transitionAttributes;
     BaseState * toInsert;
     //BaseState::DiagramType myItemType;
     QMenu *myItemMenu;

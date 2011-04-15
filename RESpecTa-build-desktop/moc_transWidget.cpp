@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'transWidget.h'
 **
-** Created: Fri Apr 15 16:53:41 2011
+** Created: Fri Apr 15 22:17:24 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -34,17 +34,16 @@ static const uint qt_meta_data_TransWidget[] = {
       13,   12,   12,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      76,   66,   12,   12, 0x08,
-      99,   12,   12,   12, 0x08,
-     113,   12,   12,   12, 0x08,
-     127,   12,   12,   12, 0x08,
+      68,   58,   12,   12, 0x08,
+      91,   12,   12,   12, 0x08,
+     105,   12,   12,   12, 0x08,
+     119,   12,   12,   12, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_TransWidget[] = {
-    "TransWidget\0\0"
-    "insertTransition(std::pair<std::string,std::string>)\0"
+    "TransWidget\0\0insertTransition(std::pair<QString,QString>)\0"
     "newString\0lengthChanged(QString)\0"
     "AcceptTrans()\0InsertTrans()\0"
     "SubtaskInserted(QString)\0"
@@ -79,7 +78,7 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: insertTransition((*reinterpret_cast< std::pair<std::string,std::string>(*)>(_a[1]))); break;
+        case 0: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
         case 1: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 2: AcceptTrans(); break;
         case 3: InsertTrans(); break;
@@ -92,7 +91,7 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void TransWidget::insertTransition(std::pair<std::string,std::string> _t1)
+void TransWidget::insertTransition(std::pair<QString,QString> _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

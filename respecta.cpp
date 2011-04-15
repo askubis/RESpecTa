@@ -40,7 +40,7 @@ RESpecTa::RESpecTa()
     myGraph = new MyGraphType();
     subtasks = new std::map<std::string, MyGraphType*> ();
 
-    //subtasks->insert(std::make_pair<std::string, MyGraphType *>("kopytko", NULL));
+    //subtasks->insert(std::make_pair<QString, MyGraphType *>("kopytko", NULL));
 
 
 
@@ -308,7 +308,7 @@ void RESpecTa::itemInserted(BaseState *item)
     item->setSubtaskName(currentSubtask);
     if(currentSubtask!="MAIN")
     {
-        v_new = boost::add_vertex(item, (*(*subtasks)[currentSubtask]));
+        v_new = boost::add_vertex(item, (*(*subtasks)[currentSubtask.toStdString()]));
     }
     else
     {
@@ -793,7 +793,7 @@ void RESpecTa::InsertState(BaseState * newState)
     }
 }
 
-void RESpecTa::insertTransition(std::pair<std::string,std::string> thePair)
+void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 {
     scene->setMode(DiagramScene::InsertLine);
     scene->setTransitionAttributes(thePair);
@@ -808,7 +808,7 @@ void RESpecTa::NewSubtaskInserted(QString newName)
 
 void RESpecTa::selectedSubtaskName(QString newString)
 {
-    currentSubtask=newString.toStdString();
+    currentSubtask=newString;
 }
 
 void RESpecTa::reportError(QString msgString)

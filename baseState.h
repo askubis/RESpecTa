@@ -17,6 +17,7 @@ class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
 class QPolygonF;
+class QXmlStreamWriter;
 QT_END_NAMESPACE
 
 #include "RobotSet.h"
@@ -35,15 +36,15 @@ public:
 
     StateType getType() {return stateType;}
     void setType(StateType newType){stateType=newType;}
-    std::string getName() {return stateName;}
-    void setName(std::string newName);
+    QString getName() {return stateName;}
+    void setName(QString newName);
     int getArgument() {return argument;}
     void setArgument(int newArg){argument = newArg;}
-    std::string getParameters() {return parameters;}
-    void setParameters(std::string newParams){parameters = newParams;}
+    QString getParameters() {return parameters;}
+    void setParameters(QString newParams){parameters = newParams;}
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
     void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
-    void setSubtaskName (std::string newSubName){ subtaskName = newSubName;updateSize();}
+    void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
 
     void updateTextPositions()
     {
@@ -76,17 +77,18 @@ public:
 
     QList<Transition *> getTransitions (){return Transitions;}
 
+    virtual void Print(QXmlStreamWriter* writer){}
     virtual std::string Print()
     {
         std::string x;
         x+="\nName ";
-        x+=this->getName();
+        x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
             x+="\nParameters ";
-            x+=this->getParameters();
+            x+=this->parameters.toStdString();
         }
     }
 
@@ -102,12 +104,13 @@ private:
     QMenu *myContextMenu;
     QList<Transition *> Transitions;
 
+protected:
 
-    std::string stateName;
-    std::string subtaskName;
+    QString stateName;
+    QString subtaskName;
     StateType stateType;
     int argument;
-    std::string parameters;
+    QString parameters;
 
     QGraphicsTextItem * nameTextItem;
 

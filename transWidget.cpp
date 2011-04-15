@@ -91,7 +91,7 @@ void TransWidget::lengthChanged(QString newString)
 
 void TransWidget::InsertTrans()
 {
-    std::pair<std::string, std::string> thePair = std::make_pair(conditionLineEdit->text().toStdString(), subtaskCombo->currentText().toStdString());
+    std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), subtaskCombo->currentText());
     emit insertTransition(thePair);
 
 }

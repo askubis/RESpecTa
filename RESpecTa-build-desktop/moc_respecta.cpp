@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Fri Apr 15 16:53:29 2011
+** Created: Fri Apr 15 22:17:03 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -34,23 +34,23 @@ static const uint qt_meta_data_RESpecTa[] = {
       20,   10,    9,    9, 0x08,
       51,   46,   41,    9, 0x08,
       77,    9,    9,    9, 0x08,
-     130,    9,    9,    9, 0x08,
-     147,  137,    9,    9, 0x08,
-     185,  176,    9,    9, 0x08,
-     217,  209,    9,    9, 0x08,
-     248,  245,    9,    9, 0x08,
-     272,    9,    9,    9, 0x08,
-     285,  245,    9,    9, 0x08,
-     310,    9,    9,    9, 0x08,
-     325,    9,    9,    9, 0x08,
-     343,  338,    9,    9, 0x08,
-     374,  368,    9,    9, 0x08,
-     401,    9,    9,    9, 0x08,
-     420,    9,    9,    9, 0x08,
-     439,    9,    9,    9, 0x08,
-     461,    9,    9,    9, 0x08,
-     483,  338,    9,    9, 0x08,
-     512,    9,    9,    9, 0x08,
+     122,    9,    9,    9, 0x08,
+     139,  129,    9,    9, 0x08,
+     177,  168,    9,    9, 0x08,
+     209,  201,    9,    9, 0x08,
+     240,  237,    9,    9, 0x08,
+     264,    9,    9,    9, 0x08,
+     277,  237,    9,    9, 0x08,
+     302,    9,    9,    9, 0x08,
+     317,    9,    9,    9, 0x08,
+     335,  330,    9,    9, 0x08,
+     366,  360,    9,    9, 0x08,
+     393,    9,    9,    9, 0x08,
+     412,    9,    9,    9, 0x08,
+     431,    9,    9,    9, 0x08,
+     453,    9,    9,    9, 0x08,
+     475,  330,    9,    9, 0x08,
+     504,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -58,7 +58,7 @@ static const uint qt_meta_data_RESpecTa[] = {
 static const char qt_meta_stringdata_RESpecTa[] = {
     "RESpecTa\0\0msgString\0reportError(QString)\0"
     "bool\0line\0lineInserted(Transition*)\0"
-    "insertTransition(std::pair<std::string,std::string>)\0"
+    "insertTransition(std::pair<QString,QString>)\0"
     "save()\0newString\0selectedSubtaskName(QString)\0"
     "newState\0InsertState(BaseState*)\0"
     "newName\0NewSubtaskInserted(QString)\0"
@@ -103,7 +103,7 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 1: { bool _r = lineInserted((*reinterpret_cast< Transition*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
-        case 2: insertTransition((*reinterpret_cast< std::pair<std::string,std::string>(*)>(_a[1]))); break;
+        case 2: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
         case 3: save(); break;
         case 4: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 5: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;

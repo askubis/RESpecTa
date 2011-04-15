@@ -134,6 +134,7 @@ public:
 private:
     EmptyGenState * State;
 
+    QLineEdit * argLineEdit;
     QComboBox * RobotCombo;
 private slots:
 

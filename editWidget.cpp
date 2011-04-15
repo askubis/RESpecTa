@@ -24,7 +24,7 @@ transWidget = new TransWidget(tabWidget);
 
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-    connect (transWidget, SIGNAL(insertTransition(std::pair<std::string,std::string>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<std::string,std::string>)));
+    connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<QString,QString>)));
 
 
 

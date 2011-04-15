@@ -6,7 +6,7 @@
 
 
 
-void BaseState::setName(std::string newName)
+void BaseState::setName(QString newName)
  {
     stateName=newName;
     updateSize();
@@ -18,7 +18,7 @@ void BaseState::updateSize()
     int fontSize = 17;
     do
     {
-        y = (QString().fromStdString(this->stateName).append(QString().fromStdString("\n"+this->subtaskName)));
+        y = (QString(this->stateName).append(QString("\n"+this->subtaskName)));
         nameTextItem->setPlainText(y);
         QFont tmp = nameTextItem->font();
         tmp.setPixelSize(--fontSize);

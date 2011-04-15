@@ -194,11 +194,11 @@ void runGenWidget::showAddPosesDialog()
 BaseState * runGenWidget::getStateObject()
 {
     Coordinates * tmp = State->getCoords();
-    State->setArgs(argsLineEdit->text().toStdString());
-    State->setSpeech(speechLineEdit->text().toStdString());
+    State->setArgs(argsLineEdit->text());
+    State->setSpeech(speechLineEdit->text());
     State->setGenType(GeneratorType(genTypeCombo->currentIndex()));
     State->setRobot(Robot(robotCombo->currentIndex()));
-    tmp->setFilePath(trjFileName->text().toStdString());
+    tmp->setFilePath(trjFileName->text());
     State->setCoords(tmp);
     return new RunGenState(*State);
 }
@@ -321,6 +321,12 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
     :MyTypeWidget(parent)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
+    QLabel *argLabel = new QLabel(tr("Argument:"));
+    argLineEdit = new QLineEdit();
+    argLineEdit->setValidator(new QIntValidator(argLineEdit));
+
+    emptyGenLayout->addWidget(argLabel);
+    emptyGenLayout->addWidget(argLineEdit);
 
     QLabel *SetLabel = new QLabel(tr("Robot:"));
     emptyGenLayout->addWidget(SetLabel);
@@ -338,6 +344,7 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
 BaseState * emptyGenWidget::getStateObject()
 {
     this->State->setRobot(Robot(RobotCombo->currentIndex()));
+    this->State->setArgument(argLineEdit->text());
     return new EmptyGenState(*State);
 }
 

@@ -32,7 +32,7 @@ class RESpecTa : public QMainWindow
 
 public:
    RESpecTa();
-   void setCurrentSubtask(std::string newSubtask){currentSubtask = newSubtask;}
+   void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
    MyGraphType * getGraph (){return myGraph;}
    std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
 
@@ -40,7 +40,7 @@ public:
 private slots:
     void reportError(QString msgString);
     bool lineInserted(Transition *line);
-    void insertTransition(std::pair<std::string,std::string>);
+    void insertTransition(std::pair<QString,QString>);
     void save();
     void selectedSubtaskName(QString newString);
     void InsertState(BaseState * newState);
@@ -78,7 +78,7 @@ private:
 
     MyGraphType * myGraph;
     std::map<std::string, MyGraphType *> * subtasks;
-    std::string currentSubtask;
+    QString currentSubtask;
 
     QWidget *editWidget;
 
