@@ -52,6 +52,7 @@ private:
 
 signals:
     void insertTransition(std::pair<QString,QString>);
+    QStringList getSubtasksList();
 
 private slots:
     void lengthChanged(QString newString);

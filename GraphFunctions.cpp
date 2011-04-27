@@ -50,11 +50,15 @@ bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &
 
 
 template <class VertexIter, class theGraph>
-        void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string FileName)
+        void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string FileName, std::map<std::string, MyGraphType *> * subtasks)
 {
     QFile* file = new QFile(QString().fromStdString(FileName));
     file->open( QIODevice::WriteOnly);
     QXmlStreamWriter * writer = new QXmlStreamWriter(file);
+    writer->setAutoFormatting(1);
+    writer->setCodec("UTF-8");
+    writer->writeStartDocument("1.0");
+    writer->writeDTD(QString().fromStdString("<!DOCTYPE TaskDescription SYSTEM \"fsautomat.dtd\" >"));
 
     typedef typename property_map<theGraph, state_t>::const_type StateMap;
     StateMap stateMap = get(state_t(), G);
@@ -65,10 +69,13 @@ template <class VertexIter, class theGraph>
     BaseState *State;
     Transition * transition;
 
+    //test
+
+
+
 //make some enterance to the file
 //get to know what is the routine of file adding (subtasks)
-
-writer->setAutoFormatting(1);
+    writer->writeStartElement("TaskDescription");
     for (;first != last;first++)
     {
       State = boost::get(stateMap, *first);
@@ -103,6 +110,20 @@ writer->setAutoFormatting(1);
 
     }
 
+
+    if(subtasks!=NULL)
+    {
+        for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+        {
+            std::string subtaskFileName = (*it).first + ".xml";
+            writer->writeStartElement("xi:include");
+            writer->writeAttribute("href", QString().fromStdString(subtaskFileName));
+            writer->writeAttribute("parse", "xml");
+            writer->writeAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
+        }
+    }
+    writer->writeEndElement();
+    writer->writeEndDocument();
     file->close();
 
 

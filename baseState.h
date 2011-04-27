@@ -44,7 +44,7 @@ public:
     void setParameters(QString newParams){parameters = newParams;}
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
     void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
-    void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
+    //void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
 
     void updateTextPositions()
     {
@@ -107,7 +107,7 @@ private:
 protected:
 
     QString stateName;
-    QString subtaskName;
+    //QString subtaskName;
     StateType stateType;
     int argument;
     QString parameters;

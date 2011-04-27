@@ -38,6 +38,7 @@ public:
 
 
 private slots:
+    QStringList getSubtasksList();
     void reportError(QString msgString);
     bool lineInserted(Transition *line);
     void insertTransition(std::pair<QString,QString>);

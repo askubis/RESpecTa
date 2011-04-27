@@ -35,7 +35,7 @@ template <class VertexIter, class theGraph>
 QStringList getStateNames(VertexIter first, VertexIter last, const theGraph &G);
 
 template <class VertexIter, class theGraph>
-void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string fileName);
+void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string fileName, std::map<std::string, MyGraphType *> * subtasks);
 
 
 

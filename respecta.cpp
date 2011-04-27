@@ -52,7 +52,7 @@ RESpecTa::RESpecTa()
 
 
     QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(toolBox);
+    //layout->addWidget(toolBox);
     view = new QGraphicsView(scene);
     layout->addWidget(view);
     layout->addWidget(editWidget);
@@ -118,11 +118,11 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::save()
 {
-    printStates(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph), std::string("MAIN.txt"));
+    printStates(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph), std::string("MAIN.txt"), subtasks);
     for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
-        printStates(vertices((*tmp)).first, vertices((*tmp)).second, (*tmp), std::string((*it).first+".txt"));
+        printStates(vertices((*tmp)).first, vertices((*tmp)).second, (*tmp), std::string((*it).first+".txt"), NULL);
     }
 
 }
@@ -305,7 +305,7 @@ void RESpecTa::itemInserted(BaseState *item)
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
     //Vertex v_new;
     MyGraphType::vertex_descriptor v_new;
-    item->setSubtaskName(currentSubtask);
+    //item->setSubtaskName(currentSubtask);
     if(currentSubtask!="MAIN")
     {
         v_new = boost::add_vertex(item, (*(*subtasks)[currentSubtask.toStdString()]));
@@ -481,14 +481,14 @@ void RESpecTa::about()
 //! [21]
 void RESpecTa::createToolBox()
 {
-    buttonGroup = new QButtonGroup(this);
-    buttonGroup->setExclusive(false);
-    connect(buttonGroup, SIGNAL(buttonClicked(int)),
-            this, SLOT(buttonGroupClicked(int)));
-    QGridLayout *layout = new QGridLayout;
+    //buttonGroup = new QButtonGroup(this);
+    //buttonGroup->setExclusive(false);
+    //connect(buttonGroup, SIGNAL(buttonClicked(int)),
+    //        this, SLOT(buttonGroupClicked(int)));
+    //QGridLayout *layout = new QGridLayout;
     //layout->addWidget(createCellWidget(tr("Conditional"),
     //                           BaseState::Conditional), 0, 0);
-    layout->addWidget(createCellWidget(tr("State")),0, 1);
+    //layout->addWidget(createCellWidget(tr("State")),0, 1);
     //layout->addWidget(createCellWidget(tr("Input/Output"),
     //                  BaseState::Io), 1, 0);
 //! [21]
@@ -506,11 +506,11 @@ void RESpecTa::createToolBox()
     textWidget->setLayout(textLayout);
     layout->addWidget(textWidget, 1, 1);*/
 
-    layout->setRowStretch(3, 10);
-    layout->setColumnStretch(2, 10);
+    //layout->setRowStretch(3, 10);
+    //layout->setColumnStretch(2, 10);
 
-    QWidget *itemWidget = new QWidget;
-    itemWidget->setLayout(layout);
+    //QWidget *itemWidget = new QWidget;
+    //itemWidget->setLayout(layout);
 
    /* backgroundButtonGroup = new QButtonGroup(this);
     connect(backgroundButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
@@ -534,10 +534,10 @@ void RESpecTa::createToolBox()
 
 
 //! [22]
-    toolBox = new QToolBox;
-    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-    toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-    toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
+    //toolBox = new QToolBox;
+    //toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
+    //toolBox->setMinimumWidth(itemWidget->sizeHint().width());
+    //toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
     //toolBox->addItem(backgroundWidget, tr("Backgrounds"));
 }
 //! [22]
@@ -642,14 +642,14 @@ void RESpecTa::createToolbars()
     pointerButton->setCheckable(true);
     pointerButton->setChecked(true);
     pointerButton->setIcon(QIcon(":/images/pointer.png"));
-    QToolButton *linePointerButton = new QToolButton;
-    linePointerButton->setCheckable(true);
-    linePointerButton->setIcon(QIcon(":/images/linepointer.png"));
+    //QToolButton *linePointerButton = new QToolButton;
+    //linePointerButton->setCheckable(true);
+    //linePointerButton->setIcon(QIcon(":/images/linepointer.png"));
 
     pointerTypeGroup = new QButtonGroup(this);
     pointerTypeGroup->addButton(pointerButton, int(DiagramScene::MoveItem));
-    pointerTypeGroup->addButton(linePointerButton,
-                                int(DiagramScene::InsertLine));
+    //pointerTypeGroup->addButton(linePointerButton,
+    //                            int(DiagramScene::InsertLine));
     connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(pointerGroupClicked(int)));
 
@@ -663,7 +663,7 @@ void RESpecTa::createToolbars()
 
     pointerToolbar = addToolBar(tr("Pointer type"));
     pointerToolbar->addWidget(pointerButton);
-    pointerToolbar->addWidget(linePointerButton);
+    //pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
 //! [27]
 }
@@ -814,4 +814,15 @@ void RESpecTa::selectedSubtaskName(QString newString)
 void RESpecTa::reportError(QString msgString)
 {
     QMessageBox::information(this, QString().fromStdString("Error"), msgString);
+}
+
+QStringList RESpecTa::getSubtasksList()
+{
+    QStringList x;
+
+    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    {
+        x<<QString().fromStdString((*it).first);
+    }
+    return x;
 }

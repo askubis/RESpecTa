@@ -32,6 +32,7 @@ sysIniWidget::sysIniWidget(QWidget * parent)
 
     State = new sysInitState();
     State->setTransmitter(Transmitter(TRANSMITTERS_NUMBER));
+        State->setType(StateType(SYSTEM_INITIALIZATION));
 
     connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
     connect (ecpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
@@ -156,6 +157,7 @@ runGenWidget::runGenWidget(QWidget * parent)
     State = new RunGenState();
     State->getCoords()->setMotionType(MotionType(0));
     State->getCoords()->setCoordType(CoordType(0));
+    State->setType(StateType(RUN_GENERATOR));
 
     connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
     connect(poseDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
@@ -255,6 +257,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
      setLayout(emptyGenLayout);
 
      State = new EmptyGenForSetState();
+     State->setType(StateType(EMPTY_GEN_FOR_SET));
 }
 
 void emptyGenForSetWidget::addFirst()
@@ -339,6 +342,7 @@ emptyGenWidget::emptyGenWidget(QWidget * parent)
     setLayout(emptyGenLayout);
 
     State = new EmptyGenState();
+    State->setType(StateType(EMPTY_GEN));
 }
 
 BaseState * emptyGenWidget::getStateObject()
@@ -363,6 +367,7 @@ waitStateWidget::waitStateWidget(QWidget * parent)
 
     setLayout(waitLayout);
     State = new WaitState();
+    State->setType(StateType(WAIT));
 }
 
 BaseState * waitStateWidget::getStateObject()
@@ -401,6 +406,7 @@ stopGenWidget::stopGenWidget(QWidget * parent)
      setLayout(stopGenLayout);
 
      State = new StopGenState();
+     State->setType(StateType(STOP_GEN));
 }
 
 void stopGenWidget::add()
@@ -458,6 +464,7 @@ iniSensorWidget::iniSensorWidget(QWidget * parent)
     setLayout(iniSensorLayout);
 
     State = new InitiateSensorState();
+    State->setType(StateType(INITIATE_SENSOR_READING));
 }
 
 BaseState * iniSensorWidget::getStateObject()
@@ -484,6 +491,7 @@ getSensorWidget::getSensorWidget(QWidget * parent)
     setLayout(getSensorLayout);
 
     State = new GetSensorState();
+    State->setType(StateType(GET_SENSOR_READING));
 }
 
 BaseState * getSensorWidget::getStateObject()

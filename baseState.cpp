@@ -18,7 +18,7 @@ void BaseState::updateSize()
     int fontSize = 17;
     do
     {
-        y = (QString(this->stateName).append(QString("\n"+this->subtaskName)));
+        y = (QString(this->stateName).append(QString("\n")).append(QString().fromStdString(STATE_TYPE_TABLE[this->stateType])));
         nameTextItem->setPlainText(y);
         QFont tmp = nameTextItem->font();
         tmp.setPixelSize(--fontSize);
@@ -56,8 +56,8 @@ BaseState & BaseState::operator=(const BaseState &other)
 {
     if (this->stateName==other.stateName) return *this;//TODO:askubis check if not wrong with that condition
     this->argument=other.argument;
-    this->setName(other.stateName);
     this->stateType=other.stateType;
+    this->setName(other.stateName);
     this->parameters=other.parameters;
     this->Transitions=other.Transitions;
     this->myContextMenu=other.myContextMenu;
@@ -73,8 +73,8 @@ BaseState::BaseState(BaseState& old)
 {
     nameTextItem = new QGraphicsTextItem(old.nameTextItem);
     this->argument=old.argument;
-    this->setName(old.stateName);
     this->stateType=old.stateType;
+    this->setName(old.stateName);
     this->parameters=old.parameters;
     myPolygon << QPointF(-50, -50) << QPointF(50, -50)
               << QPointF(50, 50) << QPointF(-50, 50)

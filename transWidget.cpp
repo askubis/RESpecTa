@@ -22,6 +22,7 @@ TransWidget::TransWidget(QWidget *parent)
 
    RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
    QStringList subtaskList;
+   //subtaskList =(QStringList) emit(getSubtasksList);
    std::map<std::string, MyGraphType *> * xsubtasks = x->getSubtasks();
    for (std::map<std::string, MyGraphType*>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
    {

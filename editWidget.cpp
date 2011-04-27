@@ -9,6 +9,7 @@ EditWidget::EditWidget(QWidget *parent)
 
     tabWidget = new QTabWidget(this);
     tabWidget->setMaximumWidth(230);
+    tabWidget->setMinimumWidth(230);
 stateWidget = new StateWidget(tabWidget);
     tabWidget->addTab(stateWidget,tr("State"));
 transWidget = new TransWidget(tabWidget);
@@ -25,6 +26,7 @@ transWidget = new TransWidget(tabWidget);
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<QString,QString>)));
+    connect (transWidget, SIGNAL(getSubtasksList()), this->parentWidget(), SLOT(getSubtasksList()) );
 
 
 
