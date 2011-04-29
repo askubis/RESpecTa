@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     GraphFunctions.cpp \
     StateTypeWidgets.cpp \
     baseState.cpp \
-    Transition.cpp
+    Transition.cpp \
+    Model.cpp \
+    Controller.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -39,6 +41,8 @@ HEADERS  += respecta.h \
     GraphFunctions.h \
     StateTypeWidgets.h \
     baseState.h \
+    Model.h \
+    Controller.h
 
 FORMS    += respecta.ui
 

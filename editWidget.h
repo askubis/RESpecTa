@@ -28,7 +28,7 @@ class EditWidget : public QWidget
     Q_OBJECT
 
 public:
-    EditWidget(QWidget *parent = 0);
+    EditWidget(QWidget *parent, Model * mod, Controller * cont);
 
 private:
     QTabWidget * tabWidget;

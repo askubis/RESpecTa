@@ -7,6 +7,9 @@
 #include "diagramtextitem.h"
 #include "Graph.h"
 
+class Model;
+class Controller;
+
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 class QMenu;
@@ -27,7 +30,7 @@ public:
 
 
 
-    DiagramScene(QMenu *itemMenu, QObject *parent = 0);
+    DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod, Controller * newcont);
     QFont font() const
         { return myFont; }
     QColor textColor() const
@@ -60,6 +63,9 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
+    Controller * cont;
+    Model * mod;
+
     bool isItemChange(int type);
 
     std::pair<QString,QString> transitionAttributes;

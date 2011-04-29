@@ -15,37 +15,40 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include "GraphFunctions.cpp"
+//#include "GraphFunctions.cpp"
 
 #include "editWidget.h"
 
 const int InsertTextButton = 10;
 
 //! [0]
-RESpecTa::RESpecTa()
+RESpecTa::RESpecTa(Model * newmod, Controller * newcont)
 {
+    mod=newmod;
+    cont=newcont;
+
     createFileMenu();
     createEditMenu();
     createHelpMenu();
     createActions();
     createToolBox();
 
-    scene = new DiagramScene(itemMenu, this);
+    scene = new DiagramScene(itemMenu, this, mod, cont);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
     connect(scene, SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scene, SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     createToolbars();
 
-    myGraph = new MyGraphType();
-    subtasks = new std::map<std::string, MyGraphType*> ();
+    //myGraph = new MyGraphType();
+    //subtasks = new std::map<std::string, MyGraphType*> ();
 
     //subtasks->insert(std::make_pair<QString, MyGraphType *>("kopytko", NULL));
 
 
 
 
-    editWidget = new EditWidget(this);
+    editWidget = new EditWidget(this, mod, cont);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
    // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
     editWidget->resize(10,800);
@@ -118,12 +121,8 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::save()
 {
-    printStates(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph), std::string("MAIN.txt"), subtasks);
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
-    {
-        MyGraphType * tmp = (*it).second;
-        printStates(vertices((*tmp)).first, vertices((*tmp)).second, (*tmp), std::string((*it).first+".txt"), NULL);
-    }
+    cont->saveClicked();
+
 
 }
 
@@ -190,23 +189,7 @@ void RESpecTa::deleteItem()
         {
             scene->removeItem(item);
             Transition *transition = qgraphicsitem_cast<Transition *>(item);
-
-            if((findEdge(myGraph, transition) )!=edges(*myGraph).second)
-                boost::remove_edge((*(findEdge(myGraph, transition))), (*myGraph));
-
-            for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-            {
-                MyGraphType * tmp = (*it).second;
-                if((findEdge(tmp, transition) )!=edges(*tmp).second)
-                    boost::remove_edge((*(findEdge(tmp, transition))), (*tmp));
-            }
-
-
-
-            transition->startItem()->removeTransition(transition);
-            transition->endItem()->removeTransition(transition);
-
-
+            cont->deleteTransition(transition);
 
             scene->removeItem(item);
             delete item;
@@ -219,30 +202,15 @@ void RESpecTa::deleteItem()
          {
              foreach(Transition * transition, qgraphicsitem_cast<BaseState *>(item)->getTransitions())
              {
-                 if((findEdge(myGraph, transition) )!=edges(*myGraph).second)
-                     boost::remove_edge((*(findEdge(myGraph, transition))), (*myGraph));
-
-                 for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-                 {
-                     MyGraphType * tmp = (*it).second;
-                     if((findEdge(tmp, transition) )!=edges(*tmp).second)
-                         boost::remove_edge((*(findEdge(tmp, transition))), (*tmp));
-                 }
+                 cont->deleteTransition(transition);
              }
 
+             BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+             state->removeTransitions();
 
-             qgraphicsitem_cast<BaseState *>(item)->removeTransitions();
+             cont->deleteState(state);
 
-             if((findVertex(myGraph, qgraphicsitem_cast<BaseState *>(item)) )!=vertices(*myGraph).second)
-                 boost::remove_vertex((*(findVertex(myGraph, qgraphicsitem_cast<BaseState *>(item)))), (*myGraph));
 
-             for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-             {
-                 MyGraphType * tmp = (*it).second;
-                 if((findVertex(tmp, qgraphicsitem_cast<BaseState *>(item)) )!=vertices(*tmp).second)
-                     boost::remove_vertex((*(findVertex(tmp, qgraphicsitem_cast<BaseState *>(item)))), (*tmp));
-
-             }
 
              scene->removeItem(item);
 
@@ -304,16 +272,10 @@ void RESpecTa::itemInserted(BaseState *item)
     pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
     //Vertex v_new;
-    MyGraphType::vertex_descriptor v_new;
+
     //item->setSubtaskName(currentSubtask);
-    if(currentSubtask!="MAIN")
-    {
-        v_new = boost::add_vertex(item, (*(*subtasks)[currentSubtask.toStdString()]));
-    }
-    else
-    {
-        v_new = boost::add_vertex(item, (*myGraph));
-    }
+    cont->addState(item, currentSubtask.toStdString());
+
     item->setToolTip(QString().fromStdString(item->Print()));
     //item->setStatusTip(item->Print());
 
@@ -335,22 +297,12 @@ void RESpecTa::itemInserted(BaseState *item)
 bool RESpecTa::lineInserted(Transition *line)
 {
 
-    if (((findVertex(myGraph, line->startItem()) )!=vertices(*myGraph).second) && ((findVertex(myGraph, line->endItem()) )!=vertices(*myGraph).second ))
+    bool test = cont->tryInsertTransition(line);
+    if(test==false)
     {
-        boost::add_edge( (*(findVertex(myGraph, line->startItem()))), (*(findVertex(myGraph, line->endItem()))), line, (*myGraph) );
-        return true;
+        reportError(QString("Cannot create a transition between\nstates in different tasks"));
     }
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-    {
-        MyGraphType * tmp = (*it).second;
-        if (((findVertex(tmp, line->startItem()) )!=vertices(*tmp).second) && ((findVertex(tmp, line->endItem()) )!=vertices(*tmp).second ))
-        {
-            boost::add_edge( (*(findVertex(tmp, line->startItem()))), (*(findVertex(tmp, line->endItem()))), line, (*tmp) );
-            return true;
-        }
-    }
-    reportError(QString("Cannot create a transition between\nstates in different tasks"));
-    return false;
+    return test;
 }
 
 //! [8]
@@ -772,17 +724,13 @@ QIcon RESpecTa::createColorIcon(QColor color)
 void RESpecTa::InsertState(BaseState * newState)
 {
 
-    bool abort = false;
-    if (!checkStateNameAvailable(vertices(*myGraph).first,vertices(*myGraph).second, (*myGraph), newState->getName()))abort=true;
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-    {
-        MyGraphType * tmp = (*it).second;
-        if (!checkStateNameAvailable(vertices(*tmp).first,vertices(*tmp).second, (*tmp), newState->getName()))
-        {
-           abort = true;
-        }
-    }
-    if(abort)
+    bool not_abort = mod->checkNameAvailable(newState->getName());
+
+
+
+
+
+    if(!not_abort)
     {
         reportError(QString("State with that name already exists"));
     }
@@ -802,8 +750,7 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 
 void RESpecTa::NewSubtaskInserted(QString newName)
 {
-    //this->subtasks->insert(newName)
-    (*(this->subtasks))[newName.toStdString()] = new MyGraphType();
+    cont->addSubtask(newName);
 }
 
 void RESpecTa::selectedSubtaskName(QString newString)
@@ -814,15 +761,4 @@ void RESpecTa::selectedSubtaskName(QString newString)
 void RESpecTa::reportError(QString msgString)
 {
     QMessageBox::information(this, QString().fromStdString("Error"), msgString);
-}
-
-QStringList RESpecTa::getSubtasksList()
-{
-    QStringList x;
-
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
-    {
-        x<<QString().fromStdString((*it).first);
-    }
-    return x;
 }

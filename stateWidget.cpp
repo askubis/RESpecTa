@@ -12,9 +12,11 @@
 
 
 
-StateWidget::StateWidget(QWidget *parent)
+StateWidget::StateWidget(QWidget *parent, Model * newmod, Controller * newcont)
 : QWidget(parent)
 {
+    mod = newmod;
+    cont = newcont;
 this->setMaximumWidth(230);
     //creating Base of the widget (background)
     QHBoxLayout *bottomLayout = new QHBoxLayout;
@@ -54,16 +56,8 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
     taskLayout->addWidget(createTaskButton);
 
     subtaskCombo = new QComboBox(this);
-    QStringList subtaskList;
-    subtaskList<<tr("MAIN");
-    RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
-    std::map<std::string, MyGraphType *> * subtasks = x->getSubtasks();
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
-    {
-        subtaskList<<(*it).first.c_str();
-    }
     connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(SubtaskIndexChanged(QString)));
-    subtaskCombo->addItems(subtaskList);
+    subtaskCombo->addItems(mod->getTasksNameLists());
     StateLayout->addLayout(taskLayout);
 
     StateLayout->addWidget(subtaskCombo);
@@ -97,45 +91,45 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
 
 
-   sysIniWidget* sysIni = new sysIniWidget(this);
+   sysIniWidget* sysIni = new sysIniWidget(this, mod,cont);
    mainLayout->addWidget(sysIni);
    tmpWidget = 0;
    StateWidgets[0]=sysIni;
    connect(sysIni, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   runGenWidget* runGen = new runGenWidget(this);
+   runGenWidget* runGen = new runGenWidget(this,  mod,cont);
    mainLayout->addWidget(runGen);
    runGen->setVisible(false);
    StateWidgets[1]=runGen;
 
-   emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this);
+   emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this,  mod,cont);
    mainLayout->addWidget(emptyForSet);
    emptyForSet->setVisible(false);
    StateWidgets[2]=emptyForSet;
    connect(emptyForSet, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   emptyGenWidget* emptyGen = new emptyGenWidget(this);
+   emptyGenWidget* emptyGen = new emptyGenWidget(this,  mod,cont);
    mainLayout->addWidget(emptyGen);
    emptyGen->setVisible(false);
    StateWidgets[3]=emptyGen;
 
-   waitStateWidget* waitGen = new waitStateWidget(this);
+   waitStateWidget* waitGen = new waitStateWidget(this,  mod,cont);
    mainLayout->addWidget(waitGen);
    waitGen->setVisible(false);
    StateWidgets[4]=waitGen;
 
-   stopGenWidget* stopGen = new stopGenWidget(this);
+   stopGenWidget* stopGen = new stopGenWidget(this,  mod,cont);
    mainLayout->addWidget(stopGen);
    stopGen->setVisible(false);
    StateWidgets[5]=stopGen;
    connect(stopGen, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   iniSensorWidget* initSensor = new iniSensorWidget(this);
+   iniSensorWidget* initSensor = new iniSensorWidget(this,  mod,cont);
    mainLayout->addWidget(initSensor);
    initSensor->setVisible(false);
    StateWidgets[6]=initSensor;
 
-   getSensorWidget* getSensorReading = new getSensorWidget(this);
+   getSensorWidget* getSensorReading = new getSensorWidget(this,  mod,cont);
    mainLayout->addWidget(getSensorReading);
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
@@ -219,7 +213,8 @@ void StateWidget::createNewSubtask()
 
 void StateWidget::refreshData()
 {
-
+    subtaskCombo->clear();
+    subtaskCombo->addItems(mod->getTasksNameLists());
 }
 
 

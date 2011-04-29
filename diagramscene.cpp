@@ -6,9 +6,11 @@
 #include "Transition.h"
 
 //! [0]
-DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
+DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod, Controller * newcont)
     : QGraphicsScene(parent)
 {
+    cont=newcont;
+    mod=newmod;
     myItemMenu = itemMenu;
     myMode = MoveItem;
     //myItemType = BaseState::Step;

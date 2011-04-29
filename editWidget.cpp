@@ -3,16 +3,16 @@
 
 #include <QtGui>
 
-EditWidget::EditWidget(QWidget *parent)
+EditWidget::EditWidget(QWidget *parent, Model * newmod, Controller * newcont)
     : QWidget(parent)
 {
 
     tabWidget = new QTabWidget(this);
     tabWidget->setMaximumWidth(230);
     tabWidget->setMinimumWidth(230);
-stateWidget = new StateWidget(tabWidget);
+stateWidget = new StateWidget(tabWidget, newmod, newcont);
     tabWidget->addTab(stateWidget,tr("State"));
-transWidget = new TransWidget(tabWidget);
+transWidget = new TransWidget(tabWidget, newmod, newcont);
     tabWidget->addTab(transWidget, tr("Transition"));
     //tabWidget->setTabEnabled(1, false);
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
@@ -26,7 +26,7 @@ transWidget = new TransWidget(tabWidget);
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<QString,QString>)));
-    connect (transWidget, SIGNAL(getSubtasksList()), this->parentWidget(), SLOT(getSubtasksList()) );
+    //connect (transWidget, SIGNAL(getSubtasksList()), this->parentWidget(), SLOT(getSubtasksList()) );
 
 
 

@@ -26,10 +26,13 @@ class StateWidget : public QWidget
 {
     Q_OBJECT
 public:
-    StateWidget(QWidget * w);
+    StateWidget(QWidget * w,Model * newmod, Controller * newcont);
 
     void refreshData();
 private:
+    Model * mod;
+    Controller * cont;
+
     QVBoxLayout *topLayout;
     QVBoxLayout *StateLayout;
     QVBoxLayout *mainLayout;

@@ -27,10 +27,13 @@ class TransWidget : public QWidget
 {
     Q_OBJECT
 public:
-    TransWidget(QWidget *parent);
+    TransWidget(QWidget *parent,Model * newmod, Controller * newcont);
 
     void refreshData();
 private:
+    Model * mod;
+    Controller * cont;
+
     QVBoxLayout *TransitionLayout;
 
     //QLabel *transCondLabel;
@@ -52,7 +55,7 @@ private:
 
 signals:
     void insertTransition(std::pair<QString,QString>);
-    QStringList getSubtasksList();
+   // QStringList getSubtasksList();
 
 private slots:
     void lengthChanged(QString newString);

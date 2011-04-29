@@ -8,9 +8,11 @@
 
 using namespace boost;
 
-TransWidget::TransWidget(QWidget *parent)
+TransWidget::TransWidget(QWidget *parent,Model * newmod, Controller * newcont)
 : QWidget(parent)
 {
+    mod = newmod;
+    cont = newcont;
    TransitionLayout = new QVBoxLayout;
 
    QLabel *transCondLabel = new QLabel(tr("Transition condition:"));
@@ -20,14 +22,6 @@ TransWidget::TransWidget(QWidget *parent)
    TransitionLayout->addWidget(transCondLabel);
    TransitionLayout->addWidget(conditionLineEdit);
 
-   RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
-   QStringList subtaskList;
-   //subtaskList =(QStringList) emit(getSubtasksList);
-   std::map<std::string, MyGraphType *> * xsubtasks = x->getSubtasks();
-   for (std::map<std::string, MyGraphType*>::iterator it = xsubtasks->begin(); it!=xsubtasks->end() ;it++)
-   {
-       subtaskList<<(*it).first.c_str();
-   }
 
    /*
 
@@ -49,7 +43,7 @@ TransWidget::TransWidget(QWidget *parent)
    QLabel * taskLabel = new QLabel(tr("Subtask:"));
    subtaskCombo = new QComboBox(this);
    subtaskCombo->addItem("None");
-   subtaskCombo->addItems(subtaskList);
+   subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
    TransitionLayout->addWidget(taskLabel);
    TransitionLayout->addWidget(subtaskCombo);
 
@@ -104,5 +98,7 @@ void TransWidget::SubtaskInserted(QString newName)
 
 void TransWidget::refreshData()
 {
-
+    subtaskCombo->clear();
+    subtaskCombo->addItem("None");
+    subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
 }

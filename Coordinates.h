@@ -6,8 +6,15 @@
 
 #include "Pose.h"
 
+
+
 #ifndef COORDINATES_H
 #define COORDINATES_H
+
+QT_BEGIN_NAMESPACE
+class QString;
+QT_END_NAMESPACE
+
 
 class Coordinates
 {

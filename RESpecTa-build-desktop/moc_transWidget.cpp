@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'transWidget.h'
 **
-** Created: Mon Apr 18 11:07:44 2011
+** Created: Fri Apr 29 16:50:12 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,31 +23,30 @@ static const uint qt_meta_data_TransWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       1,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       13,   12,   12,   12, 0x05,
-      70,   12,   58,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      98,   88,   12,   12, 0x08,
-     121,   12,   12,   12, 0x08,
-     135,   12,   12,   12, 0x08,
-     149,   12,   12,   12, 0x08,
+      68,   58,   12,   12, 0x08,
+      91,   12,   12,   12, 0x08,
+     105,   12,   12,   12, 0x08,
+     119,   12,   12,   12, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_TransWidget[] = {
     "TransWidget\0\0insertTransition(std::pair<QString,QString>)\0"
-    "QStringList\0getSubtasksList()\0newString\0"
-    "lengthChanged(QString)\0AcceptTrans()\0"
-    "InsertTrans()\0SubtaskInserted(QString)\0"
+    "newString\0lengthChanged(QString)\0"
+    "AcceptTrans()\0InsertTrans()\0"
+    "SubtaskInserted(QString)\0"
 };
 
 const QMetaObject TransWidget::staticMetaObject = {
@@ -80,15 +79,13 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
-        case 1: { QStringList _r = getSubtasksList();
-            if (_a[0]) *reinterpret_cast< QStringList*>(_a[0]) = _r; }  break;
-        case 2: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 3: AcceptTrans(); break;
-        case 4: InsertTrans(); break;
-        case 5: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 1: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 2: AcceptTrans(); break;
+        case 3: InsertTrans(); break;
+        case 4: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 6;
+        _id -= 5;
     }
     return _id;
 }
@@ -98,14 +95,5 @@ void TransWidget::insertTransition(std::pair<QString,QString> _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
-}
-
-// SIGNAL 1
-QStringList TransWidget::getSubtasksList()
-{
-    QStringList _t0;
-    void *_a[] = { const_cast<void*>(reinterpret_cast<const void*>(&_t0)) };
-    QMetaObject::activate(this, &staticMetaObject, 1, _a);
-    return _t0;
 }
 QT_END_MOC_NAMESPACE

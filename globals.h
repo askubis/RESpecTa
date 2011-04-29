@@ -1,7 +1,13 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#include <QStringList>
 #include <iostream>
-class QStringList;
+
+//QT_BEGIN_NAMESPACE
+//class QStringList;
+//QT_END_NAMESPACE
+
+
 
 
 //***************   STATE TYPES   ***************//

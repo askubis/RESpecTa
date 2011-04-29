@@ -6,9 +6,14 @@
 //#include "GlobalVariables.h"
 
 #include "baseState.h"
-#include "Graph.h"
+#include "Model.h"
+#include "Controller.h"
+//#include "Graph.h"
 
 class DiagramScene;
+//class Model;
+//class Controller;
+
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -31,14 +36,15 @@ class RESpecTa : public QMainWindow
     Q_OBJECT
 
 public:
-   RESpecTa();
+    RESpecTa(){}
+    RESpecTa(Model * newmod, Controller * newcont);
    void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
-   MyGraphType * getGraph (){return myGraph;}
-   std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
+   //MyGraphType * getGraph (){return myGraph;}
+   //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
 
 
 private slots:
-    QStringList getSubtasksList();
+    //QStringList getSubtasksList();
     void reportError(QString msgString);
     bool lineInserted(Transition *line);
     void insertTransition(std::pair<QString,QString>);
@@ -76,9 +82,8 @@ private:
     void createToolbars();
 
 
-
-    MyGraphType * myGraph;
-    std::map<std::string, MyGraphType *> * subtasks;
+    Controller * cont;
+    Model * mod;
     QString currentSubtask;
 
     QWidget *editWidget;

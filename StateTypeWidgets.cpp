@@ -6,8 +6,8 @@
 
 //***************   SYS_INITIALIZATION   ***************//
 
-sysIniWidget::sysIniWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * sysIniLayout = new QVBoxLayout;
 
@@ -112,8 +112,8 @@ BaseState * sysIniWidget::getStateObject()
 
 //***************   RUN_GENERATOR   ***************//
 
-runGenWidget::runGenWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+runGenWidget::runGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * runGenLayout = new QVBoxLayout;
     robotCombo = new QComboBox(this);
@@ -209,8 +209,8 @@ BaseState * runGenWidget::getStateObject()
 //***************   EMPTY_GEN_FOR_SET   ***************//
 
 
-emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
@@ -320,8 +320,8 @@ BaseState * emptyGenForSetWidget::getStateObject()
 
 //***************   EMPTY_GEN   ***************//
 
-emptyGenWidget::emptyGenWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+emptyGenWidget::emptyGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
     QLabel *argLabel = new QLabel(tr("Argument:"));
@@ -354,8 +354,8 @@ BaseState * emptyGenWidget::getStateObject()
 
 //***************   WAIT_GEN   ***************//
 
-waitStateWidget::waitStateWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+waitStateWidget::waitStateWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * waitLayout = new QVBoxLayout;
 
@@ -378,8 +378,8 @@ BaseState * waitStateWidget::getStateObject()
 
 //***************   STOP_GEN   ***************//
 
-stopGenWidget::stopGenWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+stopGenWidget::stopGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * stopGenLayout = new QVBoxLayout;
 
@@ -448,8 +448,8 @@ BaseState * stopGenWidget::getStateObject()
 
 //***************   SENSOR_INI_GEN   ***************//
 
-iniSensorWidget::iniSensorWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+iniSensorWidget::iniSensorWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * iniSensorLayout = new QVBoxLayout;
 
@@ -475,8 +475,8 @@ BaseState * iniSensorWidget::getStateObject()
 
 //***************   GET_SENSOR_GEN   ***************//
 
-getSensorWidget::getSensorWidget(QWidget * parent)
-    :MyTypeWidget(parent)
+getSensorWidget::getSensorWidget(QWidget * parent, Model * newmod, Controller * newcont)
+    :MyTypeWidget(parent, newmod, newcont)
 {
     QVBoxLayout * getSensorLayout = new QVBoxLayout;
 

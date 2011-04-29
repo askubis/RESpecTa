@@ -33,9 +33,11 @@ class MyTypeWidget : public QWidget
 {
    Q_OBJECT
 public:
-    MyTypeWidget(QWidget * parent):QWidget(parent){}
+    MyTypeWidget(QWidget * parent,Model * newmod, Controller * newcont):QWidget(parent){mod = newmod; cont = newcont;}
     virtual BaseState * getStateObject() = 0;
 private:
+    Model * mod;
+    Controller * cont;
 
 private slots:
 
@@ -45,7 +47,7 @@ class sysIniWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    sysIniWidget(QWidget * parent);
+    sysIniWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     sysInitState * getState(){return State;}
@@ -71,7 +73,7 @@ class runGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    runGenWidget(QWidget * parent);
+    runGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     RunGenState * getState(){return State;}
@@ -101,7 +103,7 @@ class emptyGenForSetWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    emptyGenForSetWidget(QWidget * parent);
+    emptyGenForSetWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     EmptyGenForSetState * getState(){return State;}
@@ -126,7 +128,7 @@ class emptyGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    emptyGenWidget(QWidget * parent);
+    emptyGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     EmptyGenState * getState(){return State;}
@@ -144,7 +146,7 @@ class waitStateWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    waitStateWidget(QWidget * parent);
+    waitStateWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     WaitState * getState(){return State;}
@@ -161,7 +163,7 @@ class stopGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    stopGenWidget(QWidget * parent);
+    stopGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     StopGenState * getState(){return State;}
@@ -182,7 +184,7 @@ class iniSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    iniSensorWidget(QWidget * parent);
+    iniSensorWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     InitiateSensorState * getState(){return State;}
@@ -200,7 +202,7 @@ class getSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    getSensorWidget(QWidget * parent);
+    getSensorWidget(QWidget * parent,Model * newmod, Controller * newcont);
     BaseState * getStateObject();
 
     GetSensorState * getState(){return State;}
