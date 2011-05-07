@@ -8,7 +8,6 @@
 #include "Graph.h"
 
 class Model;
-class Controller;
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -30,7 +29,7 @@ public:
 
 
 
-    DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod, Controller * newcont);
+    DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod );
     QFont font() const
         { return myFont; }
     QColor textColor() const
@@ -56,6 +55,7 @@ signals:
     bool lineInserted(Transition * line);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
+    void reportError(QString);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -63,7 +63,6 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
-    Controller * cont;
     Model * mod;
 
     bool isItemChange(int type);

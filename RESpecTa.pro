@@ -21,8 +21,8 @@ SOURCES += main.cpp\
     StateTypeWidgets.cpp \
     baseState.cpp \
     Transition.cpp \
-    Model.cpp \
-    Controller.cpp
+    TransDialog.cpp \
+    Model.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -42,7 +42,7 @@ HEADERS  += respecta.h \
     StateTypeWidgets.h \
     baseState.h \
     Model.h \
-    Controller.h
+    TransDialog.h
 
 FORMS    += respecta.ui
 

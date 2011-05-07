@@ -8,11 +8,10 @@
 
 using namespace boost;
 
-TransWidget::TransWidget(QWidget *parent,Model * newmod, Controller * newcont)
+TransWidget::TransWidget(QWidget *parent,Model * newmod )
 : QWidget(parent)
 {
     mod = newmod;
-    cont = newcont;
    TransitionLayout = new QVBoxLayout;
 
    QLabel *transCondLabel = new QLabel(tr("Transition condition:"));
@@ -23,16 +22,10 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod, Controller * newcont)
    TransitionLayout->addWidget(conditionLineEdit);
 
 
-   /*
 
-   QLabel *sourceLabel = new QLabel(tr("Source State:"));
-   sourceCombo = new QComboBox(this);
-   MyGraphType * myGraph = x->getGraph();
-   QStringList sourceItems = getStateNames(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph));
-   sourceCombo->addItems(sourceItems);
-   TransitionLayout->addWidget(sourceLabel);
-   TransitionLayout->addWidget(sourceCombo);
 
+
+/*
    QLabel *destLabel = new QLabel(tr("Dest State:"));
    destCombo = new QComboBox(this);
    QStringList destItems = getStateNames(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph));
@@ -46,6 +39,12 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod, Controller * newcont)
    subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
    TransitionLayout->addWidget(taskLabel);
    TransitionLayout->addWidget(subtaskCombo);
+   connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(subtaskChanged(QString)));
+
+   QLabel *sourceLabel = new QLabel(tr("State:"));
+   sourceCombo = new QComboBox(this);
+   TransitionLayout->addWidget(sourceLabel);
+   TransitionLayout->addWidget(sourceCombo);
 
    OKButton = new QPushButton(tr("&OK"));
    OKButton->setChecked(false);
@@ -59,6 +58,7 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod, Controller * newcont)
    InsertButton->setDisabled(true);
    bottomLayout->addWidget(InsertButton);
 
+   TransitionLayout->addStretch();
    TransitionLayout->addLayout(bottomLayout);
    setLayout(TransitionLayout);
 }
@@ -86,7 +86,7 @@ void TransWidget::lengthChanged(QString newString)
 
 void TransWidget::InsertTrans()
 {
-    std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), subtaskCombo->currentText());
+    std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), sourceCombo->currentText());
     emit insertTransition(thePair);
 
 }
@@ -96,9 +96,37 @@ void TransWidget::SubtaskInserted(QString newName)
     this->subtaskCombo->addItem(newName);
 }
 
+void TransWidget::subtaskChanged(QString name)
+{
+    if(subtaskCombo->currentIndex()!=-1)
+    {
+        sourceCombo->clear();
+        if(name.toStdString()!="None")
+        {
+            sourceCombo->addItems(mod->getAllStateNames(name.toStdString()));
+        }
+    }
+}
+
+
 void TransWidget::refreshData()
 {
     subtaskCombo->clear();
     subtaskCombo->addItem("None");
     subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
+    subtaskChanged(subtaskCombo->currentText());
+}
+
+void TransWidget::TransSelected(Transition * trans)
+{
+    conditionLineEdit->setText(trans->getCondition());
+    if(mod->getSubtaskName(QString().fromStdString(trans->getSubtask()))==std::string(""))
+    {
+        trans->setSubtask("");
+    }
+    else
+    {
+        subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString().fromStdString(trans->getSubtask())))));
+        sourceCombo->setCurrentIndex(sourceCombo->findText(QString().fromStdString(trans->getSubtask())));
+    }
 }

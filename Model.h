@@ -1,11 +1,15 @@
 #ifndef MODEL_H
 #define MODEL_H
+class Model;
+
 #include "globals.h"
 #include "Graph.h"
+#include "respecta.h"
 
 
 class Model
 {
+
 public:
     Model();
     void save(std::string filename);
@@ -17,10 +21,21 @@ public:
     void addSubtask(QString name);
     QStringList getTasksNameLists();
     QStringList getTasksNameListsWithoutMain();
+    QStringList getAllStateNames(std::string sub);
+    //bool checkStateNameIsAvailable( MyGraphType &G, QString given);
+    void checkIfOK();
+    bool checkNameAvailable(QString name, MyGraphType * G);
+    std::string getSubtaskName(QString StateName);
 
+
+    void setView(RESpecTa * newres){res=newres;}
+    std::string getMainName(){return mainName;}
+
+    signals:
+    void reportError(QString);
 
 private:
-
+    RESpecTa * res;
     std::string mainName;
     std::map<std::string, MyGraphType *> * subtasks;
 };

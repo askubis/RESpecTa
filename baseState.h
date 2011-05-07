@@ -26,7 +26,7 @@ QT_END_NAMESPACE
 
 
 class Transition;
-
+class StateWidget;
 //! [0]
 class BaseState : public QGraphicsPolygonItem
 {
@@ -57,7 +57,6 @@ public:
     BaseState & operator =(const BaseState &);
 
     BaseState();
-
     BaseState(BaseState& old);
 
     ~BaseState(){delete nameTextItem;}
@@ -81,10 +80,13 @@ public:
     virtual std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name ";
         x+=this->stateName.toStdString();
-        x+="\nStateType: ";
-        x+=STATE_TYPE_TABLE[this->getType()];
+        if(this->getType()<STATE_TYPES_NUMBER)
+        {
+            x+="\nStateType: ";
+            x+=STATE_TYPE_TABLE[this->getType()];
+        }
         if(parameters.size()>0)
         {
             x+="\nParameters ";

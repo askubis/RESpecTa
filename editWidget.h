@@ -28,7 +28,7 @@ class EditWidget : public QWidget
     Q_OBJECT
 
 public:
-    EditWidget(QWidget *parent, Model * mod, Controller * cont);
+    EditWidget(QWidget *parent, Model * mod);
 
 private:
     QTabWidget * tabWidget;
@@ -37,6 +37,7 @@ private:
 signals:
     void reportError(QString msgString);
 private slots:
+    void itemSelected(QGraphicsItem *);
     void refreshWidget(int);
     void forwardError(QString msgString){emit reportError(msgString);}
 

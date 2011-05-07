@@ -27,12 +27,12 @@ class TransWidget : public QWidget
 {
     Q_OBJECT
 public:
-    TransWidget(QWidget *parent,Model * newmod, Controller * newcont);
+    TransWidget(QWidget *parent,Model * newmod );
 
     void refreshData();
+    void TransSelected(Transition *);
 private:
     Model * mod;
-    Controller * cont;
 
     QVBoxLayout *TransitionLayout;
 
@@ -47,7 +47,7 @@ private:
 
 
     QComboBox *sourceCombo;
-    QComboBox *destCombo;
+    //QComboBox *destCombo;
     QComboBox *subtaskCombo;
 
 
@@ -58,6 +58,8 @@ signals:
    // QStringList getSubtasksList();
 
 private slots:
+
+    void subtaskChanged(QString);
     void lengthChanged(QString newString);
     void AcceptTrans();
     void InsertTrans();

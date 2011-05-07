@@ -33,11 +33,11 @@ class MyTypeWidget : public QWidget
 {
    Q_OBJECT
 public:
-    MyTypeWidget(QWidget * parent,Model * newmod, Controller * newcont):QWidget(parent){mod = newmod; cont = newcont;}
+    MyTypeWidget(QWidget * parent,Model * newmod ):QWidget(parent){mod = newmod;}
     virtual BaseState * getStateObject() = 0;
+    virtual void setState(BaseState * state) = 0;
 private:
     Model * mod;
-    Controller * cont;
 
 private slots:
 
@@ -47,12 +47,13 @@ class sysIniWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    sysIniWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    sysIniWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    sysInitState * getState(){return State;}
-    void setState(sysInitState * newState){State = newState;}
+//    sysInitState * getState(){return State;}
+  //  void setState(sysInitState * newState){State = newState;}
     QListWidget * robotsInitialized;
+    void setState(BaseState * state);
 private:
     sysInitState * State;
 
@@ -73,11 +74,12 @@ class runGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    runGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    runGenWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    RunGenState * getState(){return State;}
-    void setState(RunGenState * newState){State = newState;}
+    //RunGenState * getState(){return State;}
+    //void setState(RunGenState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     RunGenState * State;
 
@@ -103,11 +105,12 @@ class emptyGenForSetWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    emptyGenForSetWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    emptyGenForSetWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    EmptyGenForSetState * getState(){return State;}
-    void setState(EmptyGenForSetState * newState){State = newState;}
+    //EmptyGenForSetState * getState(){return State;}
+    //void setState(EmptyGenForSetState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     EmptyGenForSetState * State;
 
@@ -128,11 +131,12 @@ class emptyGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    emptyGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    emptyGenWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    EmptyGenState * getState(){return State;}
-    void setState(EmptyGenState * newState){State = newState;}
+    //EmptyGenState * getState(){return State;}
+    //void setState(EmptyGenState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     EmptyGenState * State;
 
@@ -146,11 +150,12 @@ class waitStateWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    waitStateWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    waitStateWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    WaitState * getState(){return State;}
-    void setState(WaitState * newState){State = newState;}
+    //WaitState * getState(){return State;}
+    //void setState(WaitState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     WaitState * State;
 
@@ -163,11 +168,12 @@ class stopGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    stopGenWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    stopGenWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    StopGenState * getState(){return State;}
-    void setState(StopGenState * newState){State = newState;}
+    //StopGenState * getState(){return State;}
+    //void setState(StopGenState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     StopGenState * State;
 
@@ -184,11 +190,12 @@ class iniSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    iniSensorWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    iniSensorWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    InitiateSensorState * getState(){return State;}
-    void setState(InitiateSensorState * newState){State = newState;}
+    //InitiateSensorState * getState(){return State;}
+    //void setState(InitiateSensorState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     InitiateSensorState * State;
 
@@ -202,11 +209,12 @@ class getSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
-    getSensorWidget(QWidget * parent,Model * newmod, Controller * newcont);
+    getSensorWidget(QWidget * parent,Model * newmod );
     BaseState * getStateObject();
 
-    GetSensorState * getState(){return State;}
-    void setState(GetSensorState * newState){State = newState;}
+    //GetSensorState * getState(){return State;}
+    //void setState(GetSensorState * newState){State = newState;}
+    void setState(BaseState * state);
 private:
     GetSensorState * State;
 
@@ -229,6 +237,7 @@ public:
 
     Coordinates * getCoords(){return coords;}
     void setCoords(Coordinates * newCoords){coords = newCoords;}
+    void coordsUpdated();
 private:
     QListWidget * poseList;
     QComboBox * motionTypeCombo;
@@ -282,6 +291,7 @@ class MPDialog:public QDialog
     Q_OBJECT
 public:
     MPDialog(QWidget * parent);
+    void setSensTrans(std::vector<Sensor> sens, Transmitter tran);
 private:
     QListWidget * sensorList;
     QComboBox * sensorCombo;

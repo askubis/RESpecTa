@@ -6,10 +6,9 @@
 #include "Transition.h"
 
 //! [0]
-DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod, Controller * newcont)
+DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod )
     : QGraphicsScene(parent)
 {
-    cont=newcont;
     mod=newmod;
     myItemMenu = itemMenu;
     myMode = MoveItem;
@@ -115,6 +114,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             toInsert->setPos(mouseEvent->scenePos());
 
             emit itemInserted(toInsert);
+            //connect(toInsert, SIGNAL(clicked()), this, SIGNAL(itemInserted(BaseState*)));
 
             textItem = toInsert->getNameTextItem();
             addItem(textItem);
@@ -173,6 +173,8 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [11]
 void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    if(this->selectedItems().size()==1 && myMode!=InsertLine)
+        {emit itemSelected(selectedItems().first());}
 
     if (line != 0 && myMode == InsertLine) {
         QList<QGraphicsItem *> startItems = items(line->line().p1());
@@ -186,8 +188,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         delete line;
 //! [11] //! [12]
 
-        //std::cout<<startItems.count()<<" "<<endItems.count()<<" "<<(startItems.first()->type() == BaseState::Type)<<" "
-          //      <<(endItems.first()->type() == BaseState::Type)<<" "<<(startItems.first() != endItems.first())<<std::endl;
         while(startItems.count()>1 && startItems.first()->type() != BaseState::Type)
         {
             startItems.removeFirst();
@@ -197,8 +197,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             endItems.removeFirst();
         }
 
-        //std::cout<<startItems.count()<<" "<<endItems.count()<<" "<<(startItems.first()->type() == BaseState::Type)<<" "
-          //      <<(endItems.first()->type() == BaseState::Type)<<" "<<(startItems.first() != endItems.first())<<std::endl;
 
         if (startItems.count() > 0 && endItems.count() > 0 &&
             startItems.first()->type() == BaseState::Type &&
@@ -207,20 +205,31 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
             BaseState *startItem =
                 qgraphicsitem_cast<BaseState *>(startItems.first());
+            if(startItem->getName()=="_END_" || startItem->getName()=="_STOP_")
+            {
+                emit reportError("_END_ and _STOP_ states cannot be a source of transition");
+                return;
+            }
             BaseState *endItem =
                 qgraphicsitem_cast<BaseState *>(endItems.first());
+            if(endItem->getName()=="_INIT_")
+            {
+                emit reportError("_INIT_ state cannot be a target of transition");
+                return;
+            }
             Transition *transition = new Transition(startItem, endItem);
             bool test = emit lineInserted(transition);
             if(test)
             {
                 transition->setCondition(transitionAttributes.first);
-                //transition->setSubtask(transitionAttributes.second);//to be changed
+                transition->setSubtask(transitionAttributes.second.toStdString());//to be changed
                 transition->setColor(myLineColor);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);
                 transition->setZValue(-1000.0);
                 addItem(transition);
                 transition->updatePosition();
+                myMode = MoveItem;
             }
             else
             {
@@ -232,6 +241,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 //! [12] //! [13]
     line = 0;
+
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 //! [13]

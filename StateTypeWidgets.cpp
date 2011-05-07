@@ -6,8 +6,8 @@
 
 //***************   SYS_INITIALIZATION   ***************//
 
-sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * sysIniLayout = new QVBoxLayout;
 
@@ -98,8 +98,8 @@ void sysIniWidget::createECPSection()
 }
 void sysIniWidget::changeMPSection()
 {
-    mpDialog->exec();
-    //mpDialog->setVisible(true);
+    //mpDialog->exec();
+    mpDialog->setVisible(true);
     //show edit dialog with things included in the MP section
 }
 
@@ -108,12 +108,24 @@ BaseState * sysIniWidget::getStateObject()
     return new sysInitState(*State);
 }
 
+void sysIniWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new sysInitState(*((sysInitState*)st));
+    mpDialog->setSensTrans(State->getSensors(), State->getTransmitter());
+    this->robotsInitialized->clear();
+    for (int i = 0; i< State->getInits().size();i++)
+    {
+        this->robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[(State->getInits())[i].robot]));
+    }
+}
+
 
 
 //***************   RUN_GENERATOR   ***************//
 
-runGenWidget::runGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * runGenLayout = new QVBoxLayout;
     robotCombo = new QComboBox(this);
@@ -205,12 +217,26 @@ BaseState * runGenWidget::getStateObject()
     return new RunGenState(*State);
 }
 
+void runGenWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new RunGenState(*((RunGenState*)st));
+    robotCombo->setCurrentIndex(State->getRobot());
+    argsLineEdit->setText(State->getArgs());
+    speechLineEdit->setText(State->getSpeech());
+    genTypeCombo->setCurrentIndex(State->getGenType());
+    trjFileName->setText(State->getCoords()->getFilePath());
+    poseDialog->setCoords(new Coordinates(*(State->getCoords())));
+    poseDialog->coordsUpdated();
+
+}
+
 
 //***************   EMPTY_GEN_FOR_SET   ***************//
 
 
-emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
 
@@ -318,10 +344,30 @@ BaseState * emptyGenForSetWidget::getStateObject()
     return new EmptyGenForSetState(*State);
 }
 
+void emptyGenForSetWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new EmptyGenForSetState(*((EmptyGenForSetState*)st));
+    FirstRobotList->clear();
+    SecondRobotList->clear();
+    RobotSet set = State->getSet();
+    std::vector<Robot> robots = set.first;
+    foreach(Robot rob, robots)
+    {
+        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
+    }
+    robots = set.second;
+    foreach(Robot rob, robots)
+    {
+        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
+    }
+
+}
+
 //***************   EMPTY_GEN   ***************//
 
-emptyGenWidget::emptyGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+emptyGenWidget::emptyGenWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * emptyGenLayout = new QVBoxLayout;
     QLabel *argLabel = new QLabel(tr("Argument:"));
@@ -352,16 +398,25 @@ BaseState * emptyGenWidget::getStateObject()
     return new EmptyGenState(*State);
 }
 
+void emptyGenWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new EmptyGenState(*((EmptyGenState*)st));
+    argLineEdit->setText(State->getArgument());
+    RobotCombo->setCurrentIndex(State->getRobot());
+
+}
+
 //***************   WAIT_GEN   ***************//
 
-waitStateWidget::waitStateWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+waitStateWidget::waitStateWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * waitLayout = new QVBoxLayout;
 
     QLabel *TimeLabel = new QLabel(tr("TimeSpan"));
     timeSpan = new QLineEdit;
-    timeSpan->setValidator(new QIntValidator(timeSpan));
+    timeSpan->setValidator(new QIntValidator(0, 999999999, timeSpan));
     waitLayout->addWidget(TimeLabel);
     waitLayout->addWidget(timeSpan);
 
@@ -376,10 +431,20 @@ BaseState * waitStateWidget::getStateObject()
     return new WaitState(*State);
 }
 
+void waitStateWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new WaitState(*((WaitState*)st));
+    char tab[20];
+    sprintf (tab, "%lld", State->getTimespan());
+    timeSpan->setText(QString().fromStdString(tab));
+
+}
+
 //***************   STOP_GEN   ***************//
 
-stopGenWidget::stopGenWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+stopGenWidget::stopGenWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * stopGenLayout = new QVBoxLayout;
 
@@ -446,10 +511,23 @@ BaseState * stopGenWidget::getStateObject()
     return new StopGenState(*State);
 }
 
+void stopGenWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new StopGenState(*((StopGenState*)st));
+    RobotList->clear();
+    RobotSet set = State->getSet();
+    std::vector<Robot> robots = set.first;
+    foreach(Robot rob, robots)
+    {
+        RobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
+    }
+}
+
 //***************   SENSOR_INI_GEN   ***************//
 
-iniSensorWidget::iniSensorWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+iniSensorWidget::iniSensorWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * iniSensorLayout = new QVBoxLayout;
 
@@ -473,10 +551,17 @@ BaseState * iniSensorWidget::getStateObject()
     return new InitiateSensorState(*State);
 }
 
+void iniSensorWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new InitiateSensorState(*((InitiateSensorState*)st));
+    SensorCombo->setCurrentIndex(State->getSensor());
+}
+
 //***************   GET_SENSOR_GEN   ***************//
 
-getSensorWidget::getSensorWidget(QWidget * parent, Model * newmod, Controller * newcont)
-    :MyTypeWidget(parent, newmod, newcont)
+getSensorWidget::getSensorWidget(QWidget * parent, Model * newmod )
+    :MyTypeWidget(parent, newmod )
 {
     QVBoxLayout * getSensorLayout = new QVBoxLayout;
 
@@ -500,6 +585,12 @@ BaseState * getSensorWidget::getStateObject()
     return new GetSensorState(*State);
 }
 
+void getSensorWidget::setState(BaseState * st)
+{
+    delete State;
+    State = new GetSensorState(*((GetSensorState*)st));
+    SensorCombo->setCurrentIndex(State->getSensor());
+}
 
 
 //***********************************************   DIALOGS   ***********************************************//
@@ -606,8 +697,31 @@ void PoseDialog::AddPose()
         std::vector<Pose *> pos_vec= coords->getPoses();
         pos_vec.push_back(tmp);
         coords->setPoses(pos_vec);
-        poseList->addItem(QString().fromStdString("kopytko"));
+        QString str;
+        char tab[20];
+        sprintf(tab, "%d Poses: C:", i);
+        str.append(QString().fromStdString(tab));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", c[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        str.append(QString().fromStdString(" V:"));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", v[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        str.append(QString().fromStdString(" A:"));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", a[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        poseList->addItem(str);
     }
+    //może zacieniować niewykorzystane i wymagać wykorzystania wszystkich danych w przypadku gdy
+    //jedna pozycja już została dodana z jakąś długością wektorów C, A, V
 }
 
 void PoseDialog::RemovePose()
@@ -632,6 +746,7 @@ void PoseDialog::PoseOK()
     Coordinates * tmp = new Coordinates(*coords);
     emit InsertCoords(tmp);
     this->setVisible(false);
+    //check if all poses have the same amount of coords.
 }
 
 void PoseDialog::PoseCancel()
@@ -644,8 +759,41 @@ void PoseDialog::PosesReset()
     poseList->clear();
     delete coords;
     coords = new Coordinates();
-
 }
+
+void PoseDialog::coordsUpdated()
+{
+    coordTypeCombo->setCurrentIndex(this->coords->getCoordType());
+    motionTypeCombo->setCurrentIndex(this->coords->getMotionType());
+    poseList->clear();
+    foreach(Pose * pose, this->coords->getPoses())
+    {
+        QString str;
+        char tab[20];
+        int i = pose->getC().size();
+        sprintf(tab, "%d Poses: C:", i);
+        str.append(QString().fromStdString(tab));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", pose->getC()[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        str.append(QString().fromStdString(" V:"));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", pose->getV()[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        str.append(QString().fromStdString(" A:"));
+        for(int j=0;j<i;j++)
+        {
+            sprintf(tab, " %3.2f", pose->getA()[j]);
+            str.append(QString().fromStdString(tab));
+        }
+        poseList->addItem(str);
+    }
+}
+
 
 //***************   ECP_DIALOG   ***************//
 ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
@@ -792,6 +940,16 @@ void MPDialog::OKPressed()
     }
     emit InsertMP(tmp, Transmitter(transmitterCombo->currentIndex()));
     this->setVisible(false);
+}
+
+void MPDialog::setSensTrans(std::vector<Sensor> sens, Transmitter tran)
+{
+    sensorList->clear();
+    for (int i = 0; i< sens.size();i++)
+    {
+        sensorList->addItem(QString().fromStdString(SENSOR_TABLE[sens[i]]));
+    }
+    transmitterCombo->setCurrentIndex(tran);
 }
 
 void MPDialog::add()

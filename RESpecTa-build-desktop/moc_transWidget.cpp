@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'transWidget.h'
 **
-** Created: Fri Apr 29 16:50:12 2011
+** Created: Thu May 5 10:26:10 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_TransWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -34,19 +34,20 @@ static const uint qt_meta_data_TransWidget[] = {
       13,   12,   12,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      68,   58,   12,   12, 0x08,
-      91,   12,   12,   12, 0x08,
-     105,   12,   12,   12, 0x08,
-     119,   12,   12,   12, 0x08,
+      58,   12,   12,   12, 0x08,
+      92,   82,   12,   12, 0x08,
+     115,   12,   12,   12, 0x08,
+     129,   12,   12,   12, 0x08,
+     143,   12,   12,   12, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_TransWidget[] = {
     "TransWidget\0\0insertTransition(std::pair<QString,QString>)\0"
-    "newString\0lengthChanged(QString)\0"
-    "AcceptTrans()\0InsertTrans()\0"
-    "SubtaskInserted(QString)\0"
+    "subtaskChanged(QString)\0newString\0"
+    "lengthChanged(QString)\0AcceptTrans()\0"
+    "InsertTrans()\0SubtaskInserted(QString)\0"
 };
 
 const QMetaObject TransWidget::staticMetaObject = {
@@ -79,13 +80,14 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
-        case 1: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 2: AcceptTrans(); break;
-        case 3: InsertTrans(); break;
-        case 4: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 1: subtaskChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 2: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 3: AcceptTrans(); break;
+        case 4: InsertTrans(); break;
+        case 5: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }

@@ -16,13 +16,13 @@ QStringList getStateNames(VertexIter first, VertexIter last, const theGraph &G)
 
        typedef typename property_traits<StateMap>::value_type StateType;
        StateType st;
-       //BaseState x;
+       BaseState * x;
 
        while (first != last)
        {
          st = boost::get(stateMap, *first);
-         QString tmp = st.getName();
-         //QString tmp = x.getName();
+         x = (BaseState *)st;
+         QString tmp = x->getName();
          items<< (tmp);
          ++first;
        }
@@ -50,7 +50,7 @@ bool checkStateNameAvailable(VertexIter first, VertexIter last, const theGraph &
 
 
 template <class VertexIter, class theGraph>
-        void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string FileName, std::map<std::string, MyGraphType *> * subtasks)
+        void printStates(VertexIter first, VertexIter last, const theGraph &G, std::string FileName, std::map<std::string, MyGraphType *> * subtasks, std::string mainName)
 {
     QFile* file = new QFile(QString().fromStdString(FileName));
     file->open( QIODevice::WriteOnly);
@@ -69,12 +69,6 @@ template <class VertexIter, class theGraph>
     BaseState *State;
     Transition * transition;
 
-    //test
-
-
-
-//make some enterance to the file
-//get to know what is the routine of file adding (subtasks)
     writer->writeStartElement("TaskDescription");
     for (;first != last;first++)
     {
@@ -82,6 +76,13 @@ template <class VertexIter, class theGraph>
       writer->writeStartElement("State");
       writer->writeAttribute(QString("id"), State->getName());
       writer->writeAttribute(QString("type"), QString().fromStdString(STATE_TYPE_TABLE[State->getType()]));
+      char tab[20];
+      sprintf(tab, "%lf", State->pos().x());
+      writer->writeTextElement("PosX", QString().fromStdString(tab));
+      sprintf(tab, "%lf", State->pos().y());
+      writer->writeTextElement("PosY", QString().fromStdString(tab));
+
+
       State->Print(writer);
 
 
@@ -96,12 +97,16 @@ template <class VertexIter, class theGraph>
           u = target((*startIt), G);
           BaseState *tmpState;
           tmpState = boost::get(stateMap, u);
-          QString * tmp= new QString(tmpState->getName());
-          if(transition->getSubtask())
+          QString tmpString;
+          if(transition->getSubtask() != "")
           {
-
+                tmpString.fromStdString(transition->getSubtask()).append(QString(">>")).append(QString(tmpState->getName()));
           }
-          writer->writeAttribute("target", *tmp);
+          else
+          {
+              tmpString= QString(tmpState->getName());
+          }
+          writer->writeAttribute("target", tmpString);
 
           writer->writeEndElement();
       }
@@ -115,6 +120,7 @@ template <class VertexIter, class theGraph>
     {
         for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
         {
+            if((*it).first == mainName)continue;
             std::string subtaskFileName = (*it).first + ".xml";
             writer->writeStartElement("xi:include");
             writer->writeAttribute("href", QString().fromStdString(subtaskFileName));

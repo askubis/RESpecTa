@@ -30,6 +30,33 @@ private:
 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class StopState:public BaseState
+{
+    public:
+    StopState():BaseState(){}
+    StopState(StopState& old):BaseState(old){}
+    void Print(QXmlStreamWriter* writer){}
+    std::string Print()
+    {
+        std::string x;
+        x+="Name: ";
+        x+=this->stateName.toStdString();
+        if(this->getType()<STATE_TYPES_NUMBER)
+        {
+            x+="\nStateType: ";
+            x+=STATE_TYPE_TABLE[this->getType()];
+        }
+        if(parameters.size()>0)
+        {
+            x+="\nParameters: ";
+            x+=this->parameters.toStdString();
+        }
+        return x;
+    }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class EmptyGenForSetState:public BaseState
 {
 public:
@@ -67,13 +94,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nFIRST SET:";
@@ -123,13 +150,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nROBOT: ";
@@ -137,6 +164,10 @@ public:
         x+="\nArgument: ";
         x+=argument.toStdString();
         return x;
+        x+="\nPositionX";
+        x+=this->pos().x();
+        x+="\nPositionY";
+        x+=this->pos().y();
     }
 private:
     Robot robot;
@@ -167,13 +198,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nSENSOR: ";
@@ -208,13 +239,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nSENSOR: ";
@@ -309,13 +340,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nROBOT: ";
@@ -413,13 +444,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nFIRST SET:";
@@ -503,13 +534,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
@@ -581,13 +612,13 @@ public:
     std::string Print()
     {
         std::string x;
-        x+="\nName ";
+        x+="Name: ";
         x+=this->stateName.toStdString();
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
         if(parameters.size()>0)
         {
-            x+="\nParameters ";
+            x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
         x+="\nTimespan: ";

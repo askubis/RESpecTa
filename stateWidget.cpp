@@ -12,11 +12,10 @@
 
 
 
-StateWidget::StateWidget(QWidget *parent, Model * newmod, Controller * newcont)
+StateWidget::StateWidget(QWidget *parent, Model * newmod )
 : QWidget(parent)
 {
     mod = newmod;
-    cont = newcont;
 this->setMaximumWidth(230);
     //creating Base of the widget (background)
     QHBoxLayout *bottomLayout = new QHBoxLayout;
@@ -91,49 +90,54 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
 
 
-   sysIniWidget* sysIni = new sysIniWidget(this, mod,cont);
+   sysIniWidget* sysIni = new sysIniWidget(this, mod  );
    mainLayout->addWidget(sysIni);
    tmpWidget = 0;
    StateWidgets[0]=sysIni;
    connect(sysIni, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   runGenWidget* runGen = new runGenWidget(this,  mod,cont);
+   runGenWidget* runGen = new runGenWidget(this,  mod  );
    mainLayout->addWidget(runGen);
    runGen->setVisible(false);
    StateWidgets[1]=runGen;
 
-   emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this,  mod,cont);
+   emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this,  mod  );
    mainLayout->addWidget(emptyForSet);
    emptyForSet->setVisible(false);
    StateWidgets[2]=emptyForSet;
    connect(emptyForSet, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   emptyGenWidget* emptyGen = new emptyGenWidget(this,  mod,cont);
+   emptyGenWidget* emptyGen = new emptyGenWidget(this,  mod  );
    mainLayout->addWidget(emptyGen);
    emptyGen->setVisible(false);
    StateWidgets[3]=emptyGen;
 
-   waitStateWidget* waitGen = new waitStateWidget(this,  mod,cont);
+   waitStateWidget* waitGen = new waitStateWidget(this,  mod  );
    mainLayout->addWidget(waitGen);
    waitGen->setVisible(false);
    StateWidgets[4]=waitGen;
 
-   stopGenWidget* stopGen = new stopGenWidget(this,  mod,cont);
+   stopGenWidget* stopGen = new stopGenWidget(this,  mod  );
    mainLayout->addWidget(stopGen);
    stopGen->setVisible(false);
    StateWidgets[5]=stopGen;
    connect(stopGen, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-   iniSensorWidget* initSensor = new iniSensorWidget(this,  mod,cont);
+   iniSensorWidget* initSensor = new iniSensorWidget(this,  mod  );
    mainLayout->addWidget(initSensor);
    initSensor->setVisible(false);
    StateWidgets[6]=initSensor;
 
-   getSensorWidget* getSensorReading = new getSensorWidget(this,  mod,cont);
+   getSensorWidget* getSensorReading = new getSensorWidget(this,  mod  );
    mainLayout->addWidget(getSensorReading);
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
 
+   if(tmpWidget==SYSTEM_INITIALIZATION)
+   {
+       stateNameEdit->setText("_INIT_");
+       stateNameEdit->setDisabled(true);
+   }
 
    mainLayout->addLayout(bottomLayout);
 }
@@ -175,16 +179,27 @@ void StateWidget::AcceptState()
 
 void StateWidget::setStateSubclass(int chosen)
 {
+    if(tmpWidget==SYSTEM_INITIALIZATION)
+    {
+        stateNameEdit->setEnabled(true);
+    }
+    if(chosen==SYSTEM_INITIALIZATION)
+    {
+        stateNameEdit->setText("_INIT_");
+        stateNameEdit->setDisabled(true);
+    }
     StateWidgets[tmpWidget]->setVisible(false);
     tmpWidget = chosen;
     StateWidgets[tmpWidget]->setVisible(true);
+
 }
 
 void StateWidget::InsertState()
 {
-    //RESpecTa * x = (RESpecTa *) this->parentWidget()->parentWidget()->parentWidget();
-    //if(res!=x) exit(78);
-    //res->insertClicked();
+    if ( !StateNameOK())
+    {
+        return;
+    }
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
     if(toInsertState==NULL)
         return;
@@ -192,7 +207,6 @@ void StateWidget::InsertState()
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
     toInsertState->setParameters(paramEdit->text());
     emit InsertState(toInsertState);
-
 }
 
 void StateWidget::createNewSubtask()
@@ -207,8 +221,6 @@ void StateWidget::createNewSubtask()
         subtaskCombo->addItem(taskNameEdit->text());
         emit SubtaskInserted(taskNameEdit->text());
     }
-
-
 }
 
 void StateWidget::refreshData()
@@ -216,5 +228,40 @@ void StateWidget::refreshData()
     subtaskCombo->clear();
     subtaskCombo->addItems(mod->getTasksNameLists());
 }
+
+void StateWidget::StateSelected(BaseState * state)
+{
+    edited = state;
+    stateNameEdit->setText(state->getName());
+    subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString(state->getName())))));
+    paramEdit->setText(state->getParameters());
+    stateTypeCombo->setCurrentIndex(state->getType());
+    StateWidgets[tmpWidget]->setVisible(false);
+    if(state->getType()<STATE_TYPES_NUMBER)
+    {
+        tmpWidget = state->getType();
+        StateWidgets[tmpWidget]->setVisible(true);
+        StateWidgets[tmpWidget]->setState(state);
+    }
+}
+
+bool StateWidget::StateNameOK()
+{
+    if (stateNameEdit->text()=="_INIT_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
+    {
+        emit reportError(QString().fromStdString("_INIT_ name is dedicated only to SYSTEM_INITIALIZATION state"));
+        return false;
+    }
+    if(stateNameEdit->text()=="_END_"||stateNameEdit->text()=="_end_"||stateNameEdit->text()=="_stop_"||stateNameEdit->text()=="_STOP_")
+    {
+        emit reportError(QString().fromStdString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
+        return false;
+    }
+
+
+    return true;
+
+}
+
 
 

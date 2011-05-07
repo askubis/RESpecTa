@@ -22,22 +22,22 @@
 const int InsertTextButton = 10;
 
 //! [0]
-RESpecTa::RESpecTa(Model * newmod, Controller * newcont)
+RESpecTa::RESpecTa(Model * newmod)
 {
     mod=newmod;
-    cont=newcont;
 
     createFileMenu();
     createEditMenu();
     createHelpMenu();
-    createActions();
-    createToolBox();
+    //createActions();
+    //createToolBox();
 
-    scene = new DiagramScene(itemMenu, this, mod, cont);
+    scene = new DiagramScene(itemMenu, this, mod);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
     connect(scene, SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scene, SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
+    connect(scene, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     createToolbars();
 
     //myGraph = new MyGraphType();
@@ -45,11 +45,12 @@ RESpecTa::RESpecTa(Model * newmod, Controller * newcont)
 
     //subtasks->insert(std::make_pair<QString, MyGraphType *>("kopytko", NULL));
 
+    transDial = new TransDialog(this, mod);
 
 
-
-    editWidget = new EditWidget(this, mod, cont);
+    editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+    connect(this, SIGNAL(itemSelectedSig(QGraphicsItem *)), editWidget, SLOT(itemSelected(QGraphicsItem *)));
    // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
     editWidget->resize(10,800);
 
@@ -94,11 +95,26 @@ void RESpecTa::createEditMenu()
     connect(deleteAction, SIGNAL(triggered()),
         this, SLOT(deleteItem()));
 
+    insertEndStateAction = new QAction(QIcon(":/images/_END_image.jpg"),
+                               tr("&End"), this);
+    insertEndStateAction->setShortcut(tr("End"));
+    insertEndStateAction->setStatusTip(tr("Insert End state for main task or subtask"));
+    connect(insertEndStateAction, SIGNAL(triggered()),
+        this, SLOT(addEndState()));
+
+    showTransitions = new QAction(tr("&Transitions"), this);
+    showTransitions->setShortcut(tr("Home"));
+    showTransitions->setStatusTip(tr("Show transitions of this State"));
+    connect(showTransitions, SIGNAL(triggered()),
+        this, SLOT(EditTransitionsOfState()));
+
+
     itemMenu = menuBar()->addMenu(tr("&Edit"));
     itemMenu->addAction(deleteAction);
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
+    itemMenu->addAction(showTransitions);
 
 }
 
@@ -121,7 +137,8 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::save()
 {
-    cont->saveClicked();
+    //get path
+    mod->save("MAIN.txt");
 
 
 }
@@ -189,7 +206,7 @@ void RESpecTa::deleteItem()
         {
             scene->removeItem(item);
             Transition *transition = qgraphicsitem_cast<Transition *>(item);
-            cont->deleteTransition(transition);
+            mod->deleteTransition(transition);
 
             scene->removeItem(item);
             delete item;
@@ -202,13 +219,19 @@ void RESpecTa::deleteItem()
          {
              foreach(Transition * transition, qgraphicsitem_cast<BaseState *>(item)->getTransitions())
              {
-                 cont->deleteTransition(transition);
+                 mod->deleteTransition(transition);
              }
 
              BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+             QList<Transition *> tranList = state->getTransitions();
+             foreach(Transition * t, tranList)
+             {
+                 mod->deleteTransition(t);
+             }
+
              state->removeTransitions();
 
-             cont->deleteState(state);
+             mod->deleteState(state);
 
 
 
@@ -274,9 +297,13 @@ void RESpecTa::itemInserted(BaseState *item)
     //Vertex v_new;
 
     //item->setSubtaskName(currentSubtask);
-    cont->addState(item, currentSubtask.toStdString());
-
+    mod->addState(item, currentSubtask.toStdString());
+    if(currentSubtask.toStdString()==mod->getMainName() && item->getName().toLower()==QString().fromStdString("_end_"))
+    {
+        item->setName(QString().fromStdString("_STOP_"));
+    }
     item->setToolTip(QString().fromStdString(item->Print()));
+
     //item->setStatusTip(item->Print());
 
 
@@ -294,10 +321,12 @@ void RESpecTa::itemInserted(BaseState *item)
 }
 //! [7]
 
+
+
 bool RESpecTa::lineInserted(Transition *line)
 {
 
-    bool test = cont->tryInsertTransition(line);
+    bool test = mod->tryInsertTransition(line);
     if(test==false)
     {
         reportError(QString("Cannot create a transition between\nstates in different tasks"));
@@ -408,6 +437,7 @@ void RESpecTa::lineButtonTriggered()
 //! [19]
 void RESpecTa::itemSelected(QGraphicsItem *item)
 {
+    emit itemSelectedSig(item);
     /*DiagramTextItem *textItem =
     qgraphicsitem_cast<DiagramTextItem *>(item);
 
@@ -532,6 +562,7 @@ void RESpecTa::createToolbars()
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
 
+    editToolBar->addAction(insertEndStateAction);
     /*fontCombo = new QFontComboBox();
     connect(fontCombo, SIGNAL(currentFontChanged(QFont)),
             this, SLOT(currentFontChanged(QFont)));
@@ -557,7 +588,7 @@ void RESpecTa::createToolbars()
             this, SLOT(textButtonTriggered()));
 */
 //! [26]
-    fillColorToolButton = new QToolButton;
+    /*fillColorToolButton = new QToolButton;
     fillColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
     fillColorToolButton->setMenu(createColorMenu(SLOT(itemColorChanged()),
                          Qt::white));
@@ -565,10 +596,10 @@ void RESpecTa::createToolbars()
     fillColorToolButton->setIcon(createColorToolButtonIcon(
     ":/images/floodfill.png", Qt::white));
     connect(fillColorToolButton, SIGNAL(clicked()),
-            this, SLOT(fillButtonTriggered()));
+            this, SLOT(fillButtonTriggered()));*/
 //! [26]
 
-    lineColorToolButton = new QToolButton;
+    /*lineColorToolButton = new QToolButton;
     lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
     lineColorToolButton->setMenu(createColorMenu(SLOT(lineColorChanged()),
                                  Qt::black));
@@ -576,7 +607,7 @@ void RESpecTa::createToolbars()
     lineColorToolButton->setIcon(createColorToolButtonIcon(
         ":/images/linecolor.png", Qt::black));
     connect(lineColorToolButton, SIGNAL(clicked()),
-            this, SLOT(lineButtonTriggered()));
+            this, SLOT(lineButtonTriggered()));*/
 
     //textToolBar = addToolBar(tr("Font"));
     //textToolBar->addWidget(fontCombo);
@@ -585,10 +616,10 @@ void RESpecTa::createToolbars()
     //textToolBar->addAction(italicAction);
     //textToolBar->addAction(underlineAction);
 
-    colorToolBar = addToolBar(tr("Color"));
+    /*colorToolBar = addToolBar(tr("Color"));
     //colorToolBar->addWidget(fontColorToolButton);
     colorToolBar->addWidget(fillColorToolButton);
-    colorToolBar->addWidget(lineColorToolButton);
+    colorToolBar->addWidget(lineColorToolButton);*/
 
     QToolButton *pointerButton = new QToolButton;
     pointerButton->setCheckable(true);
@@ -617,6 +648,9 @@ void RESpecTa::createToolbars()
     pointerToolbar->addWidget(pointerButton);
     //pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
+
+
+
 //! [27]
 }
 //! [27]
@@ -750,7 +784,7 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 
 void RESpecTa::NewSubtaskInserted(QString newName)
 {
-    cont->addSubtask(newName);
+    mod->addSubtask(newName);
 }
 
 void RESpecTa::selectedSubtaskName(QString newString)
@@ -761,4 +795,23 @@ void RESpecTa::selectedSubtaskName(QString newString)
 void RESpecTa::reportError(QString msgString)
 {
     QMessageBox::information(this, QString().fromStdString("Error"), msgString);
+}
+
+void RESpecTa::addEndState()
+{
+    StopState * tmp = new StopState();
+    tmp->setType(StateType(STATE_TYPES_NUMBER));
+    tmp->setName("_END_");
+    scene->setMode(DiagramScene::InsertItem);
+    scene->setToInsertState(tmp);
+}
+void RESpecTa::EditTransitionsOfState()
+{
+    if(scene->selectedItems().first()->type()==BaseState::Type)
+    {
+        BaseState * state = qgraphicsitem_cast<BaseState *>(scene->selectedItems().first());
+        transDial->openForAState(state);
+        transDial->setVisible(true);
+    }
+    return;
 }

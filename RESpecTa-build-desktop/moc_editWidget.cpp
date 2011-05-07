@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'editWidget.h'
 **
-** Created: Fri Apr 29 16:49:59 2011
+** Created: Thu May 5 10:26:00 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_EditWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -35,13 +35,15 @@ static const uint qt_meta_data_EditWidget[] = {
 
  // slots: signature, parameters, type, tag, flags
       43,   11,   11,   11, 0x08,
-      62,   12,   11,   11, 0x08,
+      72,   11,   11,   11, 0x08,
+      91,   12,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_EditWidget[] = {
     "EditWidget\0\0msgString\0reportError(QString)\0"
+    "itemSelected(QGraphicsItem*)\0"
     "refreshWidget(int)\0forwardError(QString)\0"
 };
 
@@ -75,11 +77,12 @@ int EditWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 1: refreshWidget((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 2: forwardError((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 1: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
+        case 2: refreshWidget((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: forwardError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }

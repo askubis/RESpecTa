@@ -1,18 +1,18 @@
 
 #ifndef RESPECTA_H
 #define RESPECTA_H
+class RESpecTa;
 
 #include <QMainWindow>
 //#include "GlobalVariables.h"
 
 #include "baseState.h"
 #include "Model.h"
-#include "Controller.h"
+#include "TransDialog.h"
 //#include "Graph.h"
 
 class DiagramScene;
 //class Model;
-//class Controller;
 
 
 QT_BEGIN_NAMESPACE
@@ -37,14 +37,19 @@ class RESpecTa : public QMainWindow
 
 public:
     RESpecTa(){}
-    RESpecTa(Model * newmod, Controller * newcont);
+    RESpecTa(Model * newmod );
    void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
    //MyGraphType * getGraph (){return myGraph;}
    //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
+   void getError(QString x){reportError(x);}
 
+signals:
+   void itemSelectedSig(QGraphicsItem *item);
 
 private slots:
     //QStringList getSubtasksList();
+    void EditTransitionsOfState();
+    void addEndState();
     void reportError(QString msgString);
     bool lineInserted(Transition *line);
     void insertTransition(std::pair<QString,QString>);
@@ -82,11 +87,11 @@ private:
     void createToolbars();
 
 
-    Controller * cont;
     Model * mod;
     QString currentSubtask;
 
     QWidget *editWidget;
+    TransDialog * transDial;
 
 
     QWidget *createBackgroundCellWidget(const QString &text,
@@ -104,6 +109,8 @@ private:
     QAction *loadAction;
     QAction *addAction;
     QAction *deleteAction;
+    QAction *insertEndStateAction;
+    QAction *showTransitions;
 
     QAction *toFrontAction;
     QAction *sendBackAction;

@@ -26,12 +26,15 @@ class StateWidget : public QWidget
 {
     Q_OBJECT
 public:
-    StateWidget(QWidget * w,Model * newmod, Controller * newcont);
+    StateWidget(QWidget * w,Model * newmod );
 
     void refreshData();
+    void StateSelected(BaseState *);
 private:
+    bool StateNameOK();
     Model * mod;
-    Controller * cont;
+
+    BaseState * edited;
 
     QVBoxLayout *topLayout;
     QVBoxLayout *StateLayout;
@@ -68,6 +71,7 @@ signals:
 
 
 private slots:
+
     void forwardError(QString msgString){emit reportError(msgString);}
     void setStateSubclass(int chosen);
     void createNewSubtask();

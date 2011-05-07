@@ -3,16 +3,16 @@
 
 #include <QtGui>
 
-EditWidget::EditWidget(QWidget *parent, Model * newmod, Controller * newcont)
+EditWidget::EditWidget(QWidget *parent, Model * newmod )
     : QWidget(parent)
 {
 
     tabWidget = new QTabWidget(this);
     tabWidget->setMaximumWidth(230);
     tabWidget->setMinimumWidth(230);
-stateWidget = new StateWidget(tabWidget, newmod, newcont);
+stateWidget = new StateWidget(tabWidget, newmod);
     tabWidget->addTab(stateWidget,tr("State"));
-transWidget = new TransWidget(tabWidget, newmod, newcont);
+transWidget = new TransWidget(tabWidget, newmod);
     tabWidget->addTab(transWidget, tr("Transition"));
     //tabWidget->setTabEnabled(1, false);
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
@@ -50,6 +50,21 @@ void EditWidget::refreshWidget(int index)
         break;
     default:
         break;
+    }
+
+}
+
+void EditWidget::itemSelected(QGraphicsItem *item)
+{
+    if (item->type()==BaseState::Type)
+    {
+        this->tabWidget->setCurrentWidget(stateWidget);
+        stateWidget->StateSelected(qgraphicsitem_cast<BaseState *>(item));
+    }
+    else if (item->type()==Transition::Type)
+    {
+        this->tabWidget->setCurrentWidget(transWidget);
+        transWidget->TransSelected(qgraphicsitem_cast<Transition *>(item));
     }
 
 }

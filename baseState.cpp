@@ -49,7 +49,7 @@ BaseState::BaseState()
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-    nameTextItem = new QGraphicsTextItem(this);
+    nameTextItem = new QGraphicsTextItem();
 }
 
 BaseState & BaseState::operator=(const BaseState &other)
@@ -62,7 +62,7 @@ BaseState & BaseState::operator=(const BaseState &other)
     this->Transitions=other.Transitions;
     this->myContextMenu=other.myContextMenu;
     this->myPolygon=other.myPolygon;
-    nameTextItem = new QGraphicsTextItem(other.nameTextItem);
+    nameTextItem = new QGraphicsTextItem();
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
@@ -71,7 +71,7 @@ BaseState & BaseState::operator=(const BaseState &other)
 
 BaseState::BaseState(BaseState& old)
 {
-    nameTextItem = new QGraphicsTextItem(old.nameTextItem);
+    nameTextItem = new QGraphicsTextItem();
     this->argument=old.argument;
     this->stateType=old.stateType;
     this->setName(old.stateName);
