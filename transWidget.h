@@ -46,6 +46,8 @@ private:
     QPushButton *InsertButton;
 
 
+    Transition * edited;
+
     QComboBox *sourceCombo;
     //QComboBox *destCombo;
     QComboBox *subtaskCombo;
@@ -55,6 +57,8 @@ private:
 
 signals:
     void insertTransition(std::pair<QString,QString>);
+    void reportError(QString);
+
    // QStringList getSubtasksList();
 
 private slots:

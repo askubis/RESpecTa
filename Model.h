@@ -26,6 +26,17 @@ public:
     void checkIfOK();
     bool checkNameAvailable(QString name, MyGraphType * G);
     std::string getSubtaskName(QString StateName);
+    bool ReplaceState(BaseState * oldState, BaseState * newState);
+
+    void MoveTransitionUp(BaseState * st, int index);
+    void MoveTransitionDown(BaseState * st, int index);
+
+    std::vector<Transition *> getTransitions(BaseState * state);
+
+    bool checkTransitonExists(Transition * trans);
+
+    boost::graph_traits<MyGraphType>::edge_iterator findEdge ( MyGraphType * graph, Transition * toFind);
+    boost::graph_traits<MyGraphType>::vertex_iterator findVertex ( MyGraphType * graph, BaseState * toFind);
 
 
     void setView(RESpecTa * newres){res=newres;}

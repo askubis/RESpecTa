@@ -46,6 +46,7 @@ RESpecTa::RESpecTa(Model * newmod)
     //subtasks->insert(std::make_pair<QString, MyGraphType *>("kopytko", NULL));
 
     transDial = new TransDialog(this, mod);
+    connect(transDial, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
 
     editWidget = new EditWidget(this, mod);
@@ -138,7 +139,7 @@ void RESpecTa::createFileMenu()
 void RESpecTa::save()
 {
     //get path
-    mod->save("MAIN.txt");
+    mod->save("MAIN.xml");
 
 
 }
@@ -200,6 +201,8 @@ void RESpecTa::buttonGroupClicked(int id)
 //! [3]
 void RESpecTa::deleteItem()
 {
+
+    //check why there's a bug with deleting transitions attached to a deleted node
     foreach (QGraphicsItem *item, scene->selectedItems())
     {
         if (item->type() == Transition::Type)
@@ -208,7 +211,7 @@ void RESpecTa::deleteItem()
             Transition *transition = qgraphicsitem_cast<Transition *>(item);
             mod->deleteTransition(transition);
 
-            scene->removeItem(item);
+            //scene->removeItem(item);
             delete item;
         }
     }
@@ -217,17 +220,15 @@ void RESpecTa::deleteItem()
     {
          if (item->type() == BaseState::Type)
          {
-             foreach(Transition * transition, qgraphicsitem_cast<BaseState *>(item)->getTransitions())
+             BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+             foreach(Transition * transition, state->getTransitions())
              {
                  mod->deleteTransition(transition);
+                 scene->removeItem(transition);
+                 delete transition;
              }
 
-             BaseState * state = qgraphicsitem_cast<BaseState *>(item);
-             QList<Transition *> tranList = state->getTransitions();
-             foreach(Transition * t, tranList)
-             {
-                 mod->deleteTransition(t);
-             }
+
 
              state->removeTransitions();
 
@@ -811,7 +812,30 @@ void RESpecTa::EditTransitionsOfState()
     {
         BaseState * state = qgraphicsitem_cast<BaseState *>(scene->selectedItems().first());
         transDial->openForAState(state);
+        transDial->setModal(true);
         transDial->setVisible(true);
     }
     return;
 }
+
+void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
+{
+    bool check = mod->ReplaceState(oldState,newState);
+    if(check)
+    {
+        QList<Transition *> TranList = oldState->getTransitions();
+        foreach(Transition * T, TranList)
+        {
+            if(T->startItem() == oldState)T->setStartItem(newState);
+            if(T->endItem() == oldState)T->setEndItem(newState);
+            newState->addTransition(T);
+        }
+        newState->setPos(oldState->pos().x(), oldState->pos().y());
+        scene->removeItem(oldState);
+        scene->setItemParams(newState);
+        newState->setToolTip(QString().fromStdString(newState->Print()));
+        delete oldState;
+    }
+    //state could be somehow chosen to be edited...
+}
+

@@ -45,6 +45,7 @@ public:
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
     void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
     //void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
+    void updateSize();
 
     void updateTextPositions()
     {
@@ -99,7 +100,7 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
-    void updateSize();
+
 
    // DiagramType myDiagramType;
     QPolygonF myPolygon;

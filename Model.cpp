@@ -125,6 +125,9 @@ void Model::checkIfOK()
     //sprawdzić czy jest _end_ w subtaskach
     //sprawdzić dla tranzycji czy subtask gdzieś istnieje
     //kazy stan poza end i stop musi miec przynajmniej jeden stan wyjsciowy
+
+    //czy graf spojny
+    //czy z kazdego stanu da sie dojsc do end/stop
     MyGraphType * tmp = (*subtasks)[mainName];
     if(checkNameAvailable(QString("_INIT_"), tmp) &&  checkNameAvailable(QString("_init_"), tmp))
     {
@@ -246,7 +249,146 @@ std::string Model::getSubtaskName(QString StateName)
     return std::string("");
 }
 
+bool Model::ReplaceState(BaseState * oldState, BaseState * newState)
+{
+    //check if the state wasn't deleted
+    std::string subtaskName = getSubtaskName(oldState->getName());
+    if(subtaskName==std::string(""))
+    {
+        res->getError(QString().fromStdString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        return false;
+    }
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+    typedef  property_map<MyGraphType, state_t>::type StateMap;
+    StateMap stateMap = get(state_t(), (*(tmpGraph)));
+    boost::graph_traits<MyGraphType>::vertex_iterator first =findVertex(tmpGraph, oldState);
+    {//changing
+        boost::put(stateMap, *first, newState);
+        return true;
+    }
+    return false;
 
 
+}
+
+
+void Model::MoveTransitionUp(BaseState * st, int index)
+{
+    std::string subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==std::string(""))
+    {
+        res->getError(QString().fromStdString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        return;
+    }
+
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+    boost::graph_traits<MyGraphType>::vertex_iterator first = findVertex(tmpGraph, st);
+
+    typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
+    TransitionMap transitionMap = get(transition_t(), (*tmpGraph));
+    Transition * transition;
+
+    boost::graph_traits<MyGraphType>::out_edge_iterator startIt, endIt;
+    tie(startIt, endIt)=out_edges((*first), (*tmpGraph));
+    for (int i = 0 ;i<index-1 && startIt!=endIt;startIt++, i++)
+    {
+    }
+    std::vector<Transition *> transVect;
+    for (;startIt!=endIt;startIt++)
+    {
+        transition = boost::get(transitionMap, *startIt);
+        transVect.push_back(transition);
+    }
+    for(int i =0;i<transVect.size(); i++)
+    {
+        boost::remove_edge((*(findEdge(tmpGraph, transVect[i]))), (*tmpGraph));
+    }
+
+    tryInsertTransition(transVect[1]);
+    tryInsertTransition(transVect[0]);
+    for(int i=2;i<transVect.size();i++)
+        tryInsertTransition(transVect[i]);
+
+}
+
+void Model::MoveTransitionDown(BaseState * st, int index)
+{
+    std::string subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==std::string(""))
+    {
+        res->getError(QString().fromStdString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        return;
+    }
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+    boost::graph_traits<MyGraphType>::vertex_iterator first = findVertex(tmpGraph, st);
+
+    boost::graph_traits<MyGraphType>::out_edge_iterator startIt, endIt;
+    tie(startIt, endIt)=out_edges((*first), (*tmpGraph));
+    for (int i = 0 ;i<index && startIt!=endIt;startIt++, i++)
+    {
+    }
+    typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
+    TransitionMap transitionMap = get(transition_t(), (*tmpGraph));
+    Transition * transition;
+
+    std::vector<Transition *> transVect;
+    for (;startIt!=endIt;startIt++)
+    {
+        transition = boost::get(transitionMap, *startIt);
+        transVect.push_back(transition);
+    }
+    for(int i =0;i<transVect.size(); i++)
+    {
+        boost::remove_edge((*(findEdge(tmpGraph, transVect[i]))), (*tmpGraph));
+    }
+    tryInsertTransition(transVect[1]);
+    tryInsertTransition(transVect[0]);
+    for(int i=2;i<transVect.size();i++)
+        tryInsertTransition(transVect[i]);
+}
+
+std::vector<Transition *> Model::getTransitions(BaseState * st)
+{
+    std::vector<Transition *> tranVect;
+    std::string subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==std::string(""))
+    {
+        res->getError(QString().fromStdString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        return tranVect;
+    }
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+    boost::graph_traits<MyGraphType>::vertex_iterator first = findVertex(tmpGraph, st);
+
+    boost::graph_traits<MyGraphType>::out_edge_iterator startIt, endIt;
+    tie(startIt, endIt)=out_edges((*first), (*tmpGraph));
+    typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
+    TransitionMap transitionMap = get(transition_t(), (*tmpGraph));
+    for (; startIt!=endIt;startIt++)
+    {
+        Transition * transition = boost::get(transitionMap, *startIt);
+        tranVect.push_back(transition);
+    }
+    return tranVect;
+}
+
+bool Model::checkTransitonExists(Transition * trans)
+{
+    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    {
+        MyGraphType * tmpGraph = (*it).second;
+        if(findEdge(tmpGraph,trans)!= edges(*tmpGraph).second) return true;
+    }
+    return false;
+}
+
+boost::graph_traits<MyGraphType>::edge_iterator Model::findEdge ( MyGraphType * graph, Transition * toFind)
+{
+    property_map<MyGraphType, transition_t>::type Trans = get(transition_t(), (*graph));
+    graph_traits<MyGraphType>::edge_iterator first, last;
+    tie(first, last) = edges(*graph);
+    for ( ;first!=last; first++)
+    if ( boost::get(Trans, (*first)) == toFind) return first;
+    return last;
+}
 
 

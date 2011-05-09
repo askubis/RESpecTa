@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Thu May 5 10:25:52 2011
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
+** Created: Mon May 9 14:37:55 2011
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,7 +11,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'respecta.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.7.0. It"
+#error "This file was generated using the moc from 4.7.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -23,7 +23,7 @@ static const uint qt_meta_data_RESpecTa[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      23,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -34,34 +34,36 @@ static const uint qt_meta_data_RESpecTa[] = {
       15,   10,    9,    9, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      47,    9,    9,    9, 0x08,
-      72,    9,    9,    9, 0x08,
-      96,   86,    9,    9, 0x08,
-     127,  122,  117,    9, 0x08,
-     153,    9,    9,    9, 0x08,
-     198,    9,    9,    9, 0x08,
-     215,  205,    9,    9, 0x08,
-     253,  244,    9,    9, 0x08,
-     285,  277,    9,    9, 0x08,
-     316,  313,    9,    9, 0x08,
-     340,    9,    9,    9, 0x08,
-     353,  313,    9,    9, 0x08,
-     378,    9,    9,    9, 0x08,
-     393,    9,    9,    9, 0x08,
-     406,   10,    9,    9, 0x08,
-     437,  431,    9,    9, 0x08,
-     464,    9,    9,    9, 0x08,
-     483,    9,    9,    9, 0x08,
-     502,    9,    9,    9, 0x08,
-     524,    9,    9,    9, 0x08,
-     546,   10,    9,    9, 0x08,
-     575,    9,    9,    9, 0x08,
+      65,   47,    9,    9, 0x08,
+     101,    9,    9,    9, 0x08,
+     126,    9,    9,    9, 0x08,
+     150,  140,    9,    9, 0x08,
+     181,  176,  171,    9, 0x08,
+     207,    9,    9,    9, 0x08,
+     252,    9,    9,    9, 0x08,
+     269,  259,    9,    9, 0x08,
+     307,  298,    9,    9, 0x08,
+     339,  331,    9,    9, 0x08,
+     370,  367,    9,    9, 0x08,
+     394,    9,    9,    9, 0x08,
+     407,  367,    9,    9, 0x08,
+     432,    9,    9,    9, 0x08,
+     447,    9,    9,    9, 0x08,
+     460,   10,    9,    9, 0x08,
+     491,  485,    9,    9, 0x08,
+     518,    9,    9,    9, 0x08,
+     537,    9,    9,    9, 0x08,
+     556,    9,    9,    9, 0x08,
+     578,    9,    9,    9, 0x08,
+     600,   10,    9,    9, 0x08,
+     629,    9,    9,    9, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_RESpecTa[] = {
     "RESpecTa\0\0item\0itemSelectedSig(QGraphicsItem*)\0"
+    "oldState,newState\0ReplaceState(BaseState*,BaseState*)\0"
     "EditTransitionsOfState()\0addEndState()\0"
     "msgString\0reportError(QString)\0bool\0"
     "line\0lineInserted(Transition*)\0"
@@ -108,32 +110,33 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: itemSelectedSig((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
-        case 1: EditTransitionsOfState(); break;
-        case 2: addEndState(); break;
-        case 3: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 4: { bool _r = lineInserted((*reinterpret_cast< Transition*(*)>(_a[1])));
+        case 1: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2]))); break;
+        case 2: EditTransitionsOfState(); break;
+        case 3: addEndState(); break;
+        case 4: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 5: { bool _r = lineInserted((*reinterpret_cast< Transition*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
-        case 5: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
-        case 6: save(); break;
-        case 7: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 8: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 9: NewSubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 10: buttonGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 11: deleteItem(); break;
-        case 12: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 13: bringToFront(); break;
-        case 14: sendToBack(); break;
-        case 15: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 16: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 17: itemColorChanged(); break;
-        case 18: lineColorChanged(); break;
-        case 19: fillButtonTriggered(); break;
-        case 20: lineButtonTriggered(); break;
-        case 21: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
-        case 22: about(); break;
+        case 6: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
+        case 7: save(); break;
+        case 8: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 9: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 10: NewSubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 11: buttonGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: deleteItem(); break;
+        case 13: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 14: bringToFront(); break;
+        case 15: sendToBack(); break;
+        case 16: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 17: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 18: itemColorChanged(); break;
+        case 19: lineColorChanged(); break;
+        case 20: fillButtonTriggered(); break;
+        case 21: lineButtonTriggered(); break;
+        case 22: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
+        case 23: about(); break;
         default: ;
         }
-        _id -= 23;
+        _id -= 24;
     }
     return _id;
 }

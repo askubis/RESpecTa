@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'transWidget.h'
 **
-** Created: Thu May 5 10:26:10 2011
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
+** Created: Mon May 9 14:38:10 2011
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,7 +11,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'transWidget.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.7.0. It"
+#error "This file was generated using the moc from 4.7.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -23,31 +23,33 @@ static const uint qt_meta_data_TransWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       2,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       13,   12,   12,   12, 0x05,
+      58,   12,   12,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      58,   12,   12,   12, 0x08,
-      92,   82,   12,   12, 0x08,
-     115,   12,   12,   12, 0x08,
-     129,   12,   12,   12, 0x08,
-     143,   12,   12,   12, 0x08,
+      79,   12,   12,   12, 0x08,
+     113,  103,   12,   12, 0x08,
+     136,   12,   12,   12, 0x08,
+     150,   12,   12,   12, 0x08,
+     164,   12,   12,   12, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_TransWidget[] = {
     "TransWidget\0\0insertTransition(std::pair<QString,QString>)\0"
-    "subtaskChanged(QString)\0newString\0"
-    "lengthChanged(QString)\0AcceptTrans()\0"
-    "InsertTrans()\0SubtaskInserted(QString)\0"
+    "reportError(QString)\0subtaskChanged(QString)\0"
+    "newString\0lengthChanged(QString)\0"
+    "AcceptTrans()\0InsertTrans()\0"
+    "SubtaskInserted(QString)\0"
 };
 
 const QMetaObject TransWidget::staticMetaObject = {
@@ -80,14 +82,15 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
-        case 1: subtaskChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 2: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 3: AcceptTrans(); break;
-        case 4: InsertTrans(); break;
-        case 5: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 1: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 2: subtaskChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 3: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 4: AcceptTrans(); break;
+        case 5: InsertTrans(); break;
+        case 6: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }
@@ -97,5 +100,12 @@ void TransWidget::insertTransition(std::pair<QString,QString> _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
+}
+
+// SIGNAL 1
+void TransWidget::reportError(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 QT_END_MOC_NAMESPACE

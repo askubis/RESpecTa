@@ -67,10 +67,12 @@ signals:
     void InsertState(BaseState * newState);
     void selectedSubtaskName(QString newString);
     void reportError(QString msgString);
+    void ReplaceState(BaseState * oldState, BaseState * newState);
 
 
 
 private slots:
+
 
     void forwardError(QString msgString){emit reportError(msgString);}
     void setStateSubclass(int chosen);

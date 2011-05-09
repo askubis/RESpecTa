@@ -44,6 +44,7 @@ public:
     void setFont(const QFont &font);
     void setToInsertState (BaseState * newState){toInsert = newState;}
     void setTransitionAttributes(std::pair<QString,QString> thePair){transitionAttributes=thePair;}
+    void setItemParams(BaseState * toInsert);
 
 public slots:
     void setMode(Mode mode);

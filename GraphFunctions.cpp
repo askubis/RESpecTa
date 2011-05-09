@@ -189,15 +189,7 @@ boost::graph_traits<MyGraphType>::vertex_iterator findVertex ( MyGraphType * gra
 }
 
 
-boost::graph_traits<MyGraphType>::edge_iterator findEdge ( MyGraphType * graph, Transition * toFind)
-{
-    property_map<MyGraphType, transition_t>::type Trans = get(transition_t(), (*graph));
-    graph_traits<MyGraphType>::edge_iterator first, last;
-    tie(first, last) = edges(*graph);
-    for ( ;first!=last; first++)
-    if ( boost::get(Trans, (*first)) == toFind) return first;
-    return last;
-}
+
 
 
 

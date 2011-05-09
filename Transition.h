@@ -32,6 +32,9 @@ public:
     QPainterPath shape() const;
     void setColor(const QColor &color)
         { myColor = color; }
+    void setStartItem( BaseState *newStartItem) { myStartItem=newStartItem; }
+    void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
+
     BaseState *startItem() const
         { return myStartItem; }
     BaseState *endItem() const

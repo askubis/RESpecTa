@@ -60,12 +60,25 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
 
    TransitionLayout->addStretch();
    TransitionLayout->addLayout(bottomLayout);
+   edited = NULL;
    setLayout(TransitionLayout);
 }
 
 void TransWidget::AcceptTrans()
 {
-
+    if(edited==NULL)
+    {
+        emit reportError(QString().fromStdString("Please, select a transition to edit, edit it and then press OK."));
+        return;
+    }
+    if(!mod->checkTransitonExists(edited))
+    {
+        emit reportError(QString().fromStdString("The Transition You have been editing has been deleted"));
+        edited=NULL;
+        return;
+    }
+    edited->setCondition(conditionLineEdit->text());
+    edited->setSubtask(sourceCombo->currentText().toStdString());
 
 }
 
@@ -86,6 +99,7 @@ void TransWidget::lengthChanged(QString newString)
 
 void TransWidget::InsertTrans()
 {
+    edited = NULL;
     std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), sourceCombo->currentText());
     emit insertTransition(thePair);
 
@@ -119,6 +133,7 @@ void TransWidget::refreshData()
 
 void TransWidget::TransSelected(Transition * trans)
 {
+    edited = trans;
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(QString().fromStdString(trans->getSubtask()))==std::string(""))
     {

@@ -15,16 +15,23 @@ public:
     ~TransDialog(){}
     void openForAState(BaseState * tmp);
 
+signals:
+    void reportError(QString);
+
 private slots:
     void UpPressed();
     void DownPressed();
     void OKPressed();
+    void RowChanged(int);
 
 private:
+    BaseState * state;
     Model * mod;
     QListWidget * transCondList;
     QListWidget * transTargList;
     QListWidget * transSubList;
+    //std::vector<int> changes;
+    //QList<Transition *> tranList;
 
 
 

@@ -172,9 +172,24 @@ void StateWidget::SubtaskIndexChanged(QString newString)
 
 void StateWidget::AcceptState()
 {
-
-
-
+    if(edited==NULL)
+    {
+        emit reportError(QString().fromStdString("Please, select a state to edit, edit it and then press OK."));
+        return;
+    }
+    if ( !StateNameOK())
+    {
+        return;
+    }
+    BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
+    if(toInsertState==NULL)
+        return;
+    toInsertState->setName(this->stateNameEdit->text());
+    toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
+    toInsertState->setParameters(paramEdit->text());
+    //create some signal to send it, needs to be stated which state is changed
+    emit ReplaceState(edited, toInsertState);
+    edited = NULL;
 }
 
 void StateWidget::setStateSubclass(int chosen)
@@ -196,6 +211,7 @@ void StateWidget::setStateSubclass(int chosen)
 
 void StateWidget::InsertState()
 {
+    edited = NULL;
     if ( !StateNameOK())
     {
         return;
@@ -243,6 +259,7 @@ void StateWidget::StateSelected(BaseState * state)
         StateWidgets[tmpWidget]->setVisible(true);
         StateWidgets[tmpWidget]->setState(state);
     }
+
 }
 
 bool StateWidget::StateNameOK()
@@ -257,10 +274,7 @@ bool StateWidget::StateNameOK()
         emit reportError(QString().fromStdString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
         return false;
     }
-
-
     return true;
-
 }
 
 

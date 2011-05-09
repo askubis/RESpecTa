@@ -208,6 +208,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(startItem->getName()=="_END_" || startItem->getName()=="_STOP_")
             {
                 emit reportError("_END_ and _STOP_ states cannot be a source of transition");
+                myMode = MoveItem;
                 return;
             }
             BaseState *endItem =
@@ -215,6 +216,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(endItem->getName()=="_INIT_")
             {
                 emit reportError("_INIT_ state cannot be a target of transition");
+                myMode = MoveItem;
                 return;
             }
             Transition *transition = new Transition(startItem, endItem);
@@ -256,3 +258,17 @@ bool DiagramScene::isItemChange(int type)
     return false;
 }
 //! [14]
+
+
+void DiagramScene::setItemParams(BaseState * toInsert)
+{
+    toInsert->setMenu(myItemMenu);
+    toInsert->setBrush(myItemColor);
+    addItem(toInsert);
+
+    QGraphicsTextItem * textItem = toInsert->getNameTextItem();
+    addItem(textItem);
+    toInsert->updateTextPositions();
+    toInsert->updateSize();
+}
+

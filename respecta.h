@@ -46,7 +46,10 @@ public:
 signals:
    void itemSelectedSig(QGraphicsItem *item);
 
+
 private slots:
+
+    void ReplaceState(BaseState * oldState, BaseState * newState);
     //QStringList getSubtasksList();
     void EditTransitionsOfState();
     void addEndState();
