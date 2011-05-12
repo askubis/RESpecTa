@@ -35,7 +35,8 @@ class StopState:public BaseState
     public:
     StopState():BaseState(){}
     StopState(StopState& old):BaseState(old){}
-    void Print(QXmlStreamWriter* writer){}
+
+    void Print(QXmlStreamWriter*){}
     std::string Print()
     {
         std::string x;

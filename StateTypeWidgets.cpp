@@ -94,13 +94,18 @@ void sysIniWidget::removeECPSection()
 void sysIniWidget::createECPSection()
 {
     //ecpDialog->exec();
-    ecpDialog->setVisible(true);
+    //ecpDialog->setModal(true);
+    ecpDialog->exec();
+
 }
 void sysIniWidget::changeMPSection()
 {
     //mpDialog->exec();
-    mpDialog->setVisible(true);
+    //mpDialog->setModal(true);
+    mpDialog->exec();
     //show edit dialog with things included in the MP section
+
+
 }
 
 BaseState * sysIniWidget::getStateObject()
@@ -202,7 +207,9 @@ void runGenWidget::selectTrjFilePath()
 void runGenWidget::showAddPosesDialog()
 {
     //poseDialog->setVisible(true);
+    //poseDialog->setModal(true);
     poseDialog->exec();
+
 }
 
 BaseState * runGenWidget::getStateObject()

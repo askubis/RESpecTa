@@ -22,17 +22,6 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    TransitionLayout->addWidget(conditionLineEdit);
 
 
-
-
-
-/*
-   QLabel *destLabel = new QLabel(tr("Dest State:"));
-   destCombo = new QComboBox(this);
-   QStringList destItems = getStateNames(vertices((*myGraph)).first, vertices((*myGraph)).second, (*myGraph));
-   destCombo->addItems(destItems);
-   TransitionLayout->addWidget(destLabel);
-   TransitionLayout->addWidget(destCombo);*/
-
    QLabel * taskLabel = new QLabel(tr("Subtask:"));
    subtaskCombo = new QComboBox(this);
    subtaskCombo->addItem("None");
@@ -41,10 +30,10 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    TransitionLayout->addWidget(subtaskCombo);
    connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(subtaskChanged(QString)));
 
-   QLabel *sourceLabel = new QLabel(tr("State:"));
-   sourceCombo = new QComboBox(this);
-   TransitionLayout->addWidget(sourceLabel);
-   TransitionLayout->addWidget(sourceCombo);
+   QLabel *stateLabel = new QLabel(tr("State:"));
+   stateCombo = new QComboBox(this);
+   TransitionLayout->addWidget(stateLabel);
+   TransitionLayout->addWidget(stateCombo);
 
    OKButton = new QPushButton(tr("&OK"));
    OKButton->setChecked(false);
@@ -58,9 +47,25 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    InsertButton->setDisabled(true);
    bottomLayout->addWidget(InsertButton);
 
+
+
+   QLabel * sourceLabel =new QLabel(tr("Source state:"));
+   QLabel * sourceNameLabel = new QLabel();
+
+   QLabel * destLabel =new QLabel(tr("Destination state:"));
+   QLabel * destNameLabel = new QLabel();
+
+   TransitionLayout->addWidget(sourceLabel);
+   TransitionLayout->addWidget(sourceNameLabel);
+   TransitionLayout->addWidget(destLabel);
+   TransitionLayout->addWidget(destNameLabel);
+
+
+
    TransitionLayout->addStretch();
    TransitionLayout->addLayout(bottomLayout);
    edited = NULL;
+   OKButton->setDisabled(true);
    setLayout(TransitionLayout);
 }
 
@@ -69,16 +74,25 @@ void TransWidget::AcceptTrans()
     if(edited==NULL)
     {
         emit reportError(QString().fromStdString("Please, select a transition to edit, edit it and then press OK."));
+        OKButton->setDisabled(true);
+        sourceNameLabel->setText(QString());
+        destNameLabel->setText(QString());
         return;
     }
     if(!mod->checkTransitonExists(edited))
     {
         emit reportError(QString().fromStdString("The Transition You have been editing has been deleted"));
         edited=NULL;
+        OKButton->setDisabled(true);
+        sourceNameLabel->setText(QString());
+        destNameLabel->setText(QString());
         return;
     }
     edited->setCondition(conditionLineEdit->text());
-    edited->setSubtask(sourceCombo->currentText().toStdString());
+    edited->setSubtask(stateCombo->currentText().toStdString());
+    OKButton->setDisabled(false);
+    sourceNameLabel->setText(QString());//TO EDIT
+    destNameLabel->setText(QString());
 
 }
 
@@ -86,12 +100,12 @@ void TransWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        OKButton->setDisabled(false);
+        //OKButton->setDisabled(false);
         InsertButton->setDisabled(false);
     }
     else
     {
-        OKButton->setDisabled(true);
+
         InsertButton->setDisabled(true);
     }
 }
@@ -100,7 +114,10 @@ void TransWidget::lengthChanged(QString newString)
 void TransWidget::InsertTrans()
 {
     edited = NULL;
-    std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), sourceCombo->currentText());
+    OKButton->setDisabled(true);
+    sourceNameLabel->setText(QString());
+    destNameLabel->setText(QString());
+    std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), stateCombo->currentText());
     emit insertTransition(thePair);
 
 }
@@ -114,10 +131,10 @@ void TransWidget::subtaskChanged(QString name)
 {
     if(subtaskCombo->currentIndex()!=-1)
     {
-        sourceCombo->clear();
+        stateCombo->clear();
         if(name.toStdString()!="None")
         {
-            sourceCombo->addItems(mod->getAllStateNames(name.toStdString()));
+            stateCombo->addItems(mod->getAllStateNames(name.toStdString()));
         }
     }
 }
@@ -134,6 +151,9 @@ void TransWidget::refreshData()
 void TransWidget::TransSelected(Transition * trans)
 {
     edited = trans;
+    OKButton->setDisabled(false);
+    sourceNameLabel->setText(QString());//TO EDIT
+    destNameLabel->setText(QString());
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(QString().fromStdString(trans->getSubtask()))==std::string(""))
     {
@@ -142,6 +162,6 @@ void TransWidget::TransSelected(Transition * trans)
     else
     {
         subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString().fromStdString(trans->getSubtask())))));
-        sourceCombo->setCurrentIndex(sourceCombo->findText(QString().fromStdString(trans->getSubtask())));
+        stateCombo->setCurrentIndex(stateCombo->findText(QString().fromStdString(trans->getSubtask())));
     }
 }

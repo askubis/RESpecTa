@@ -57,9 +57,10 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
     subtaskCombo = new QComboBox(this);
     connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(SubtaskIndexChanged(QString)));
     subtaskCombo->addItems(mod->getTasksNameLists());
-    StateLayout->addLayout(taskLayout);
 
+    StateLayout->addLayout(taskLayout);
     StateLayout->addWidget(subtaskCombo);
+
 
     nameLabel = new QLabel(tr("State Name:"));
     stateNameEdit = new QLineEdit;
@@ -146,12 +147,12 @@ void StateWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        OKButton->setDisabled(false);
+        //OKButton->setDisabled(false);
         InsertButton->setDisabled(false);
     }
     else
     {
-        OKButton->setDisabled(true);
+        //OKButton->setDisabled(true);
         InsertButton->setDisabled(true);
     }
 }
@@ -188,8 +189,11 @@ void StateWidget::AcceptState()
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
     toInsertState->setParameters(paramEdit->text());
     //create some signal to send it, needs to be stated which state is changed
-    emit ReplaceState(edited, toInsertState);
+    OKButton->setDisabled(true);
+    BaseState * tmp = edited;
     edited = NULL;
+    emit ReplaceState(tmp, toInsertState);//TODO need to copy old name when reading or it fails - cannot read if it was deleted
+
 }
 
 void StateWidget::setStateSubclass(int chosen)
@@ -212,6 +216,7 @@ void StateWidget::setStateSubclass(int chosen)
 void StateWidget::InsertState()
 {
     edited = NULL;
+    OKButton->setDisabled(true);
     if ( !StateNameOK())
     {
         return;
@@ -247,7 +252,9 @@ void StateWidget::refreshData()
 
 void StateWidget::StateSelected(BaseState * state)
 {
+    if(state->getName().toLower()==QString().fromStdString("_end_")||state->getName().toLower()==QString().fromStdString("_stop_"))return;
     edited = state;
+    OKButton->setDisabled(false);
     stateNameEdit->setText(state->getName());
     subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString(state->getName())))));
     paramEdit->setText(state->getParameters());
@@ -264,12 +271,17 @@ void StateWidget::StateSelected(BaseState * state)
 
 bool StateWidget::StateNameOK()
 {
-    if (stateNameEdit->text()=="_INIT_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
+    if (stateNameEdit->text().toLower()=="_init_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
     {
         emit reportError(QString().fromStdString("_INIT_ name is dedicated only to SYSTEM_INITIALIZATION state"));
         return false;
     }
-    if(stateNameEdit->text()=="_END_"||stateNameEdit->text()=="_end_"||stateNameEdit->text()=="_stop_"||stateNameEdit->text()=="_STOP_")
+    if (stateNameEdit->text().toLower()=="_init_" && subtaskCombo->currentText()!=QString().fromStdString(mod->getMainName()))
+    {
+        emit reportError(QString().fromStdString("_INIT_ name is dedicated only to the main task"));
+        return false;
+    }
+    if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")
     {
         emit reportError(QString().fromStdString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
         return false;

@@ -48,9 +48,12 @@ private:
 
     Transition * edited;
 
-    QComboBox *sourceCombo;
+    QComboBox *stateCombo;
     //QComboBox *destCombo;
     QComboBox *subtaskCombo;
+
+    QLabel * sourceNameLabel;
+    QLabel * destNameLabel;
 
 
 

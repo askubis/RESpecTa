@@ -15,7 +15,7 @@ public:
     void save(std::string filename);
     void deleteTransition(Transition * transition);
     void deleteState(BaseState * state);
-    void addState(BaseState * item, std::string subtaskName);
+    bool addState(BaseState * item, std::string subtaskName);
     bool tryInsertTransition(Transition * trans);
     bool checkNameAvailable(QString name);
     void addSubtask(QString name);
@@ -37,6 +37,9 @@ public:
 
     boost::graph_traits<MyGraphType>::edge_iterator findEdge ( MyGraphType * graph, Transition * toFind);
     boost::graph_traits<MyGraphType>::vertex_iterator findVertex ( MyGraphType * graph, BaseState * toFind);
+    void printStates(MyGraphType *G, std::string FileName, bool ifMain);
+    bool checkStateNameAvailable(MyGraphType *G, QString given);
+    QStringList getStateNames(MyGraphType G);
 
 
     void setView(RESpecTa * newres){res=newres;}

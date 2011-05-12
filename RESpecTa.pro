@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     editWidget.cpp \
     stateWidget.cpp \
     transWidget.cpp \
-    GraphFunctions.cpp \
     StateTypeWidgets.cpp \
     baseState.cpp \
     Transition.cpp \
@@ -38,7 +37,6 @@ HEADERS  += respecta.h \
     editWidget.h \
     stateWidget.h \
     transWidget.h \
-    GraphFunctions.h \
     StateTypeWidgets.h \
     baseState.h \
     Model.h \

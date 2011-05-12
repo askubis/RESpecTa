@@ -77,7 +77,7 @@ public:
 
     QList<Transition *> getTransitions (){return Transitions;}
 
-    virtual void Print(QXmlStreamWriter* writer){}
+    virtual void Print(QXmlStreamWriter* ){}
     virtual std::string Print()
     {
         std::string x;
@@ -93,6 +93,7 @@ public:
             x+="\nParameters ";
             x+=this->parameters.toStdString();
         }
+        return x;
     }
 
 protected:

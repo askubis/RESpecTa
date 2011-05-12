@@ -113,12 +113,13 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             addItem(toInsert);
             toInsert->setPos(mouseEvent->scenePos());
 
-            emit itemInserted(toInsert);
+
             //connect(toInsert, SIGNAL(clicked()), this, SIGNAL(itemInserted(BaseState*)));
 
             textItem = toInsert->getNameTextItem();
             addItem(textItem);
             toInsert->updateTextPositions();
+            emit itemInserted(toInsert);
             //textItem->setPos(mouseEvent->scenePos().x()-50, mouseEvent->scenePos().y()-50);
             break;
 //! [6] //! [7]

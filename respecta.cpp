@@ -18,7 +18,6 @@
 //#include "GraphFunctions.cpp"
 
 #include "editWidget.h"
-
 const int InsertTextButton = 10;
 
 //! [0]
@@ -298,12 +297,20 @@ void RESpecTa::itemInserted(BaseState *item)
     //Vertex v_new;
 
     //item->setSubtaskName(currentSubtask);
-    mod->addState(item, currentSubtask.toStdString());
     if(currentSubtask.toStdString()==mod->getMainName() && item->getName().toLower()==QString().fromStdString("_end_"))
     {
         item->setName(QString().fromStdString("_STOP_"));
     }
-    item->setToolTip(QString().fromStdString(item->Print()));
+    bool check = mod->addState(item, currentSubtask.toStdString());
+    if(check)
+    {
+        item->setToolTip(QString().fromStdString(item->Print()));
+    }
+    else
+    {
+        scene->removeItem(item);
+        delete item;        //TODO:CHECK
+    }
 
     //item->setStatusTip(item->Print());
 
@@ -761,10 +768,6 @@ void RESpecTa::InsertState(BaseState * newState)
 
     bool not_abort = mod->checkNameAvailable(newState->getName());
 
-
-
-
-
     if(!not_abort)
     {
         reportError(QString("State with that name already exists"));
@@ -812,15 +815,15 @@ void RESpecTa::EditTransitionsOfState()
     {
         BaseState * state = qgraphicsitem_cast<BaseState *>(scene->selectedItems().first());
         transDial->openForAState(state);
-        transDial->setModal(true);
-        transDial->setVisible(true);
+        //transDial->setModal(true);
+        transDial->exec();
     }
     return;
 }
 
 void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
 {
-    bool check = mod->ReplaceState(oldState,newState);
+    bool check = mod->ReplaceState(oldState,newState);//need to use oldStateName given, cannot check it if the state was deleted
     if(check)
     {
         QList<Transition *> TranList = oldState->getTransitions();
@@ -835,7 +838,9 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
         scene->setItemParams(newState);
         newState->setToolTip(QString().fromStdString(newState->Print()));
         delete oldState;
+        emit itemSelected(newState);
     }
+
     //state could be somehow chosen to be edited...
 }
 
