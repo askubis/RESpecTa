@@ -53,6 +53,81 @@ public:
     std::vector<double> getC(){return coordinates;}
     void setC(std::vector<double> newC){coordinates=newC;}
 
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        QStringList errors;
+        bool wasA=false;
+        bool wasC=false;
+        bool wasV=false;
+        while (!reader->atEnd())
+        {
+            //get coordinateType and motionType
+            std::cout<<"READING POSE"<<std::endl;
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+            if(reader->name().toString()=="Pose"&&reader->isEndElement())
+            {
+                return errors;
+            }
+            else if (reader->name()=="Accelerations")
+            {
+                if(wasA)
+                {
+                    //error
+                }
+                else
+                {
+                    wasA=true;
+                    QString tmpString = reader->readElementText();
+                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    foreach(QString str, strList)
+                    {
+                        a.push_back(str.toDouble());
+                    }
+                }
+            }
+            else if (reader->name()=="Velocity")
+            {
+                if(wasV)
+                {
+                    //error
+                }
+                else
+                {
+                    wasV=true;
+                    QString tmpString = reader->readElementText();
+                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    foreach(QString str, strList)
+                    {
+                        v.push_back(str.toDouble());
+                    }
+                }
+            }
+            else if (reader->name()=="Coordinates")
+            {
+                if(wasC)
+                {
+                    //error
+                }
+                else
+                {
+                    wasC=true;
+                    QString tmpString = reader->readElementText();
+                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    foreach(QString str, strList)
+                    {
+                        coordinates.push_back(str.toDouble());
+                    }
+                }
+            }
+            else
+            {
+                //error unexpected name
+            }
+        }
+            return errors;
+    }
+
 private:
     std::vector<double> a;
     std::vector<double> v;

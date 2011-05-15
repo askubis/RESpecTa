@@ -33,7 +33,7 @@ void BaseState::updateSize()
                 x.truncate(size);
                 nameTextItem->setPlainText(x);
             }
-        y.insert(size, QString().fromStdString("\n"));
+        y.insert(size, QString("\n"));
         nameTextItem->setPlainText(y);
         }
     }
@@ -54,7 +54,7 @@ BaseState::BaseState()
 
 BaseState & BaseState::operator=(const BaseState &other)
 {
-    if (this->stateName==other.stateName) return *this;//TODO:askubis check if not wrong with that condition
+    if (this->stateName==other.stateName) return *this;
     this->argument=other.argument;
     this->stateType=other.stateType;
     this->setName(other.stateName);

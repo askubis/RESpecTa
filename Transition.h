@@ -53,8 +53,11 @@ public:
         std::string toRet;
         toRet+="\nCondition: ";
         toRet+=condition.toStdString();
-        toRet+=" Subtask address ";
-        toRet+=" ";
+        if(subtask!="")
+        {
+            toRet+="\nSubtask: ";
+            toRet+=subtask;
+        }
         return toRet;
     }
 
@@ -72,9 +75,7 @@ private:
     QPolygonF TransitionHead;
 
     QString condition;
-    //QString subtask;//@TODO:askubis change to a pointer
     std::string subtask;
-    //BaseState * sub;
 };
 //! [0]
 

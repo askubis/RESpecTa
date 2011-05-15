@@ -21,7 +21,7 @@ transWidget = new TransWidget(tabWidget, newmod);
     connect(stateWidget, SIGNAL(SubtaskInserted(QString)), (RESpecTa *)this->parentWidget(), SLOT(NewSubtaskInserted(QString)));
 
     connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
-    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * )));
+    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * , QString)), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * ,QString)));
     connect (stateWidget, SIGNAL(selectedSubtaskName(QString)), (RESpecTa *)this->parentWidget(),SLOT(selectedSubtaskName(QString)));
 
 
@@ -31,6 +31,10 @@ transWidget = new TransWidget(tabWidget, newmod);
     //connect (transWidget, SIGNAL(getSubtasksList()), this->parentWidget(), SLOT(getSubtasksList()) );
     connect (transWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
+    connect((RESpecTa *)this->parentWidget(), SIGNAL(refreshWidgets()), this, SLOT(refreshAllWidgets()));
+    connect((RESpecTa *)this->parentWidget(), SIGNAL(SignalDeleted()), this, SLOT(SignalDeleted()));
+
+
 
 
 
@@ -38,6 +42,17 @@ transWidget = new TransWidget(tabWidget, newmod);
     mainLayout->addWidget(tabWidget);
     setLayout(mainLayout);
 
+}
+
+void EditWidget::refreshAllWidgets()
+{
+    stateWidget->refreshData();
+}
+
+void EditWidget::SignalDeleted()
+{
+    stateWidget->setOKButtonDisabled();
+    transWidget->setOKButtonDisabled();
 }
 
 void EditWidget::refreshWidget(int index)

@@ -42,21 +42,28 @@ public:
    //MyGraphType * getGraph (){return myGraph;}
    //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
    void getError(QString x){reportError(x);}
+   void clearSaveName() {SaveName=QString();}
+   void deleteState(BaseState * state);
+   void deleteTrans(Transition * trans);
 
 signals:
    void itemSelectedSig(QGraphicsItem *item);
+   void refreshWidgets();
+   void SignalDeleted();
 
 
 private slots:
 
-    void ReplaceState(BaseState * oldState, BaseState * newState);
+    void ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName);
     //QStringList getSubtasksList();
     void EditTransitionsOfState();
     void addEndState();
     void reportError(QString msgString);
     bool lineInserted(Transition *line);
     void insertTransition(std::pair<QString,QString>);
+    void Load();
     void save();
+    void SaveAs();
     void selectedSubtaskName(QString newString);
     void InsertState(BaseState * newState);
     void NewSubtaskInserted(QString newName);
@@ -89,9 +96,14 @@ private:
     void createActions();
     void createToolbars();
 
+    void LoadFile(QString filename);
+    void LoadStates(QString filename);
+    void LoadTransitions(QString filename);
+
 
     Model * mod;
     QString currentSubtask;
+    QString SaveName;
 
     QWidget *editWidget;
     TransDialog * transDial;
@@ -109,6 +121,7 @@ private:
 
     QAction *exitAction;
     QAction *saveAction;
+    QAction *saveAsAction;
     QAction *loadAction;
     QAction *addAction;
     QAction *deleteAction;

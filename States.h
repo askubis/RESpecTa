@@ -11,6 +11,7 @@
 
 #include "baseState.h"
 class QXmlStreamWriter;
+class QXmlStreamReader;
 #include <QtGui>
 
 
@@ -28,6 +29,10 @@ private:
 
 };
 */
+//TODO change print to xml functions to print good robots
+
+//TODO flags when reading about what already was read
+//check in the ENUM structs if it's not outside of bonds
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class StopState:public BaseState
@@ -53,6 +58,33 @@ class StopState:public BaseState
             x+=this->parameters.toStdString();
         }
         return x;
+    }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
+              else
+              {
+                  //error - unexpeected node
+              }
+
+        }
+        return errors;
     }
 };
 
@@ -118,6 +150,60 @@ public:
         }
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasSet = false;
+        bool wasParam = false;
+        std::cout<<"LOADING EGFS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if(reader->name()=="SetOfRobots")
+              {
+                  if(wasSet)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      set.LoadFromXML(reader);
+                      wasSet=true;
+                  }
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else
+              {
+                  //unknown parameter
+              }
+
+        }
+        return errors;
+    }
 
 private:
     RobotSet set;
@@ -127,7 +213,7 @@ private:
 class EmptyGenState:public BaseState
 {
 public:
-    EmptyGenState():BaseState(){}
+    EmptyGenState():BaseState(){robot = (Robot)0;}
     EmptyGenState(EmptyGenState& old):BaseState(old)
     {
         this->robot=old.robot;
@@ -169,6 +255,72 @@ public:
         x+=this->pos().x();
         x+="\nPositionY";
         x+=this->pos().y();
+    }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasRobot = false;
+        bool wasParam = false;
+        bool wasArg = false;
+        std::cout<<"LOADING EG"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if (reader->name()=="ROBOT"&&reader->isStartElement())
+              {
+                  if(wasRobot)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      wasRobot=true;
+                      int index = getRobotTable().indexOf(reader->readElementText());
+                      if(index<ROBOTS_NUMBER && index>=0)
+                      {
+                          robot = (Robot)index;
+                      }
+                      else
+                      {
+                          //error out of bounds robot
+                      }
+                  }
+              }
+              else if (reader->name()=="AddArg")
+              {
+                  if(wasArg)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      argument=reader->readElementText();
+                      wasArg=true;
+                  }
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else
+              {
+                  //error - unexpected node
+              }
+        }
+        return errors;
     }
 private:
     Robot robot;
@@ -212,6 +364,59 @@ public:
         x+=SENSOR_TABLE[sensor];
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasParam = false;
+        bool wasSensor = false;
+        std::cout<<"LOADING GS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if (reader->name()=="Sensor")
+              {
+                  if(wasSensor)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      wasSensor=true;
+                      int index = getSensorTable().indexOf(reader->readElementText());
+                      if(index<SENSORS_NUMBER && index>=0)
+                      {
+                          sensor = (Sensor)index;
+                      }
+                      else
+                      {
+                          //error out of bounds sensor
+                      }
+                  }
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else
+              {
+                  //error - unexpected node
+              }
+        }
+        return errors;
+    }
 private:
     Sensor sensor;
 };
@@ -253,6 +458,59 @@ public:
         x+=SENSOR_TABLE[sensor];
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasParam = false;
+        bool wasSensor = false;
+        std::cout<<"LOADING IS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if (reader->name()=="Sensor")
+              {
+                  if(wasSensor)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      wasSensor=true;
+                      int index = getSensorTable().indexOf(reader->readElementText());
+                      if(index<SENSORS_NUMBER && index>=0)
+                      {
+                          sensor = (Sensor)index;
+                      }
+                      else
+                      {
+                          //error out of bounds sensor
+                      }
+                  }
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else
+              {
+                  //error - unexpected node
+              }
+        }
+        return errors;
+    }
 private:
     Sensor sensor;
 };
@@ -266,6 +524,7 @@ public:
     {
         this->robot=old.robot;
         this->genType=old.genType;
+        this->filePath=old.filePath;
         this->genArgs=old.genArgs;
         this->coords=new Coordinates(*(old.coords));
         this->speech=old.speech;
@@ -281,6 +540,8 @@ public:
     void setSpeech(QString newSpeech) {speech = newSpeech;}
     QString getArgs(){return genArgs;}
     void setArgs(QString newGenArgs){genArgs=newGenArgs;}
+    QString getFilePath() {return filePath;}
+    void setFilePath(QString newPath) {filePath=newPath;}
 
     void Print(QXmlStreamWriter * writer)
     {
@@ -294,7 +555,7 @@ public:
         {
             writer->writeTextElement("AddArg", genArgs);
         }
-        writer->writeTextElement("TrajectoryFilePath", coords->getFilePath());
+        writer->writeTextElement("TrajectoryFilePath", getFilePath());
         if(this->coords->getPoses().size()==0)return;
         writer->writeStartElement("Trajectory");
         writer->writeAttribute(QString("coordinateType"), QString().fromStdString(COORD_TYPE_TABLE[coords->getCoordType()]));
@@ -365,7 +626,7 @@ public:
             x+=this->genArgs.toStdString();
         }
         x+="\nFilePath:";
-        x+=coords->getFilePath().toStdString();
+        x+=getFilePath().toStdString();
         x+="\nMotion Type:";
         x+=MOTION_TYPE_TABLE[coords->getMotionType()];
         x+="\nCoord Type:";
@@ -403,8 +664,136 @@ public:
         }
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasParam=false;
+        bool wasSpeech=false;
+        bool wasArgs=false;
+        bool wasRobot=false;
+        bool wasTrj=false;
+        bool wasGenType=false;
+        bool wasFile=false;
+        std::cout<<"LOADING RGS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  std::cout<<"TEST "<<stateName.toStdString()<< " poses: "<<coords->getPoses().size()<<std::endl;
+                  return errors;
+              }
+              else if (reader->name()=="ROBOT")
+              {
+                  if(wasRobot)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      wasRobot=true;
+                      int index = getRobotTable().indexOf(reader->readElementText());
+                      if(index<ROBOTS_NUMBER && index>=0)
+                      {
+                          robot = (Robot)index;
+                      }
+                      else
+                      {
+                          //error out of bounds sensor
+                      }
+                  }
+              }
+              else if (reader->name()=="TrajectoryFilePath")
+              {
+                  if(wasFile)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      setFilePath(reader->readElementText());
+                      wasFile=true;
+                  }
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else if (reader->name()=="Speech")
+              {
+                  if(wasSpeech)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      speech=reader->readElementText();
+                      wasSpeech=true;
+                  }
+              }
+              else if (reader->name()=="AddArg")
+              {
+                  if(wasArgs)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      genArgs=reader->readElementText();
+                      wasArgs=true;
+                  }
+              }
+              else if(reader->name()=="ECPGeneratorType")
+              {
+                  if(wasGenType)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      int index = getGeneratorTypeTable().indexOf(reader->readElementText());
+                      if(index<GENERATORS_NUMBER && index>=0)
+                      {
+                          genType=(GeneratorType)index;
+                      }
+                      else
+                      {
+                          genType=(GeneratorType)0;
+                          //out of bounds error
+                      }
+                  }
+              }
+              else if(reader->name()=="Trajectory")
+              {
+                  if(wasTrj)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      wasTrj=true;
+                      coords->LoadFromXML(reader);
+                  }
+              }
+              else
+              {
+                  //error - unexpected node
+              }
+        }
+        return errors;
+    }
 
 private:
+    QString filePath;
     Robot robot;
     GeneratorType genType;
     Coordinates * coords;
@@ -462,15 +851,115 @@ public:
         }
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasSet = false;
+        bool wasParam = false;
+        std::cout<<"LOADING SGS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if(reader->name()=="SetOfRobots")
+              {
+                  if(wasSet)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      set.LoadFromXML(reader);
+                      wasSet=true;
+                  }
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParam)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParam=true;
+                  }
+              }
+              else
+              {
+                  //unknown parameter
+              }
+
+        }
+        if(set.second.size()>0)
+        {
+            //error
+        }
+
+        return errors;
+    }
 private:
     RobotSet set;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-struct genInit
+class genInit
 {
+public:
+
     Robot robot;
     std::vector < std::pair<GeneratorType, int> > init_values;
+
+    genInit(){}
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        if(reader->attributes().hasAttribute("name"))
+        {
+            int index = (getRobotTable().indexOf(reader->attributes().value("name").toString()));
+            if(index<ROBOTS_NUMBER && index>=0)
+            {
+                 robot = (Robot)index;
+            }
+            else
+            {
+                //error - out of bounds type
+            }
+        }
+        std::cout<<"LOADING SIS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="ecp"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else
+              {
+                  int index = getGeneratorTypeTable2().indexOf(reader->name().toString());
+                  if(index<GENERATORS_NUMBER && index>=0)
+                  {
+                      init_values.push_back(std::make_pair((GeneratorType)index,reader->readElementText().toInt()));
+                  }
+
+              }
+        }
+        return errors;
+    }
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -504,7 +993,7 @@ public:
             writer->writeStartElement("mp");
             if(transmitter<TRANSMITTERS_NUMBER)
             {
-                writer->writeTextElement("ROBOT", QString().fromStdString(TRANSMITTER_TABLE[transmitter]));
+                writer->writeTextElement("Transmitter", QString().fromStdString(TRANSMITTER_TABLE[transmitter]));
             }
             for(std::vector<Sensor>::iterator it = sensors.begin();it!=sensors.end();it++)
             {
@@ -579,10 +1068,109 @@ public:
 
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasParameters = false;
+        bool wasTransmitter = false;
+        bool inMP = false;
+        std::cout<<"LOADING SIS"<<std::endl;
+        QStringList errors;
+        int index;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParameters)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParameters=true;
+                  }
+              }
+              else if (reader->name()=="mp")
+              {
+                  if(reader->isStartElement())
+                  {
+                      inMP=true;
+                  }
+                  else
+                  {
+                      inMP=false;
+                  }
+              }
+              else if (reader->name()=="Transmitter")
+              {
+                  if(!inMP)
+                  {
+                      //error
+                  }
+                  if(wasTransmitter)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      index = getTransmitterTable().indexOf(reader->readElementText());
+                      if(index<TRANSMITTERS_NUMBER&&index>=0)
+                      {
+                          transmitter=(Transmitter)index;
+                          wasTransmitter=true;
+                      }
+                      else
+                      {
+                          //error
+                      }
+                  }
+              }
+              else if (reader->name()=="Sensor")
+              {
+                  if(!inMP)
+                  {
+                      //error
+                  }
+                  index = getSensorTable().indexOf(reader->readElementText());
+                  if(index<SENSORS_NUMBER && index>=0)
+                  {
+                      sensors.push_back((Sensor)index);
+                  }
+                  else
+                  {
+                      //error
+                  }
+              }
+              else if (reader->name()=="ecp")
+              {
+                  genInit tmp;
+                  tmp.LoadFromXML(reader);
+                  inits.push_back(tmp);
+              }
+              else
+              {
+                  //error - unexpeected node
+              }
+        }
+        return errors;
+    }
 private:
     std::vector<genInit> inits;//wektor, bo w jednym stanie inicjalizacji moze sie znajdowac wiele robotów
     Transmitter transmitter;
-    //bool cubestate;//@TODO:askubis sprawdzić
     std::vector<Sensor> sensors;
 };
 
@@ -590,7 +1178,7 @@ private:
 class WaitState:public BaseState
 {
 public:
-    WaitState():BaseState(){}
+    WaitState():BaseState(){Timespan=0;}
     WaitState(WaitState& old):BaseState(old)
     {
         this->Timespan=old.Timespan;
@@ -628,8 +1216,62 @@ public:
         x+=buf;
         return x;
     }
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        bool wasTimespan = false;
+        bool wasParameters = false;
+        std::cout<<"LOADING WS"<<std::endl;
+        QStringList errors;
+        while (!reader->atEnd())
+        {
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              if(reader->name()=="State"&&reader->isEndElement())
+              {
+                  return errors;
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
+              else if (reader->name()=="Parameters")
+              {
+                  if(wasParameters)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      parameters=reader->readElementText();
+                      wasParameters=true;
+                  }
+              }
+              else if (reader->name()=="TimeSpan")
+              {
+                  if(wasTimespan)
+                  {
+                      //error
+                  }
+                  else
+                  {
+                      Timespan=reader->readElementText().toULongLong();
+                      wasTimespan=true;
+                  }
+              }
+              else
+              {
+                  //error - unexpeected node
+              }
+
+        }
+        return errors;
+    }
 private:
-    long long int Timespan;
+    unsigned long long int Timespan;
 };
 
 

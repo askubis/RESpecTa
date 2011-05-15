@@ -12,7 +12,22 @@ class Model
 
 public:
     Model();
-    void save(std::string filename);
+    void deleteAll();
+    void checkmainname()
+    {
+            MyGraphType * tmp = (*subtasks)[mainName];
+            if(tmp==NULL)std::cout<<"VERYBAD"<<std::endl;
+    }
+    void checkname()
+    {
+            MyGraphType * tmp = (*subtasks)[mainName];
+            std::cout<<"VERTICES:"<<boost::num_vertices(*tmp)<<"EDGES:"<<boost::num_edges(*tmp)<<std::endl;
+    }
+    bool checkTransCondAvailabe(BaseState * source,QString cond);
+    bool checkSubtaskExists(std::string Name);
+    BaseState * getState(QString name, std::string subtaskName);
+    void setMainName(QString newName);
+    void save(QString filename);
     void deleteTransition(Transition * transition);
     void deleteState(BaseState * state);
     bool addState(BaseState * item, std::string subtaskName);
@@ -26,7 +41,7 @@ public:
     void checkIfOK();
     bool checkNameAvailable(QString name, MyGraphType * G);
     std::string getSubtaskName(QString StateName);
-    bool ReplaceState(BaseState * oldState, BaseState * newState);
+    bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);
 
     void MoveTransitionUp(BaseState * st, int index);
     void MoveTransitionDown(BaseState * st, int index);
@@ -45,6 +60,7 @@ public:
     void setView(RESpecTa * newres){res=newres;}
     std::string getMainName(){return mainName;}
 
+    bool checkTransCondAvailabe(Transition * tr,QString cond);
     signals:
     void reportError(QString);
 

@@ -219,7 +219,7 @@ BaseState * runGenWidget::getStateObject()
     State->setSpeech(speechLineEdit->text());
     State->setGenType(GeneratorType(genTypeCombo->currentIndex()));
     State->setRobot(Robot(robotCombo->currentIndex()));
-    tmp->setFilePath(trjFileName->text());
+    State->setFilePath(trjFileName->text());
     State->setCoords(tmp);
     return new RunGenState(*State);
 }
@@ -232,7 +232,7 @@ void runGenWidget::setState(BaseState * st)
     argsLineEdit->setText(State->getArgs());
     speechLineEdit->setText(State->getSpeech());
     genTypeCombo->setCurrentIndex(State->getGenType());
-    trjFileName->setText(State->getCoords()->getFilePath());
+    trjFileName->setText(State->getFilePath());
     poseDialog->setCoords(new Coordinates(*(State->getCoords())));
     poseDialog->coordsUpdated();
 
@@ -296,7 +296,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
 void emptyGenForSetWidget::addFirst()
 {
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString().fromStdString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
     else
     {        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));    }
 }
@@ -306,13 +306,13 @@ void emptyGenForSetWidget::removeFirst()
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString().fromStdString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
 }
 
 void emptyGenForSetWidget::addSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString().fromStdString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
     else
     {        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));    }
 }
@@ -322,7 +322,7 @@ void emptyGenForSetWidget::removeSecond()
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString().fromStdString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
 }
 
 BaseState * emptyGenForSetWidget::getStateObject()
@@ -345,7 +345,7 @@ BaseState * emptyGenForSetWidget::getStateObject()
     this->State->setSet(tmp);
     if(tmp.first.size()==0||tmp.second.size()==0)
     {
-        reportError(QString().fromStdString("None of the sets can be empty\nin EmptyGenForSet state"));
+        reportError(QString("None of the sets can be empty\nin EmptyGenForSet state"));
         return NULL;
     }
     return new EmptyGenForSetState(*State);
@@ -484,7 +484,7 @@ stopGenWidget::stopGenWidget(QWidget * parent, Model * newmod )
 void stopGenWidget::add()
 {
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString().fromStdString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
     else
     {        RobotList->addItem(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]));    }
 }
@@ -494,7 +494,7 @@ void stopGenWidget::remove()
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString().fromStdString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
 }
 
 BaseState * stopGenWidget::getStateObject()
@@ -512,7 +512,7 @@ BaseState * stopGenWidget::getStateObject()
     this->State->setSet(tmp);
     if(tmp.first.size()==0)
     {
-        reportError(QString().fromStdString("The set cannot be empty\nin StopGen state"));
+        reportError(QString("The set cannot be empty\nin StopGen state"));
         return NULL;
     }
     return new StopGenState(*State);
@@ -713,13 +713,13 @@ void PoseDialog::AddPose()
             sprintf(tab, " %3.2f", c[j]);
             str.append(QString().fromStdString(tab));
         }
-        str.append(QString().fromStdString(" V:"));
+        str.append(QString(" V:"));
         for(int j=0;j<i;j++)
         {
             sprintf(tab, " %3.2f", v[j]);
             str.append(QString().fromStdString(tab));
         }
-        str.append(QString().fromStdString(" A:"));
+        str.append(QString(" A:"));
         for(int j=0;j<i;j++)
         {
             sprintf(tab, " %3.2f", a[j]);
@@ -770,8 +770,8 @@ void PoseDialog::PosesReset()
 
 void PoseDialog::coordsUpdated()
 {
-    coordTypeCombo->setCurrentIndex(this->coords->getCoordType());
-    motionTypeCombo->setCurrentIndex(this->coords->getMotionType());
+    coordTypeCombo->setCurrentIndex((int)this->coords->getCoordType());
+    motionTypeCombo->setCurrentIndex((int)this->coords->getMotionType());
     poseList->clear();
     foreach(Pose * pose, this->coords->getPoses())
     {
@@ -785,13 +785,13 @@ void PoseDialog::coordsUpdated()
             sprintf(tab, " %3.2f", pose->getC()[j]);
             str.append(QString().fromStdString(tab));
         }
-        str.append(QString().fromStdString(" V:"));
+        str.append(QString(" V:"));
         for(int j=0;j<i;j++)
         {
             sprintf(tab, " %3.2f", pose->getV()[j]);
             str.append(QString().fromStdString(tab));
         }
-        str.append(QString().fromStdString(" A:"));
+        str.append(QString(" A:"));
         for(int j=0;j<i;j++)
         {
             sprintf(tab, " %3.2f", pose->getA()[j]);
@@ -860,7 +860,7 @@ void ECPDialog::add()
 bool mark=false;
 if(argLineEdit->text().size()==0)
 {
-    reportError(QString().fromStdString("Generator needs to have arguments"));
+    reportError(QString("Generator needs to have arguments"));
     return;
 }
 for (int i=0;i<genList->count();i++)

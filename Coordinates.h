@@ -13,6 +13,7 @@
 
 QT_BEGIN_NAMESPACE
 class QString;
+class QXmlStreamReader;
 QT_END_NAMESPACE
 
 
@@ -23,7 +24,6 @@ public:
     Coordinates(Coordinates& old)
     {
         this->coordType=old.coordType;
-        this->filePath=old.filePath;
         this->motionType=old.motionType;
         Pose * x;
         for(int i=0;i<old.poses.size();i++)
@@ -41,8 +41,7 @@ public:
         }
     }
 
-    QString getFilePath() {return filePath;}
-    void setFilePath(QString newPath) {filePath=newPath;}
+
 
     CoordType getCoordType() {return coordType;}
     void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
@@ -53,9 +52,66 @@ public:
     std::vector<Pose *> getPoses(){return poses;}
     void setPoses(std::vector<Pose *> newPoses){poses=newPoses;}
 
+    QStringList LoadFromXML(QXmlStreamReader * reader)
+    {
+        QStringList errors;
+        if(reader->attributes().hasAttribute("coordinateType")&&reader->attributes().hasAttribute("motionType"))
+        {
+            int index = (getCoordTypeTable().indexOf(reader->attributes().value("coordinateType").toString()));
+            if(index<COORDTYPES_NUMBER && index>=0)
+            {
+                 coordType = (CoordType)index;
+            }
+            else
+            {
+                //error - out of bounds type
+            }
+            index = (getMotionTypeTable().indexOf(reader->attributes().value("motionType").toString()));
+            if(index<MOTIONTYPES_NUMBER && index>=0)
+            {
+                 motionType = (MotionType)index;
+            }
+            else
+            {
+                //error - out of bounds type
+            }
+        }
+        else
+        {
+            //add error,
+            return errors;
+        }
+        while (!reader->atEnd())
+        {
+            //get coordinateType and motionType
+            std::cout<<"READING COORDS"<<std::endl;
+            if(reader->name().toString()=="Trajectory"&&reader->isEndElement())
+            {
+                return errors;
+            }
+              reader->readNextStartElement();
+              std::cout<<reader->name().toString().toStdString()<<std::endl;
+            if(reader->name().toString()=="Trajectory"&&reader->isEndElement())
+            {
+                return errors;
+            }
+            else if (reader->name()=="Pose")
+            {
+                Pose * tmp = new Pose();
+                tmp->LoadFromXML(reader);
+                poses.push_back(tmp);
+            }
+            else
+            {
+                //error unexpected name
+            }
+        }
+            return errors;
+    }
+
+
 
 private:
-    QString filePath;
     CoordType coordType;
     MotionType motionType;
     std::vector<Pose *> poses;

@@ -76,7 +76,7 @@ void TransDialog::DownPressed()
     int index = transCondList->currentIndex().row();
     if(index==state->getTransitions().size()-1)
     {
-        emit reportError(QString().fromStdString("Cannot move the last transition down"));
+        emit reportError(QString("Cannot move the last transition down"));
         return;
     }
     mod->MoveTransitionDown(state,index);
@@ -90,11 +90,11 @@ void TransDialog::UpPressed()
     int index = transCondList->currentIndex().row();
     if(index<0)
     {
-        emit reportError(QString().fromStdString("A transition has to be selected"));
+        emit reportError(QString("A transition has to be selected"));
     }
     if(index==0)
     {
-        emit reportError(QString().fromStdString("Cannot move the first transition up"));
+        emit reportError(QString("Cannot move the first transition up"));
         return;
     }
     mod->MoveTransitionUp(state,index);

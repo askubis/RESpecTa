@@ -175,7 +175,7 @@ void StateWidget::AcceptState()
 {
     if(edited==NULL)
     {
-        emit reportError(QString().fromStdString("Please, select a state to edit, edit it and then press OK."));
+        emit reportError(QString("Please, select a state to edit, edit it and then press OK."));
         return;
     }
     if ( !StateNameOK())
@@ -192,7 +192,7 @@ void StateWidget::AcceptState()
     OKButton->setDisabled(true);
     BaseState * tmp = edited;
     edited = NULL;
-    emit ReplaceState(tmp, toInsertState);//TODO need to copy old name when reading or it fails - cannot read if it was deleted
+    emit ReplaceState(tmp, toInsertState, oldStateName);
 
 }
 
@@ -252,7 +252,9 @@ void StateWidget::refreshData()
 
 void StateWidget::StateSelected(BaseState * state)
 {
-    if(state->getName().toLower()==QString().fromStdString("_end_")||state->getName().toLower()==QString().fromStdString("_stop_"))return;
+
+    if(state->getName().toLower()==QString("_end_")||state->getName().toLower()==QString("_stop_"))return;
+    oldStateName = state->getName();
     edited = state;
     OKButton->setDisabled(false);
     stateNameEdit->setText(state->getName());
@@ -273,17 +275,17 @@ bool StateWidget::StateNameOK()
 {
     if (stateNameEdit->text().toLower()=="_init_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
     {
-        emit reportError(QString().fromStdString("_INIT_ name is dedicated only to SYSTEM_INITIALIZATION state"));
+        emit reportError(QString("_INIT_ name is dedicated only to SYSTEM_INITIALIZATION state"));
         return false;
     }
     if (stateNameEdit->text().toLower()=="_init_" && subtaskCombo->currentText()!=QString().fromStdString(mod->getMainName()))
     {
-        emit reportError(QString().fromStdString("_INIT_ name is dedicated only to the main task"));
+        emit reportError(QString("_INIT_ name is dedicated only to the main task"));
         return false;
     }
     if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")
     {
-        emit reportError(QString().fromStdString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
+        emit reportError(QString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
         return false;
     }
     return true;

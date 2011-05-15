@@ -37,9 +37,11 @@ private:
 signals:
     void reportError(QString msgString);
 private slots:
+    void refreshAllWidgets();
     void itemSelected(QGraphicsItem *);
     void refreshWidget(int);
     void forwardError(QString msgString){emit reportError(msgString);}
+    void SignalDeleted();
 
 
 

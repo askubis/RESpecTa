@@ -30,13 +30,13 @@ static QStringList getStateTypeTable()
 
 //***************   GENERATOR TYPES   ***************//
 enum GeneratorType {ECP_GEN_TEACH_IN, ECP_GEN_NEWSMOOTH, ECP_GEN_WEIGHT_MEASURE, ECP_GEN_TRANSPARENT, ECP_GEN_TFF_NOSE_RUN,
-     ECP_GEN_BIAS_EDP_FORCE, ECP_GEN_TFF_RUBIK_GRAB, ECP_GEN_TFF_RUBIK_FACE_ROTATE, ECP_ST_GRIPPER_OPENING,
-     ECP_GRIPPER_APPROACH_GEN,
+     ECP_ST_BIAS_EDP_FORCE, ECP_GEN_TFF_RUBIK_GRAB, ECP_GEN_TFF_RUBIK_FACE_ROTATE, ECP_ST_GRIPPER_OPENING,
+     ECP_GEN_TFF_GRIPPER_APPROACH,
                 GENERATORS_NUMBER};
 static std::string GENERATOR_TYPE_TABLE[GENERATORS_NUMBER+1] =
         {"ECP_GEN_TEACH_IN","ECP_GEN_NEWSMOOTH","ECP_GEN_WEIGHT_MEASURE","ECP_GEN_TRANSPARENT","ECP_GEN_TFF_NOSE_RUN",
-         "ECP_GEN_BIAS_EDP_FORCE","ECP_GEN_TFF_RUBIK_GRAB","ECP_GEN_TFF_RUBIK_FACE_ROTATE","ECP_ST_GRIPPER_OPENING",
-         "ECP_GIRPPER_APPROACH_GEN",""};
+         "ECP_ST_BIAS_EDP_FORCE","ECP_GEN_TFF_RUBIK_GRAB","ECP_GEN_TFF_RUBIK_FACE_ROTATE","ECP_ST_GRIPPER_OPENING",
+         "ECP_GEN_TFF_GRIPPER_APPROACH",""};
 static std::string GENERATOR_TYPE_TABLE2[GENERATORS_NUMBER+1] =
         {"ecp_teach_in_gen","ecp_smooth_gen","weight_measure_gen","ecp_gen_t","ecp_tff_nose_run_gen",
          "bias_edp_force_gen","ecp_tff_rubik_grab_gen","ecp_tff_rubik_face_rotate_gen","gripper_opening",
@@ -47,6 +47,15 @@ static QStringList getGeneratorTypeTable()
     for (int i=0;i<GENERATORS_NUMBER;i++)
     {
         items<<QString().fromStdString(GENERATOR_TYPE_TABLE[i]);
+    }
+    return items;
+}
+static QStringList getGeneratorTypeTable2()
+{
+    QStringList items;
+    for (int i=0;i<GENERATORS_NUMBER;i++)
+    {
+        items<<QString().fromStdString(GENERATOR_TYPE_TABLE2[i]);
     }
     return items;
 }
@@ -84,10 +93,10 @@ static QStringList getSensorTable()
 }
 
 //***************   COORD TYPES   ***************//
-enum CoordType {ECP_INVALID_END_EFFECTOR, ECP_XYZ_ANGLE_AXIS, ECP_XYZ_EULER_ZYZ, ECP_JOINT, ECP_MOTOR, ECP_PF_VELOCITY,
+enum CoordType {ecp_XYZ_ANGLE_AXIS, ecp_XYZ_EULER_ZYZ, JOINT, MOTOR, ECP_PF_VELOCITY,
             COORDTYPES_NUMBER};
 static std::string COORD_TYPE_TABLE[COORDTYPES_NUMBER+1] =
-        {"ECP_INVALID_END_EFFECTOR","ECP_XYZ_ANGLE_AXIS","ECP_XYZ_EULER_ZYZ","ECP_JOINT","ECP_MOTOR","ECP_PF_VELOCITY",""};
+        {"ecp_XYZ_ANGLE_AXIS","ecp_XYZ_EULER_ZYZ","JOINT","MOTOR","ECP_PF_VELOCITY",""};
 static QStringList getCoordTypeTable()
 {
     QStringList items;
@@ -102,7 +111,7 @@ static QStringList getCoordTypeTable()
 enum MotionType {ABSOLUTE, RELATIVE,
              MOTIONTYPES_NUMBER};
 static std::string MOTION_TYPE_TABLE[MOTIONTYPES_NUMBER+1] =
-        {"ABSOLUTE","RELATIVE",""};
+        {"Absolute","Relative",""};
 static QStringList getMotionTypeTable()
 {
     QStringList items;

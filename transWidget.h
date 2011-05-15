@@ -31,6 +31,8 @@ public:
 
     void refreshData();
     void TransSelected(Transition *);
+
+    void setOKButtonDisabled(){OKButton->setDisabled(true);edited=NULL;}
 private:
     Model * mod;
 

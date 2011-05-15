@@ -30,11 +30,14 @@ public:
 
     void refreshData();
     void StateSelected(BaseState *);
+
+    void setOKButtonDisabled(){OKButton->setDisabled(true);edited=NULL;}
 private:
     bool StateNameOK();
     Model * mod;
 
     BaseState * edited;
+    QString oldStateName;
 
     QVBoxLayout *topLayout;
     QVBoxLayout *StateLayout;
@@ -67,7 +70,7 @@ signals:
     void InsertState(BaseState * newState);
     void selectedSubtaskName(QString newString);
     void reportError(QString msgString);
-    void ReplaceState(BaseState * oldState, BaseState * newState);
+    void ReplaceState(BaseState * oldState, BaseState * newState, QString oldName);
 
 
 

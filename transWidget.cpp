@@ -50,15 +50,16 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
 
 
    QLabel * sourceLabel =new QLabel(tr("Source state:"));
-   QLabel * sourceNameLabel = new QLabel();
+   sourceNameLabel = new QLabel();
 
    QLabel * destLabel =new QLabel(tr("Destination state:"));
-   QLabel * destNameLabel = new QLabel();
+   destNameLabel = new QLabel();
 
    TransitionLayout->addWidget(sourceLabel);
    TransitionLayout->addWidget(sourceNameLabel);
    TransitionLayout->addWidget(destLabel);
    TransitionLayout->addWidget(destNameLabel);
+
 
 
 
@@ -73,7 +74,7 @@ void TransWidget::AcceptTrans()
 {
     if(edited==NULL)
     {
-        emit reportError(QString().fromStdString("Please, select a transition to edit, edit it and then press OK."));
+        emit reportError(QString("Please, select a transition to edit, edit it and then press OK."));
         OKButton->setDisabled(true);
         sourceNameLabel->setText(QString());
         destNameLabel->setText(QString());
@@ -81,18 +82,25 @@ void TransWidget::AcceptTrans()
     }
     if(!mod->checkTransitonExists(edited))
     {
-        emit reportError(QString().fromStdString("The Transition You have been editing has been deleted"));
+        emit reportError(QString("The Transition You have been editing has been deleted"));
         edited=NULL;
         OKButton->setDisabled(true);
         sourceNameLabel->setText(QString());
         destNameLabel->setText(QString());
         return;
     }
-    edited->setCondition(conditionLineEdit->text());
-    edited->setSubtask(stateCombo->currentText().toStdString());
-    OKButton->setDisabled(false);
-    sourceNameLabel->setText(QString());//TO EDIT
-    destNameLabel->setText(QString());
+    if (mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
+    {
+        edited->setCondition(conditionLineEdit->text());
+        edited->setSubtask(stateCombo->currentText().toStdString());
+        OKButton->setDisabled(false);
+        sourceNameLabel->setText(edited->startItem()->getName());
+        destNameLabel->setText(edited->endItem()->getName());
+    }
+    else//that condition is already used for the source state
+    {
+
+    }
 
 }
 
@@ -152,8 +160,9 @@ void TransWidget::TransSelected(Transition * trans)
 {
     edited = trans;
     OKButton->setDisabled(false);
-    sourceNameLabel->setText(QString());//TO EDIT
-    destNameLabel->setText(QString());
+
+    sourceNameLabel->setText(trans->startItem()->getName());
+    destNameLabel->setText(trans->endItem()->getName());
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(QString().fromStdString(trans->getSubtask()))==std::string(""))
     {

@@ -130,17 +130,299 @@ void RESpecTa::createFileMenu()
     saveAction->setStatusTip(tr("save to file"));
     connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
+    saveAsAction = new QAction(tr("S&ave As"), this);
+    saveAsAction->setShortcuts(QKeySequence::SaveAs);
+    saveAsAction->setStatusTip(tr("save to specific file"));
+    connect(saveAsAction, SIGNAL(triggered()), this, SLOT(SaveAs()));
+
+    loadAction = new QAction(tr("&Load"), this);
+    loadAction->setShortcuts(QKeySequence::Open);
+    loadAction->setStatusTip(tr("Load a file"));
+    connect(loadAction, SIGNAL(triggered()), this, SLOT(Load()));
+
+
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAction);
     fileMenu->addAction(saveAction);
+    fileMenu->addAction(saveAsAction);
+    fileMenu->addAction(loadAction);
 }
+
+void RESpecTa::Load()
+{
+    QString tmp;
+    QString LoadName = QFileDialog::getOpenFileName(this,
+                                tr("QFileDialog::getOpenFileName()"),
+                                tmp,
+                                tr("XML Files (*.xml)"));
+    if(!LoadName.isEmpty())
+    {
+        LoadFile(LoadName);
+        SaveName = LoadName;
+    }
+}
+
+void RESpecTa::LoadFile(QString fileName)
+{
+    mod->deleteAll();
+
+    QString subName = fileName;
+    subName.chop(4);//delete .xml
+    int ind = subName.lastIndexOf('/');
+    subName.remove(0,ind+1);//delete beginning till the last /
+
+
+    mod->checkname();
+    mod->checkmainname();
+    mod->setMainName(subName);
+    mod->checkname();
+    mod->checkmainname();
+    LoadStates(fileName);
+    mod->checkname();
+    mod->checkmainname();
+    LoadTransitions(fileName);
+    mod->checkname();
+    mod->checkmainname();
+    emit refreshWidgets();
+}
+
+void RESpecTa::LoadStates(QString filename)
+{
+
+    std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
+    QString subName = filename;
+    if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
+    int ind = subName.lastIndexOf('/');
+    subName.remove(0,ind+1);//delete beginning till the last /
+    QFile* file = new QFile(filename);
+    file->open( QIODevice::ReadOnly);
+    QXmlStreamReader * reader = new QXmlStreamReader(file);
+    while (!reader->atEnd())
+    {
+          reader->readNextStartElement();
+          std::cout<<reader->name().toString().toStdString()<<std::endl;
+          if(reader->name().toString()=="State")
+          {
+              if(reader->attributes().hasAttribute("id")&&reader->attributes().hasAttribute("type"))
+              {
+                  BaseState * state=NULL;
+                  StateType type;
+                  std::cout<<"HasID "<<reader->attributes().value("id").toString().toStdString()<<std::endl;
+                  std::cout<<"HasTYPE "<<reader->attributes().value("type").toString().toStdString()<<std::endl;
+                  int index = (getStateTypeTable().indexOf(reader->attributes().value("type").toString()));
+                  if(index<STATE_TYPES_NUMBER)
+                  {
+                       type = (StateType)index;
+                  }
+                  else
+                  {
+                      //error - out of bounds type
+                  }
+                  std::cout<<"TYPE "<<type<<std::endl;
+                  switch (type)
+                  {
+                      case 0:
+                          state = new sysInitState();
+                          break;
+                      case 1:
+                          state = new RunGenState();
+                          break;
+                      case 2:
+                          state = new EmptyGenForSetState();
+                          break;
+                      case 3:
+                          state = new EmptyGenState();
+                          break;
+                      case 4:
+                          state = new WaitState();
+                          break;
+                      case 5:
+                          state = new StopGenState();
+                          break;
+                      case 6:
+                          state = new InitiateSensorState();
+                          break;
+                      case 7:
+                          state = new GetSensorState();
+                          break;
+                      default:
+                        if(reader->attributes().value("type").toString()==QString(""))
+                         {
+                            state = new StopState();
+                         }
+                          //error
+                      break;
+                  };
+                  if(state!=NULL)
+                  {
+                      std::cout<<"LOADING STATE"<<std::endl;
+                    if(type!=-1)state->setType(type);
+                    else state->setType((StateType)STATE_TYPES_NUMBER);
+                    state->setName(reader->attributes().value("id").toString());
+                    QStringList errors = state->LoadFromXML(reader);
+                    scene->setItemParams(state);
+                    state->setToolTip(QString().fromStdString(state->Print()));
+                    mod->addState(state, subName.toStdString());
+                    //TODO: display errors,
+                  }
+                  else
+                  {
+
+                  }
+              }
+              else
+              {
+
+                  //error error line, no id or type in state
+                  reader->readElementText();
+
+              }
+          }
+          else if (reader->name()=="xi:include")
+          {
+                   QString subtaskName = reader->attributes().value("href").toString();
+                   mod->addSubtask(subtaskName);
+                   LoadStates(subtaskName);
+          }
+    }
+    file->close();
+}
+
+void RESpecTa::LoadTransitions(QString filename)
+{
+    std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
+    QFile* file = new QFile(filename);
+    QString subName = filename;
+    if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
+    int ind = subName.lastIndexOf('/');
+    subName.remove(0,ind+1);//delete beginning till the last /
+    file->open( QIODevice::ReadOnly);
+    QXmlStreamReader * reader = new QXmlStreamReader(file);
+    QString StateName;
+    while (!reader->atEnd())
+    {
+          reader->readNextStartElement();
+          std::cout<<reader->name().toString().toStdString()<<std::endl;
+          if(reader->name().toString()=="State"&&reader->isStartElement())
+          {
+              StateName = reader->attributes().value("id").toString();
+          }
+          else if(reader->name().toString()=="State"&&reader->isEndElement())
+          {
+              StateName = "";
+          }
+          else if(reader->name().toString()=="transition"&&reader->isStartElement())
+          {
+              std::cout<<"LOADING TRANS"<<std::endl;
+              if(StateName=="")
+              {
+                  //error
+              }
+              else
+              {
+                  if(reader->attributes().hasAttribute("condition")&&reader->attributes().hasAttribute("target"))
+                  {
+                      QString subtask;
+                      QString condition = reader->attributes().value("condition").toString();
+                      QString target = reader->attributes().value("target").toString();
+                      QStringList strList = target.split(">>");
+                      if(strList.size()>1)
+                      {
+                          subtask = strList[0];
+                          target = strList[1];
+                      }
+                      else
+                      {
+                          target = strList[0];
+                      }
+                      BaseState * sourceState = mod->getState(StateName, subName.toStdString());
+                      BaseState * targetState = mod->getState(target, subName.toStdString());
+                      if(sourceState!=NULL&&targetState!=NULL)
+                      {
+                          Transition * trans = new Transition(sourceState, targetState);
+                          trans->setCondition(condition);
+                          trans->setSubtask(subtask.toStdString());
+                          if(mod->checkTransCondAvailabe(sourceState, condition))
+                          {
+                            scene->addItem(trans);
+                            mod->tryInsertTransition(trans);
+                            trans->updatePosition();
+                            scene->setMode(DiagramScene::MoveItem);
+                            trans->setToolTip(QString().fromStdString(trans->Print()));
+                            trans->setZValue(-1000.0);
+                            sourceState->addTransition(trans);
+                            targetState->addTransition(trans);
+                          }
+                          else
+                          {
+                              delete trans;
+                              //error
+                          }
+                      }
+                      else
+                      {
+                          //error
+                      }
+                  }
+                  else
+                  {
+                      //error
+                  }
+              }
+          }
+          else if (reader->name()=="xi:include")
+          {
+                   QString subtaskName = reader->attributes().value("href").toString();
+                   LoadTransitions(subtaskName);
+          }
+    }
+}
+
+
+
 
 void RESpecTa::save()
 {
+    mod->checkname();
     //get path
-    mod->save("MAIN.xml");
+    if(SaveName.isEmpty())
+    {
+        SaveAs();
+    }
+    else
+    {
+        mod->save(SaveName);
+    }
+}
 
+void RESpecTa::SaveAs()
+{
+    QString tmp;
+    SaveName = QFileDialog::getSaveFileName(this,
+                                tr("QFileDialog::getOpenFileName()"),
+                                tmp,
+                                tr("XML Files (*.xml)"));
+    if (!SaveName.isEmpty())
+    {
+        if(SaveName.endsWith(".xml"))
+            mod->save(SaveName);
+        else
+        {
+            SaveName.append(".xml");
+            QFile * tmp = new QFile(SaveName);
+            if(tmp->exists())
+            {
+                QMessageBox::StandardButton reply;
+                reply = QMessageBox::question(this, tr("Warning"),
+                                                QString("The file exists,\nare you sure want\nto overwrite it"),
+                                                QMessageBox::Yes | QMessageBox::Abort);
+                if(reply==QMessageBox::Abort)return;
 
+            }
+            mod->save(SaveName);
+        }
+    }
+    emit refreshWidgets();
 }
 
 void RESpecTa::createHelpMenu()
@@ -206,12 +488,9 @@ void RESpecTa::deleteItem()
     {
         if (item->type() == Transition::Type)
         {
-            scene->removeItem(item);
             Transition *transition = qgraphicsitem_cast<Transition *>(item);
-            mod->deleteTransition(transition);
+            deleteTrans(transition);
 
-            //scene->removeItem(item);
-            delete item;
         }
     }
 
@@ -220,28 +499,38 @@ void RESpecTa::deleteItem()
          if (item->type() == BaseState::Type)
          {
              BaseState * state = qgraphicsitem_cast<BaseState *>(item);
-             foreach(Transition * transition, state->getTransitions())
-             {
-                 mod->deleteTransition(transition);
-                 scene->removeItem(transition);
-                 delete transition;
-             }
-
-
-
-             state->removeTransitions();
-
-             mod->deleteState(state);
-
-
-
-             scene->removeItem(item);
-
-             delete item;
+             deleteState(state);
          }
      }
+    emit SignalDeleted();
 }
-//! [3]
+
+
+void RESpecTa::deleteState(BaseState * state)
+{
+    foreach(Transition * transition, state->getTransitions())
+    {
+        deleteTrans(transition);
+    }
+
+    state->removeTransitions();
+
+    mod->deleteState(state);
+
+    scene->removeItem(state);
+
+    delete state;
+}
+
+void RESpecTa::deleteTrans(Transition * trans)
+{
+    mod->deleteTransition(trans);
+
+    scene->removeItem(trans);
+    delete trans;
+
+}
+
 
 //! [4]
 void RESpecTa::pointerGroupClicked(int)
@@ -297,9 +586,9 @@ void RESpecTa::itemInserted(BaseState *item)
     //Vertex v_new;
 
     //item->setSubtaskName(currentSubtask);
-    if(currentSubtask.toStdString()==mod->getMainName() && item->getName().toLower()==QString().fromStdString("_end_"))
+    if(currentSubtask.toStdString()==mod->getMainName() && item->getName().toLower()==QString("_end_"))
     {
-        item->setName(QString().fromStdString("_STOP_"));
+        item->setName(QString("_STOP_"));
     }
     bool check = mod->addState(item, currentSubtask.toStdString());
     if(check)
@@ -309,7 +598,7 @@ void RESpecTa::itemInserted(BaseState *item)
     else
     {
         scene->removeItem(item);
-        delete item;        //TODO:CHECK
+        delete item;
     }
 
     //item->setStatusTip(item->Print());
@@ -335,10 +624,6 @@ bool RESpecTa::lineInserted(Transition *line)
 {
 
     bool test = mod->tryInsertTransition(line);
-    if(test==false)
-    {
-        reportError(QString("Cannot create a transition between\nstates in different tasks"));
-    }
     return test;
 }
 
@@ -798,7 +1083,7 @@ void RESpecTa::selectedSubtaskName(QString newString)
 
 void RESpecTa::reportError(QString msgString)
 {
-    QMessageBox::information(this, QString().fromStdString("Error"), msgString);
+    QMessageBox::information(this, QString("Error"), msgString);
 }
 
 void RESpecTa::addEndState()
@@ -811,6 +1096,7 @@ void RESpecTa::addEndState()
 }
 void RESpecTa::EditTransitionsOfState()
 {
+    if(scene->selectedItems().isEmpty())return;
     if(scene->selectedItems().first()->type()==BaseState::Type)
     {
         BaseState * state = qgraphicsitem_cast<BaseState *>(scene->selectedItems().first());
@@ -821,9 +1107,9 @@ void RESpecTa::EditTransitionsOfState()
     return;
 }
 
-void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
+void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName)
 {
-    bool check = mod->ReplaceState(oldState,newState);//need to use oldStateName given, cannot check it if the state was deleted
+    bool check = mod->ReplaceState(oldState,newState, oldStateName);//need to use oldStateName given, cannot check it if the state was deleted
     if(check)
     {
         QList<Transition *> TranList = oldState->getTransitions();

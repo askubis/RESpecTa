@@ -221,11 +221,11 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 return;
             }
             Transition *transition = new Transition(startItem, endItem);
+            transition->setCondition(transitionAttributes.first);
             bool test = emit lineInserted(transition);
             if(test)
             {
-                transition->setCondition(transitionAttributes.first);
-                transition->setSubtask(transitionAttributes.second.toStdString());//to be changed
+                transition->setSubtask(transitionAttributes.second.toStdString());
                 transition->setColor(myLineColor);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);
@@ -233,6 +233,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 addItem(transition);
                 transition->updatePosition();
                 myMode = MoveItem;
+                transition->setToolTip(QString().fromStdString(transition->Print()));
             }
             else
             {

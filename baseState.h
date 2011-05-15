@@ -18,6 +18,7 @@ class QStyleOptionGraphicsItem;
 class QWidget;
 class QPolygonF;
 class QXmlStreamWriter;
+class QXmlStreamReader;
 QT_END_NAMESPACE
 
 #include "RobotSet.h"
@@ -51,6 +52,7 @@ public:
     {
         nameTextItem->setPos(this->pos().x()-50,this->pos().y()-50);
     }
+    virtual QStringList LoadFromXML(QXmlStreamReader *){}
 
 
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
