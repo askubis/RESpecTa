@@ -200,7 +200,7 @@ void RESpecTa::LoadStates(QString filename)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<reader->name().toString().toStdString()<<std::endl;
+          std::cout<<"MainLoop State: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name().toString()=="State")
           {
               if(reader->attributes().hasAttribute("id")&&reader->attributes().hasAttribute("type"))
@@ -255,10 +255,10 @@ void RESpecTa::LoadStates(QString filename)
                   };
                   if(state!=NULL)
                   {
-                      std::cout<<"LOADING STATE"<<std::endl;
                     if(type!=-1)state->setType(type);
-                    else state->setType((StateType)STATE_TYPES_NUMBER);
+                    else state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
                     state->setName(reader->attributes().value("id").toString());
+std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                     QStringList errors = state->LoadFromXML(reader);
                     scene->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
@@ -302,7 +302,7 @@ void RESpecTa::LoadTransitions(QString filename)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<reader->name().toString().toStdString()<<std::endl;
+          std::cout<<"MainLoop Transition: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name().toString()=="State"&&reader->isStartElement())
           {
               StateName = reader->attributes().value("id").toString();
@@ -555,6 +555,11 @@ void RESpecTa::bringToFront()
             zValue = item->zValue() + 0.1;
     }
     selectedItem->setZValue(zValue);
+    if(selectedItem->type()==BaseState::Type)
+    {
+        BaseState * state = (BaseState*) selectedItem;
+        state->getNameTextItem()->setZValue(zValue+0.1);
+    }
 }
 //! [5]
 
@@ -571,9 +576,14 @@ void RESpecTa::sendToBack()
     foreach (QGraphicsItem *item, overlapItems) {
         if (item->zValue() <= zValue &&
             item->type() == BaseState::Type)
-            zValue = item->zValue() - 0.1;
+            zValue = item->zValue() - 0.2;
     }
     selectedItem->setZValue(zValue);
+    if(selectedItem->type()==BaseState::Type)
+    {
+        BaseState * state = (BaseState*) selectedItem;
+        state->getNameTextItem()->setZValue(zValue+0.1);
+    }
 }
 //! [6]
 
@@ -1124,6 +1134,9 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString 
         scene->setItemParams(newState);
         newState->setToolTip(QString().fromStdString(newState->Print()));
         delete oldState;
+        scene->selectedItems().clear();
+        scene->selectedItems().push_back(newState);
+        newState->setSelected(true);
         emit itemSelected(newState);
     }
 

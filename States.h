@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "genInit.h"
 #include "baseState.h"
 class QXmlStreamWriter;
 class QXmlStreamReader;
@@ -65,7 +66,7 @@ class StopState:public BaseState
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"StopState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -109,20 +110,7 @@ public:
             writer->writeTextElement("Parameters", parameters);
             //x+=this->parameters.toStdString();
         }
-        writer->writeStartElement("SetOfRobots");
-        writer->writeStartElement("FirstSet");
-        for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
-        {
-            writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
-        }
-        writer->writeEndElement();
-        writer->writeStartElement("SecSet");
-        for(std::vector<Robot>::iterator it = set.second.begin();it!=set.second.end();it++)
-        {
-            writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
-        }//*/
-        writer->writeEndElement();
-        writer->writeEndElement();
+        set.Print(writer);
     }
     std::string Print()
     {
@@ -136,30 +124,18 @@ public:
             x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
-        x+="\nFIRST SET:";
-        for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
-        {
-            x+="\nROBOT: ";
-            x+=ROBOT_TABLE[(*it)];
-        }
-        x+="\nSECOND SET:";
-        for(std::vector<Robot>::iterator it = set.second.begin();it!=set.second.end();it++)
-        {
-            x+="\nROBOT: ";
-            x+=ROBOT_TABLE[(*it)];
-        }
+        x+=set.Print();
         return x;
     }
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         bool wasSet = false;
         bool wasParam = false;
-        std::cout<<"LOADING EGFS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"EmptyGenForSetState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -261,12 +237,11 @@ public:
         bool wasRobot = false;
         bool wasParam = false;
         bool wasArg = false;
-        std::cout<<"LOADING EG"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"EmptyGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -314,6 +289,14 @@ public:
                       parameters=reader->readElementText();
                       wasParam=true;
                   }
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
               else
               {
@@ -368,12 +351,11 @@ public:
     {
         bool wasParam = false;
         bool wasSensor = false;
-        std::cout<<"LOADING GS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"GetSensorState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -409,6 +391,14 @@ public:
                       parameters=reader->readElementText();
                       wasParam=true;
                   }
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
               else
               {
@@ -462,12 +452,11 @@ public:
     {
         bool wasParam = false;
         bool wasSensor = false;
-        std::cout<<"LOADING IS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"InitiateSensorState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -503,6 +492,14 @@ public:
                       parameters=reader->readElementText();
                       wasParam=true;
                   }
+              }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
               else
               {
@@ -557,46 +554,7 @@ public:
         }
         writer->writeTextElement("TrajectoryFilePath", getFilePath());
         if(this->coords->getPoses().size()==0)return;
-        writer->writeStartElement("Trajectory");
-        writer->writeAttribute(QString("coordinateType"), QString().fromStdString(COORD_TYPE_TABLE[coords->getCoordType()]));
-        writer->writeAttribute(QString("motionType"), QString().fromStdString(MOTION_TYPE_TABLE[coords->getMotionType()]));
-        std::vector<Pose *>::iterator it;
-        char  w[12];
-        std::string x;
-        std::vector<Pose *> posesCopy = this->coords->getPoses();
-        for(it = posesCopy.begin(); it!=posesCopy.end();it++)
-        {
-            writer->writeStartElement("Pose");
-            std::vector<double> tmp = (*(it))->getA();
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-            writer->writeTextElement("Accelerations", QString().fromStdString(x));
-            x.clear();
-            tmp = (*(it))->getV();
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-            writer->writeTextElement("Velocities", QString().fromStdString(x));
-            x.clear();
-            tmp = (*(it))->getC();
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-            writer->writeTextElement("Coordinates", QString().fromStdString(x));
-            x.clear();
-            writer->writeEndElement();
-        }
-        writer->writeEndElement();
+        coords->Print(writer);
     }
 
     std::string Print()
@@ -627,41 +585,7 @@ public:
         }
         x+="\nFilePath:";
         x+=getFilePath().toStdString();
-        x+="\nMotion Type:";
-        x+=MOTION_TYPE_TABLE[coords->getMotionType()];
-        x+="\nCoord Type:";
-        x+=COORD_TYPE_TABLE[coords->getCoordType()];
-        std::vector<Pose *>::iterator it;
-        char  w[12];
-        std::vector<Pose *> posesCopy = this->coords->getPoses();
-        for(it = posesCopy.begin(); it!=posesCopy.end();it++)
-        {
-            std::vector<double> tmp = (*(it))->getA();
-            x+="\nPOSE:";
-            x+="\nAccelerations: ";
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-            tmp = (*(it))->getV();
-            x+="\nVelocities: ";
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-            tmp = (*(it))->getC();
-            x+="\nCoords: ";
-            for (int i=0;i<tmp.size();i++)
-            {
-                sprintf(w, "%lf", tmp[i]);
-                x+=w;
-                x+=" ";
-            }
-        }
+        x+=coords->Print();
         return x;
     }
     QStringList LoadFromXML(QXmlStreamReader * reader)
@@ -673,12 +597,11 @@ public:
         bool wasTrj=false;
         bool wasGenType=false;
         bool wasFile=false;
-        std::cout<<"LOADING RGS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"RunGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   std::cout<<"TEST "<<stateName.toStdString()<< " poses: "<<coords->getPoses().size()<<std::endl;
@@ -784,6 +707,14 @@ public:
                       coords->LoadFromXML(reader);
                   }
               }
+              else if(reader->name()=="PosX")
+              {
+                  this->setPos(reader->readElementText().toDouble(), this->pos().y());
+              }
+              else if(reader->name()=="PosY")
+              {
+                  this->setPos(this->pos().x(),reader->readElementText().toDouble());
+              }
               else
               {
                   //error - unexpected node
@@ -822,14 +753,7 @@ public:
             writer->writeTextElement("Parameters", parameters);
             //x+=this->parameters.toStdString();
         }
-        writer->writeStartElement("SetOfRobots");
-        writer->writeStartElement("FirstSet");
-        for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
-        {
-            writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
-        }
-        writer->writeEndElement();
-        writer->writeEndElement();
+        set.Print();
     }
     std::string Print()
     {
@@ -843,24 +767,18 @@ public:
             x+="\nParameters: ";
             x+=this->parameters.toStdString();
         }
-        x+="\nFIRST SET:";
-        for(std::vector<Robot>::iterator it = set.first.begin();it!=set.first.end();it++)
-        {
-            x+="\nROBOT: ";
-            x+=ROBOT_TABLE[(*it)];
-        }
+        x+=set.Print();
         return x;
     }
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         bool wasSet = false;
         bool wasParam = false;
-        std::cout<<"LOADING SGS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"StopGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -915,54 +833,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class genInit
-{
-public:
 
-    Robot robot;
-    std::vector < std::pair<GeneratorType, int> > init_values;
-
-    genInit(){}
-    QStringList LoadFromXML(QXmlStreamReader * reader)
-    {
-        if(reader->attributes().hasAttribute("name"))
-        {
-            int index = (getRobotTable().indexOf(reader->attributes().value("name").toString()));
-            if(index<ROBOTS_NUMBER && index>=0)
-            {
-                 robot = (Robot)index;
-            }
-            else
-            {
-                //error - out of bounds type
-            }
-        }
-        std::cout<<"LOADING SIS"<<std::endl;
-        QStringList errors;
-        while (!reader->atEnd())
-        {
-              reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
-              if(reader->name()=="ecp"&&reader->isEndElement())
-              {
-                  return errors;
-              }
-              else
-              {
-                  int index = getGeneratorTypeTable2().indexOf(reader->name().toString());
-                  if(index<GENERATORS_NUMBER && index>=0)
-                  {
-                      init_values.push_back(std::make_pair((GeneratorType)index,reader->readElementText().toInt()));
-                  }
-
-              }
-        }
-        return errors;
-    }
-
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class sysInitState:public BaseState
 {
 public:
@@ -987,7 +858,7 @@ public:
         {
             writer->writeTextElement("Parameters", parameters);
         }
-        writer->writeStartElement("TaskInit");
+        writer->writeStartElement("taskInit");
         if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
         {
             writer->writeStartElement("mp");
@@ -999,21 +870,14 @@ public:
             {
                 writer->writeTextElement("SENSOR", QString().fromStdString(SENSOR_TABLE[(*it)]));
             }
+            writer->writeEndElement();
 
         }
         if(inits.size()>0)
         {
             for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
             {
-                writer->writeStartElement("ecp");
-                writer->writeAttribute(QString("name"), QString().fromStdString(ROBOT_TABLE[(*it).robot]));
-                for(std::vector < std::pair<GeneratorType, int> >::iterator iter = (*it).init_values.begin(); iter!=(*it).init_values.end(); iter++)
-                {
-                    char tmp[20];
-                    sprintf(tmp, "%d", (*iter).second);
-                    writer->writeTextElement(QString().fromStdString(GENERATOR_TYPE_TABLE2[(*iter).first]), QString().fromStdString(tmp));
-                }
-                writer->writeEndElement();
+                (*it).Print(writer);
             }
         }
 
@@ -1051,18 +915,7 @@ public:
         {
             for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
             {
-                x+="\nECP: ";
-                x+="\nROBOT: ";
-                x+=ROBOT_TABLE[(*it).robot];
-                for(std::vector < std::pair<GeneratorType, int> >::iterator iter = (*it).init_values.begin(); iter!=(*it).init_values.end(); iter++)
-                {
-                    x+="\nGENERATOR: ";
-                    x+=GENERATOR_TYPE_TABLE[(*iter).first];
-                    char tmp[20];
-                    sprintf(tmp, "%d", (*iter).second);
-                    x+=" ";
-                    x+=tmp;
-                }
+                x+=(*it).Print();
             }
         }
 
@@ -1073,13 +926,16 @@ public:
         bool wasParameters = false;
         bool wasTransmitter = false;
         bool inMP = false;
-        std::cout<<"LOADING SIS"<<std::endl;
         QStringList errors;
         int index;
         while (!reader->atEnd())
         {
+            if(reader->name()=="State"&&reader->isEndElement())
+            {
+                return errors;
+            }
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"SysIniState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;
@@ -1220,12 +1076,11 @@ public:
     {
         bool wasTimespan = false;
         bool wasParameters = false;
-        std::cout<<"LOADING WS"<<std::endl;
         QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"WaitState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
                   return errors;

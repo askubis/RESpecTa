@@ -53,6 +53,72 @@ public:
     std::vector<double> getC(){return coordinates;}
     void setC(std::vector<double> newC){coordinates=newC;}
 
+    std::string Print()
+    {
+        std::string x;
+        char  w[12];
+        std::vector<double> tmp = a;
+        x+="\nPOSE:";
+        x+="\nAccelerations: ";
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        tmp = v;
+        x+="\nVelocities: ";
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        tmp = coordinates;
+        x+="\nCoords: ";
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        return x;
+    }
+
+    void Print(QXmlStreamWriter * writer)
+    {
+        char  w[12];
+        std::string x;
+        writer->writeStartElement("Pose");
+        std::vector<double> tmp = a;
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        writer->writeTextElement("Accelerations", QString().fromStdString(x));
+        x.clear();
+        tmp = v;
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        writer->writeTextElement("Velocities", QString().fromStdString(x));
+        x.clear();
+        tmp = coordinates;
+        for (int i=0;i<tmp.size();i++)
+        {
+            sprintf(w, "%lf", tmp[i]);
+            x+=w;
+            x+=" ";
+        }
+        writer->writeTextElement("Coordinates", QString().fromStdString(x));
+        writer->writeEndElement();
+    }
+
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -62,9 +128,8 @@ public:
         while (!reader->atEnd())
         {
             //get coordinateType and motionType
-            std::cout<<"READING POSE"<<std::endl;
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"POSE: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="Pose"&&reader->isEndElement())
             {
                 return errors;

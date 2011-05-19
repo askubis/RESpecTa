@@ -40,7 +40,8 @@ HEADERS  += respecta.h \
     StateTypeWidgets.h \
     baseState.h \
     Model.h \
-    TransDialog.h
+    TransDialog.h \
+    genInit.h
 
 FORMS    += respecta.ui
 

@@ -136,7 +136,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
 
    if(tmpWidget==SYSTEM_INITIALIZATION)
    {
-       stateNameEdit->setText("_INIT_");
+       stateNameEdit->setText("INIT");
        stateNameEdit->setDisabled(true);
    }
 
@@ -204,7 +204,7 @@ void StateWidget::setStateSubclass(int chosen)
     }
     if(chosen==SYSTEM_INITIALIZATION)
     {
-        stateNameEdit->setText("_INIT_");
+        stateNameEdit->setText("INIT");
         stateNameEdit->setDisabled(true);
     }
     StateWidgets[tmpWidget]->setVisible(false);
@@ -273,14 +273,14 @@ void StateWidget::StateSelected(BaseState * state)
 
 bool StateWidget::StateNameOK()
 {
-    if (stateNameEdit->text().toLower()=="_init_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
+    if (stateNameEdit->text().toLower()=="init" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
     {
-        emit reportError(QString("_INIT_ name is dedicated only to SYSTEM_INITIALIZATION state"));
+        emit reportError(QString("INIT name is dedicated only to SYSTEM_INITIALIZATION state"));
         return false;
     }
-    if (stateNameEdit->text().toLower()=="_init_" && subtaskCombo->currentText()!=QString().fromStdString(mod->getMainName()))
+    if (stateNameEdit->text().toLower()=="init" && subtaskCombo->currentText()!=QString().fromStdString(mod->getMainName()))
     {
-        emit reportError(QString("_INIT_ name is dedicated only to the main task"));
+        emit reportError(QString("INIT name is dedicated only to the main task"));
         return false;
     }
     if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")

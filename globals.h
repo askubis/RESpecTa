@@ -61,12 +61,12 @@ static QStringList getGeneratorTypeTable2()
 }
 
 //***************   ROBOTS   ***************//
-enum Robot {ROBOT_UNDEFINED, ROBOT_IRP6OT_M, ROBOT_IRP6P_M, ROBOT_FESTIVAL, ROBOT_CONVEYOR, ROBOT_SPEAKER,
-            ROBOT_IRP6_MECHATRONIKA, ROBOT_ELECTRON, ROBOT_HAND, ROBOT_SPEECHRECOGNITION,
+enum Robot {ROBOT_UNDEFINED, irp6ot_m, irp6p_m, festival, conveyor,
+            ROBOT_ELECTRON, bird_hand, ROBOT_SPEECHRECOGNITION,
       ROBOTS_NUMBER};
 static std::string ROBOT_TABLE[ROBOTS_NUMBER+1] =
-        {"ROBOT_UNDEFINED","ROBOT_IRP6OT_M","ROBOT_IRP6P_M","ROBOT_FESTIVAL","ROBOT_CONVEYOR","ROBOT_SPEAKER",
-         "ROBOT_IRP6_MECHATRONIKA","ROBOT_ELECTRON","ROBOT_HAND","ROBOT_SPEECHRECOGNITION",""};
+        {"ROBOT_UNDEFINED","irp6ot_m","irp6p_m","festival","conveyor",
+         "ROBOT_ELECTRON","bird_hand","ROBOT_SPEECHRECOGNITION",""};
 static QStringList getRobotTable()
 {
     QStringList items;

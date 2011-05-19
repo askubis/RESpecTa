@@ -52,6 +52,35 @@ public:
     std::vector<Pose *> getPoses(){return poses;}
     void setPoses(std::vector<Pose *> newPoses){poses=newPoses;}
 
+    std::string Print()
+    {
+        std::string x;
+        if(poses.size()>0 )
+        {
+            x+="\nMotion Type:";
+            x+=MOTION_TYPE_TABLE[motionType];
+            x+="\nCoord Type:";
+            x+=COORD_TYPE_TABLE[coordType];
+            foreach(Pose * pos, poses)
+            {
+                x+=pos->Print();
+            }
+        }
+        return x;
+    }
+
+    void Print(QXmlStreamWriter * writer)
+    {
+        writer->writeStartElement("Trajectory");
+        writer->writeAttribute(QString("coordinateType"), QString().fromStdString(COORD_TYPE_TABLE[coordType]));
+        writer->writeAttribute(QString("motionType"), QString().fromStdString(MOTION_TYPE_TABLE[motionType]));
+        foreach(Pose * pos, poses)
+        {
+            pos->Print();
+        }
+        writer->writeEndElement();
+    }
+
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -83,14 +112,11 @@ public:
         }
         while (!reader->atEnd())
         {
-            //get coordinateType and motionType
-            std::cout<<"READING COORDS"<<std::endl;
             if(reader->name().toString()=="Trajectory"&&reader->isEndElement())
             {
                 return errors;
             }
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="Trajectory"&&reader->isEndElement())
             {
                 return errors;

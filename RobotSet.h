@@ -13,6 +13,47 @@ class RobotSet
 public:
     std::vector<Robot> first;
     std::vector<Robot> second;
+
+    std::string Print()
+    {
+        std::string x;
+        x+="\nFIRST SET:";
+        for(std::vector<Robot>::iterator it = first.begin();it!=first.end();it++)
+        {
+            x+="\nROBOT: ";
+            x+=ROBOT_TABLE[(*it)];
+        }
+        x+="\nSECOND SET:";
+        for(std::vector<Robot>::iterator it = second.begin();it!=second.end();it++)
+        {
+            x+="\nROBOT: ";
+            x+=ROBOT_TABLE[(*it)];
+        }
+        return x;
+    }
+
+    void Print(QXmlStreamWriter * writer)
+    {
+        writer->writeStartElement("SetOfRobots");
+        writer->writeStartElement("FirstSet");
+        for(std::vector<Robot>::iterator it = first.begin();it!=first.end();it++)
+        {
+            writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
+        }
+        writer->writeEndElement();
+
+        if(second.size()>0)
+        {
+            writer->writeStartElement("SecSet");
+            for(std::vector<Robot>::iterator it = second.begin();it!=second.end();it++)
+            {
+                writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
+            }//*/
+            writer->writeEndElement();
+        }
+        writer->writeEndElement();
+    }
+
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         bool wasFirst = false;
@@ -21,9 +62,8 @@ public:
         QStringList errors;
         while (!reader->atEnd())
         {
-            std::cout<<"READING SET"<<std::endl;
               reader->readNextStartElement();
-              std::cout<<reader->name().toString().toStdString()<<std::endl;
+              std::cout<<"ROBOTSET: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="SetOfRobots"&&reader->isEndElement())
             {
                 return errors;

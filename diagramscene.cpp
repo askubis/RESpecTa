@@ -214,9 +214,9 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             }
             BaseState *endItem =
                 qgraphicsitem_cast<BaseState *>(endItems.first());
-            if(endItem->getName()=="_INIT_")
+            if(endItem->getName()=="INIT")
             {
-                emit reportError("_INIT_ state cannot be a target of transition");
+                emit reportError("_INIT state cannot be a target of transition");
                 myMode = MoveItem;
                 return;
             }

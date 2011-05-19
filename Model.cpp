@@ -227,7 +227,7 @@ void Model::checkIfOK()
     MyGraphType * tmp = (*subtasks)[mainName];
     if(tmp==NULL)std::cout<<"ZLE"<<std::endl;
 
-    if( checkNameAvailable(QString("_init_"), tmp))
+    if( checkNameAvailable(QString("init"), tmp))
     {
         res->getError(QString( "No INIT state in main task!"));
     }
@@ -249,6 +249,7 @@ void Model::checkIfOK()
 
     typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
     boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
+    typedef  property_map<MyGraphType, state_t>::type StateMap;
     for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         //std::cout<<(*it).first<<" "<<boost::num_vertices(*((*it).second))<<std::endl;
@@ -263,7 +264,7 @@ void Model::checkIfOK()
             bool exists= false;
             for(std::map<std::string, MyGraphType *>::iterator it2 = subtasks->begin(); it2!=subtasks->end();it2++)
             {
-                if((*it).first==mainName) continue;
+                if((*it2).first==mainName) continue;
                 if (!checkNameAvailable(QString().fromStdString( transition->getSubtask()), (*it2).second))
                 {
                      exists = true;
@@ -272,20 +273,23 @@ void Model::checkIfOK()
             }
             if(!exists)
             {
+                StateMap stateMap = get(state_t(), (*((*it).second)));
                 boost::graph_traits<MyGraphType>::vertex_descriptor u,v;
                 u = source((*startIt), (*((*it).second)));
                 v = target((*startIt), (*((*it).second)));
                 BaseState * srcState;
                 BaseState * destState;
-                srcState = (BaseState *)u;
-                destState = (BaseState *)v;
+                //srcState = (BaseState *)u;
+                //destState = (BaseState *)v;
+                srcState = boost::get(stateMap, u);
+                destState = boost::get(stateMap, v);
 
                 sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
-                res->getError(QString( "tab"));
+                res->getError(QString(tab));
             }
         }
         tmp = (*it).second;
-        typedef  property_map<MyGraphType, state_t>::type StateMap;
+
         StateMap stateMap = get(state_t(), (*((*it).second)));
         boost::graph_traits<MyGraphType>::vertex_iterator first, last;
         tie(first, last) = vertices(*tmp);
@@ -720,6 +724,7 @@ void Model::deleteAll()
     }
     addSubtask(QString().fromStdString(mainName));
 }
+
 
 
 

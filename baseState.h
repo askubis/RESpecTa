@@ -35,6 +35,9 @@ public:
 
     enum { Type = UserType + 15 };
 
+    //TODO: the below function has to be changed - if item is brought to front the text isn't
+    //void setZValue(qreal z){;}
+
     StateType getType() {return stateType;}
     void setType(StateType newType){stateType=newType;}
     QString getName() {return stateName;}
