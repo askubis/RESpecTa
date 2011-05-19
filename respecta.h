@@ -97,8 +97,8 @@ private:
     void createToolbars();
 
     void LoadFile(QString filename);
-    void LoadStates(QString filename);
-    void LoadTransitions(QString filename);
+    QStringList LoadStates(QString filename);
+    QStringList LoadTransitions(QString filename);
 
 
     Model * mod;

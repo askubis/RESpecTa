@@ -1,5 +1,6 @@
 #ifndef GENINIT_H
 #define GENINIT_H
+#include "globals.h"
 class genInit
 {
 public:
@@ -44,6 +45,7 @@ public:
 
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
+        QStringList errors;
         if(reader->attributes().hasAttribute("name"))
         {
             int index = (getRobotTable().indexOf(reader->attributes().value("name").toString()));
@@ -53,16 +55,23 @@ public:
             }
             else
             {
-                //error - out of bounds type
+                robot = (Robot)0;
+                errors.push_back("out of bound robot");
             }
         }
-        QStringList errors;
+        else
+        {
+            robot = (Robot)0;
+            errors.push_back("no name in ecp");
+        }
+
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
               std::cout<<"GENINIT: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="ecp"&&reader->isEndElement())
               {
+                  if(init_values.size()==0) errors.push_back(QString("no init values for the Robot: ").append(ROBOT_TABLE(robot)));
                   return errors;
               }
               else
@@ -72,9 +81,15 @@ public:
                   {
                       init_values.push_back(std::make_pair((GeneratorType)index,reader->readElementText().toInt()));
                   }
+                  else
+                  {
+
+                      errors.push_back((QString("unexpected name while reading <ecp>: ")+=reader->name())+=append(ROBOT_TABLE(robot)));
+                  }
 
               }
         }
+        if(init_values.size()==0) errors.push_back(QString("no init values for Robot: ").append(ROBOT_TABLE(robot)));
         return errors;
     }
 

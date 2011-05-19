@@ -13,7 +13,7 @@ public:
     Pose(){}
     Pose(const Pose& other)
     {
-        for(int i=0; i<other.a.size();i++)
+        for(unsigned int i=0; i<other.a.size();i++)
         {
             this->a.push_back(other.a[i]);
             this->v.push_back(other.v[i]);
@@ -55,12 +55,13 @@ public:
 
     std::string Print()
     {
+        unsigned int i=0;
         std::string x;
         char  w[12];
         std::vector<double> tmp = a;
         x+="\nPOSE:";
         x+="\nAccelerations: ";
-        for (int i=0;i<tmp.size();i++)
+        for ( i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -68,7 +69,7 @@ public:
         }
         tmp = v;
         x+="\nVelocities: ";
-        for (int i=0;i<tmp.size();i++)
+        for (i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -76,7 +77,7 @@ public:
         }
         tmp = coordinates;
         x+="\nCoords: ";
-        for (int i=0;i<tmp.size();i++)
+        for (i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -87,11 +88,12 @@ public:
 
     void Print(QXmlStreamWriter * writer)
     {
+        unsigned int i;
         char  w[12];
         std::string x;
         writer->writeStartElement("Pose");
         std::vector<double> tmp = a;
-        for (int i=0;i<tmp.size();i++)
+        for (i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -100,7 +102,7 @@ public:
         writer->writeTextElement("Accelerations", QString().fromStdString(x));
         x.clear();
         tmp = v;
-        for (int i=0;i<tmp.size();i++)
+        for (i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -109,7 +111,7 @@ public:
         writer->writeTextElement("Velocities", QString().fromStdString(x));
         x.clear();
         tmp = coordinates;
-        for (int i=0;i<tmp.size();i++)
+        for (i=0;i<tmp.size();i++)
         {
             sprintf(w, "%lf", tmp[i]);
             x+=w;
@@ -132,13 +134,14 @@ public:
               std::cout<<"POSE: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="Pose"&&reader->isEndElement())
             {
+                if(!wasA||!wasV||!wasC)errors.push_back("no A, C or V in this pose");
                 return errors;
             }
             else if (reader->name()=="Accelerations")
             {
                 if(wasA)
                 {
-                    //error
+                    errors.push_back("the accelerations were twice defined");
                 }
                 else
                 {
@@ -155,7 +158,7 @@ public:
             {
                 if(wasV)
                 {
-                    //error
+                    errors.push_back("the velocities were twice defined");
                 }
                 else
                 {
@@ -172,7 +175,7 @@ public:
             {
                 if(wasC)
                 {
-                    //error
+                    errors.push_back("the Coordinates were twice defined");
                 }
                 else
                 {
@@ -187,9 +190,10 @@ public:
             }
             else
             {
-                //error unexpected name
+                QString("unexpected name while reading <pose>: ")+=reader->name()
             }
         }
+        if(!wasA||!wasV||!wasC)errors.push_back("no A, C or V in this pose");
             return errors;
     }
 

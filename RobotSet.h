@@ -56,23 +56,24 @@ public:
 
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
+        QStringList errors;
         bool wasFirst = false;
         bool wasSecond = false;
         std::vector<Robot> * tmpRobotVect;
-        QStringList errors;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
               std::cout<<"ROBOTSET: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="SetOfRobots"&&reader->isEndElement())
             {
+                if(!wasFirst||!wasSecond)errors.push_back("both sets empty in robotset");
                 return errors;
             }
             else if(reader->name()=="FirstSet")
             {
                 if(wasFirst)
                 {
-                    //error
+                    errors.push_back("first set defined more than once");
                 }
                 else
                 {
@@ -87,7 +88,7 @@ public:
             {
                 if(wasSecond)
                 {
-                    //error
+                    errors.push_back("second set defined more than once");
                 }
                 else
                 {
@@ -109,20 +110,23 @@ public:
                     }
                     else
                     {
-                        //error out of bounds robot
+                        errors.push_back("out of bounds robot");
                     }
                 }
                 else
                 {
-                    //error robot outside FirstSet/SecSet in SetOfRobots
+                    errors.push_back("robot outside any set");
                 }
             }
             else
             {
-                //error unexpected name
+                QString("unexpected name while reading <SetOfRobots>: ")+=reader->name()
             }
         }
+        if(!wasFirst||!wasSecond)errors.push_back("both sets empty in <SetOfRobots>");
+        return errors;
     }
+
 
 };
 

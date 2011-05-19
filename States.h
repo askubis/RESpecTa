@@ -34,6 +34,7 @@ private:
 
 //TODO flags when reading about what already was read
 //check in the ENUM structs if it's not outside of bonds
+//add errors
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class StopState:public BaseState

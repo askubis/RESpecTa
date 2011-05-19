@@ -13,16 +13,7 @@ class Model
 public:
     Model();
     void deleteAll();
-    void checkmainname()
-    {
-            MyGraphType * tmp = (*subtasks)[mainName];
-            if(tmp==NULL)std::cout<<"VERYBAD"<<std::endl;
-    }
-    void checkname()
-    {
-            MyGraphType * tmp = (*subtasks)[mainName];
-            std::cout<<"VERTICES:"<<boost::num_vertices(*tmp)<<"EDGES:"<<boost::num_edges(*tmp)<<std::endl;
-    }
+
     bool checkTransCondAvailabe(BaseState * source,QString cond);
     bool checkSubtaskExists(std::string Name);
     BaseState * getState(QString name, std::string subtaskName);
@@ -38,7 +29,7 @@ public:
     QStringList getTasksNameListsWithoutMain();
     QStringList getAllStateNames(std::string sub);
     //bool checkStateNameIsAvailable( MyGraphType &G, QString given);
-    void checkIfOK();
+    QStringList checkIfOK();
     bool checkNameAvailable(QString name, MyGraphType * G);
     std::string getSubtaskName(QString StateName);
     bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);

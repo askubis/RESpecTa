@@ -12,11 +12,16 @@ void Model::save(QString myFile)
 {
     std::string filename = myFile.toStdString();
 myFile.chop(4);
+QString logPath = myFile;
+logPath.append(".log");
+int ind = myFile.lastIndexOf('/');
+myFile.remove(0,ind+1);
+
     for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
         if((*it).first==mainName)continue;
 
-        if(myFile.endsWith(QString().fromStdString((*it).first)) )
+        if(myFile==QString().fromStdString((*it).first) )
         {
             res->getError(QString("a subtask exists with a name you wanted to\nsave your graph with, choose other filename"));
             res->clearSaveName();
@@ -24,8 +29,7 @@ myFile.chop(4);
         }
     }
 
-    int ind = myFile.lastIndexOf('/');
-    myFile.remove(0,ind+1);
+
    if(myFile.toStdString()!=mainName)
    {
      subtasks->insert(std::make_pair(myFile.toStdString(), (*subtasks)[mainName]));
@@ -34,7 +38,36 @@ myFile.chop(4);
    }
 
 
-    checkIfOK();
+    QStringList errors = checkIfOK();
+    if(errors.size()==0)
+    {
+
+    }
+    else if (errors.size()<=5)
+    {
+        foreach(QString x, errors)
+        {
+            res->getError(x);
+        }
+    }
+    else
+    {
+        char tab[200];
+        sprintf(tab, "There were %d errors while saving,\nto see them please see the log:\n%s", errors.size(), logPath.toStdString().c_str());
+        res->getError(QString(tab));
+        QFile file(logPath.toStdString().c_str());
+        if(!file.open(QIODevice::WriteOnly))
+            qDebug()<<"Error opening the file";
+        QTextStream streamToWrite(&file);
+        foreach(QString x, errors)
+        {
+            const char* test = x.toStdString().c_str();
+            streamToWrite<<test;
+            streamToWrite<<"\n";
+        }
+        file.close();
+
+    }
 
     for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
@@ -48,6 +81,7 @@ myFile.chop(4);
             printStates(tmp, std::string((*it).first+".xml"), false);
         }
     }
+    return;
 }
 
 void Model::deleteTransition(Transition * transition)
@@ -212,8 +246,9 @@ QStringList Model::getAllStateNames(std::string sub)
 }
 
 
-void Model::checkIfOK()
+QStringList Model::checkIfOK()
 {
+    QStringList errors;
     char tab[200];
     //sprawdzic czy jest _init_ i _stop_ w głównym
     //sprawdzić czy jest _end_ w subtaskach
@@ -229,11 +264,11 @@ void Model::checkIfOK()
 
     if( checkNameAvailable(QString("init"), tmp))
     {
-        res->getError(QString( "No INIT state in main task!"));
+        errors.push_back(QString( "No INIT state in main task!"));
     }
     if(  checkNameAvailable(QString("_stop_"), tmp))
     {
-        res->getError(QString( "No STOP state in main task!"));
+        errors.push_back(QString( "No STOP state in main task!"));
     }
     for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
@@ -243,7 +278,7 @@ void Model::checkIfOK()
         {
                 std::string tmpSubName = (*it).first;
                 sprintf(tab, "No END state in subtask: %s", tmpSubName.c_str());
-                res->getError(QString( tab));
+                errors.push_back(QString( tab));
         }
     }
 
@@ -285,7 +320,7 @@ void Model::checkIfOK()
                 destState = boost::get(stateMap, v);
 
                 sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
-                res->getError(QString(tab));
+                errors.push_back(QString(tab));
             }
         }
         tmp = (*it).second;
@@ -309,7 +344,7 @@ void Model::checkIfOK()
                 if(state->getName().toLower()!=QString( "_end_") && state->getName().toLower()!=QString( "_stop_"))
                 {
                     QString tmpQstring = state->getName().append(QString(  " state has no outgoing edges and should have at least 1"));
-                    res->getError(tmpQstring);
+                    errors.push_back(tmpQstring);
                 }
             }
             else
@@ -326,12 +361,13 @@ void Model::checkIfOK()
                 if(!mark)
                 {
                     QString tmpQstring = state->getName().append(QString( " state should have last\nTransition with condition true"));
-                    res->getError(tmpQstring);
+                    errors.push_back(tmpQstring);
                 }
             }
         }
 
     }
+    return errors;
 
 
 }
@@ -558,24 +594,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
       for ( ;startIt!=endIt;startIt++)
       {
           transition = boost::get(transitionMap, *startIt);
-          writer->writeStartElement("transition");
-          writer->writeAttribute("condition", transition->getCondition());
-          boost::graph_traits<MyGraphType>::vertex_descriptor u;
-          u = target((*startIt), *G);
-          BaseState *tmpState;
-          tmpState = boost::get(stateMap, u);
-          QString tmpString;
-          if(transition->getSubtask() != "")
-          {
-                tmpString.fromStdString(transition->getSubtask()).append(QString(">>")).append(QString(tmpState->getName()));
-          }
-          else
-          {
-              tmpString= QString(tmpState->getName());
-          }
-          writer->writeAttribute("target", tmpString);
-
-          writer->writeEndElement();
+          transition->Print(writer);
       }
 
       writer->writeEndElement();
@@ -593,6 +612,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
             writer->writeAttribute("href", QString().fromStdString(subtaskFileName));
             writer->writeAttribute("parse", "xml");
             writer->writeAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
+            writer->writeEndElement();
         }
     }
     writer->writeEndElement();

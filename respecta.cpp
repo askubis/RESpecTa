@@ -168,27 +168,57 @@ void RESpecTa::LoadFile(QString fileName)
 
     QString subName = fileName;
     subName.chop(4);//delete .xml
+    QString logPath = subName;
+    logPath.append(".log");
     int ind = subName.lastIndexOf('/');
     subName.remove(0,ind+1);//delete beginning till the last /
 
+    QStringList errors;
 
-    mod->checkname();
-    mod->checkmainname();
+
     mod->setMainName(subName);
-    mod->checkname();
-    mod->checkmainname();
-    LoadStates(fileName);
-    mod->checkname();
-    mod->checkmainname();
-    LoadTransitions(fileName);
-    mod->checkname();
-    mod->checkmainname();
+
+    errors+=LoadStates(fileName);
+
+    errors+=LoadTransitions(fileName);
+
+    if(errors.size()==0)
+    {
+
+    }
+    else if (errors.size()<=5)
+    {
+        foreach(QString x, errors)
+        {
+           reportError(x);
+        }
+    }
+    else
+    {
+        char tab[200];
+        sprintf(tab, "There were %d errors while loading,\nto see them please see the log:\n%s", errors.size(), logPath.toStdString().c_str());
+        reportError(QString(tab));
+        QFile file(logPath.toStdString().c_str());
+        if(!file.open(QIODevice::WriteOnly))
+            qDebug()<<"Error opening the file";
+        QTextStream streamToWrite(&file);
+        foreach(QString x, errors)
+        {
+            const char* test = x.toStdString().c_str();
+            streamToWrite<<test;
+            streamToWrite<<"\n";
+        }
+        file.close();
+
+    }
+
+
     emit refreshWidgets();
 }
 
-void RESpecTa::LoadStates(QString filename)
+QStringList RESpecTa::LoadStates(QString filename)
 {
-
+QStringList errors;
     std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
     QString subName = filename;
     if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
@@ -259,7 +289,7 @@ void RESpecTa::LoadStates(QString filename)
                     else state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
                     state->setName(reader->attributes().value("id").toString());
 std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
-                    QStringList errors = state->LoadFromXML(reader);
+                    errors += state->LoadFromXML(reader);
                     scene->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
                     mod->addState(state, subName.toStdString());
@@ -278,18 +308,23 @@ std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
 
               }
           }
-          else if (reader->name()=="xi:include")
-          {
+          else if (reader->name()=="include"&&reader->isStartElement())
+          {              
                    QString subtaskName = reader->attributes().value("href").toString();
+std::cout<<"subtask found "<<subtaskName.toStdString()<<std::endl;
+                   subtaskName.chop(4);
                    mod->addSubtask(subtaskName);
-                   LoadStates(subtaskName);
+                   subtaskName.append(".xml");
+                   errors+=LoadStates(subtaskName);
           }
     }
     file->close();
+    return errors;
 }
 
-void RESpecTa::LoadTransitions(QString filename)
+QStringList RESpecTa::LoadTransitions(QString filename)
 {
+    QStringList errors;
     std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
     QFile* file = new QFile(filename);
     QString subName = filename;
@@ -373,9 +408,10 @@ void RESpecTa::LoadTransitions(QString filename)
           else if (reader->name()=="xi:include")
           {
                    QString subtaskName = reader->attributes().value("href").toString();
-                   LoadTransitions(subtaskName);
+                   errors+=LoadTransitions(subtaskName);
           }
     }
+    return errors;
 }
 
 
@@ -383,7 +419,6 @@ void RESpecTa::LoadTransitions(QString filename)
 
 void RESpecTa::save()
 {
-    mod->checkname();
     //get path
     if(SaveName.isEmpty())
     {

@@ -60,6 +60,25 @@ public:
         }
         return toRet;
     }
+    void Print(QXmlStreamWriter * writer)
+    {
+        writer->writeStartElement("transition");
+        writer->writeAttribute("condition", condition);
+        BaseState *tmpState;
+        tmpState = endItem();
+        QString tmpString;
+        if(subtask != "")
+        {
+              tmpString.fromStdString(subtask).append(QString(">>")).append(QString(tmpState->getName()));
+        }
+        else
+        {
+            tmpString= QString(tmpState->getName());
+        }
+        writer->writeAttribute("target", tmpString);
+        writer->writeEndElement();
+    }
+
 
 public slots:
     void updatePosition();

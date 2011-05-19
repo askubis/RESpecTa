@@ -26,7 +26,7 @@ public:
         this->coordType=old.coordType;
         this->motionType=old.motionType;
         Pose * x;
-        for(int i=0;i<old.poses.size();i++)
+        for(unsigned int i=0;i<old.poses.size();i++)
         {
             x=new Pose(*(old.poses[i]));
             this->poses.push_back(x);
@@ -35,7 +35,7 @@ public:
 
     ~Coordinates()
     {
-        for(int i = 0;i<poses.size();i++)
+        for(unsigned int i = 0;i<poses.size();i++)
         {
             delete poses[i];
         }
@@ -93,7 +93,8 @@ public:
             }
             else
             {
-                //error - out of bounds type
+                coordType = (CoordType)0;
+                errors.push_back("Out of bounds CoordType");
             }
             index = (getMotionTypeTable().indexOf(reader->attributes().value("motionType").toString()));
             if(index<MOTIONTYPES_NUMBER && index>=0)
@@ -102,12 +103,13 @@ public:
             }
             else
             {
-                //error - out of bounds type
+                motionType = (MotionType)0;
+                errors.push_back("Out of bounds MotionType");
             }
         }
         else
         {
-            //add error,
+            errors.push_back("The trajectory has no coordinateType or motionType attribute");
             return errors;
         }
         while (!reader->atEnd())
@@ -124,12 +126,12 @@ public:
             else if (reader->name()=="Pose")
             {
                 Pose * tmp = new Pose();
-                tmp->LoadFromXML(reader);
+                errors+=tmp->LoadFromXML(reader);
                 poses.push_back(tmp);
             }
             else
             {
-                //error unexpected name
+                errors.push_back(QString("unexpected name while reading <coordinates>: ")+=reader->name());
             }
         }
             return errors;
