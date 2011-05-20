@@ -696,6 +696,16 @@ void PoseDialog::AddPose()
         }
     }
 
+    if(poseList->count()!=0&&i!=num)
+    {
+        emit reportError(QString("The pose you're trying to aadd has a different length than the previous one(s)"));
+        return;
+    }
+    else
+    {
+        num = i;
+    }
+
     if(i!=0)
     {
         tmp->setA(a);
@@ -727,8 +737,6 @@ void PoseDialog::AddPose()
         }
         poseList->addItem(str);
     }
-    //może zacieniować niewykorzystane i wymagać wykorzystania wszystkich danych w przypadku gdy
-    //jedna pozycja już została dodana z jakąś długością wektorów C, A, V
 }
 
 void PoseDialog::RemovePose()
@@ -763,6 +771,7 @@ void PoseDialog::PoseCancel()
 
 void PoseDialog::PosesReset()
 {
+    num=0;
     poseList->clear();
     delete coords;
     coords = new Coordinates();
@@ -798,6 +807,7 @@ void PoseDialog::coordsUpdated()
             str.append(QString().fromStdString(tab));
         }
         poseList->addItem(str);
+        num = i;
     }
 }
 

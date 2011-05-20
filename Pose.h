@@ -5,6 +5,7 @@
 #include <vector>
 
 
+
 #ifndef POSE_H
 #define POSE_H
 class Pose
@@ -134,54 +135,72 @@ public:
               std::cout<<"POSE: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="Pose"&&reader->isEndElement())
             {
-                if(!wasA||!wasV||!wasC)errors.push_back("no A, C or V in this pose");
+                if(!wasA||!wasV||!wasC)
+                {
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("no A, C or V in this pose")+=linenum);
+                }
+                if(a.size()!=v.size()||a.size()!=coordinates.size())
+                {
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("a, c and v vectors are not of the same length")+=linenum);
+                }
+                std::cout<<"A "<<a.size()<<" V "<<v.size()<<" C "<<coordinates.size()<<" line "<<reader->lineNumber()<<std::endl;
                 return errors;
             }
-            else if (reader->name()=="Accelerations")
+            else if (reader->name()=="Accelerations"&&reader->isStartElement())
             {
                 if(wasA)
                 {
-                    errors.push_back("the accelerations were twice defined");
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("the accelerations were twice defined")+=linenum);
                 }
                 else
                 {
                     wasA=true;
                     QString tmpString = reader->readElementText();
-                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    QStringList strList = tmpString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
                     foreach(QString str, strList)
                     {
                         a.push_back(str.toDouble());
                     }
                 }
             }
-            else if (reader->name()=="Velocity")
+            else if (reader->name()=="Velocity"&&reader->isStartElement())
             {
                 if(wasV)
                 {
-                    errors.push_back("the velocities were twice defined");
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("the velocities were twice defined")+=linenum);
                 }
                 else
                 {
                     wasV=true;
                     QString tmpString = reader->readElementText();
-                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    QStringList strList = tmpString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
                     foreach(QString str, strList)
                     {
                         v.push_back(str.toDouble());
                     }
                 }
             }
-            else if (reader->name()=="Coordinates")
+            else if (reader->name()=="Coordinates"&&reader->isStartElement())
             {
                 if(wasC)
                 {
-                    errors.push_back("the Coordinates were twice defined");
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("the Coordinates were twice defined")+=linenum);
                 }
                 else
                 {
                     wasC=true;
                     QString tmpString = reader->readElementText();
-                    QStringList strList = tmpString.split(QRegExp("\\s+"));
+                    QStringList strList = tmpString.split(QRegExp("\\s+"),QString::SkipEmptyParts);
                     foreach(QString str, strList)
                     {
                         coordinates.push_back(str.toDouble());
@@ -190,11 +209,26 @@ public:
             }
             else
             {
-                QString("unexpected name while reading <pose>: ")+=reader->name()
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back((QString("unexpected name while reading <pose>: ")+=reader->name())+=linenum);
             }
         }
-        if(!wasA||!wasV||!wasC)errors.push_back("no A, C or V in this pose");
-            return errors;
+
+        if(!wasA||!wasV||!wasC)
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("no A, C or V in this pose")+=linenum);
+        }
+        if(a.size()!=v.size()||a.size()!=coordinates.size())
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("a, c and v vectors are not of the same length")+=linenum);
+        }
+        std::cout<<"A "<<a.size()<<" V "<<v.size()<<" C "<<coordinates.size()<<" line "<<reader->lineNumber()<<std::endl;
+        return errors;
     }
 
 private:

@@ -18,23 +18,6 @@ class QXmlStreamReader;
 
 #ifndef BASESTATE_H
 #define BASESTATE_H
-/*
-class BaseState// : public DiagramItem
-{
-public:
-
-
-
-private:
-
-
-};
-*/
-//TODO change print to xml functions to print good robots
-
-//TODO flags when reading about what already was read
-//check in the ENUM structs if it's not outside of bonds
-//add errors
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class StopState:public BaseState
@@ -72,17 +55,19 @@ class StopState:public BaseState
               {
                   return errors;
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpeected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading stop generator <State>: ")+=reader->name())+=linenum);
               }
 
         }
@@ -141,31 +126,35 @@ public:
               {
                   return errors;
               }
-              else if(reader->name()=="SetOfRobots")
+              else if(reader->name()=="SetOfRobots"&&reader->isStartElement())
               {
                   if(wasSet)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the RobotSet parameter has already been defined")+=linenum);
                   }
                   else
                   {
-                      set.LoadFromXML(reader);
+                      errors+=set.LoadFromXML(reader);
                       wasSet=true;
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("2 or more parameters in empty gen for set state ")+=linenum);
                   }
                   else
                   {
@@ -173,9 +162,11 @@ public:
                       wasParam=true;
                   }
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //unknown parameter
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading empty generator <State>: ")+=reader->name())+=linenum);
               }
 
         }
@@ -251,7 +242,9 @@ public:
               {
                   if(wasRobot)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Robot parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -263,15 +256,19 @@ public:
                       }
                       else
                       {
-                          //error out of bounds robot
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds Robot")+=linenum);
                       }
                   }
               }
-              else if (reader->name()=="AddArg")
+              else if (reader->name()=="AddArg"&&reader->isStartElement())
               {
                   if(wasArg)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Arguments parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -283,7 +280,9 @@ public:
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -291,17 +290,19 @@ public:
                       wasParam=true;
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading empty generator <State>: ")+=reader->name())+=linenum);
               }
         }
         return errors;
@@ -361,11 +362,13 @@ public:
               {
                   return errors;
               }
-              else if (reader->name()=="Sensor")
+              else if (reader->name()=="Sensor"&&reader->isStartElement())
               {
                   if(wasSensor)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Sensor parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -377,15 +380,19 @@ public:
                       }
                       else
                       {
-                          //error out of bounds sensor
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds Sensor")+=linenum);
                       }
                   }
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -393,17 +400,19 @@ public:
                       wasParam=true;
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading get sensor <State>: ")+=reader->name())+=linenum);
               }
         }
         return errors;
@@ -462,11 +471,13 @@ public:
               {
                   return errors;
               }
-              else if (reader->name()=="Sensor")
+              else if (reader->name()=="Sensor"&&reader->isStartElement())
               {
                   if(wasSensor)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Sensor parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -478,15 +489,19 @@ public:
                       }
                       else
                       {
-                          //error out of bounds sensor
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds Sensor")+=linenum);
                       }
                   }
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -494,17 +509,19 @@ public:
                       wasParam=true;
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading initiate sensor <State>: ")+=reader->name())+=linenum);
               }
         }
         return errors;
@@ -608,11 +625,13 @@ public:
                   std::cout<<"TEST "<<stateName.toStdString()<< " poses: "<<coords->getPoses().size()<<std::endl;
                   return errors;
               }
-              else if (reader->name()=="ROBOT")
+              else if (reader->name()=="ROBOT"&&reader->isStartElement())
               {
                   if(wasRobot)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Robot parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -624,15 +643,19 @@ public:
                       }
                       else
                       {
-                          //error out of bounds sensor
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds Robot")+=linenum);
                       }
                   }
               }
-              else if (reader->name()=="TrajectoryFilePath")
+              else if (reader->name()=="TrajectoryFilePath"&&reader->isStartElement())
               {
                   if(wasFile)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the TrajectoryFilePath parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -640,11 +663,13 @@ public:
                       wasFile=true;
                   }
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -652,11 +677,13 @@ public:
                       wasParam=true;
                   }
               }
-              else if (reader->name()=="Speech")
+              else if (reader->name()=="Speech"&&reader->isStartElement())
               {
                   if(wasSpeech)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Speech parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -664,11 +691,13 @@ public:
                       wasSpeech=true;
                   }
               }
-              else if (reader->name()=="AddArg")
+              else if (reader->name()=="AddArg"&&reader->isStartElement())
               {
                   if(wasArgs)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Arguments parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -676,11 +705,13 @@ public:
                       wasArgs=true;
                   }
               }
-              else if(reader->name()=="ECPGeneratorType")
+              else if(reader->name()=="ECPGeneratorType"&&reader->isStartElement())
               {
                   if(wasGenType)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Generator type parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -692,33 +723,39 @@ public:
                       else
                       {
                           genType=(GeneratorType)0;
-                          //out of bounds error
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds GeneratorType")+=linenum);
                       }
                   }
               }
-              else if(reader->name()=="Trajectory")
+              else if(reader->name()=="Trajectory"&&reader->isStartElement())
               {
                   if(wasTrj)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Trajectory parameter has already been defined")+=linenum);
                   }
                   else
                   {
                       wasTrj=true;
-                      coords->LoadFromXML(reader);
+                      errors+=coords->LoadFromXML(reader);
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading run generator <State>: ")+=reader->name())+=linenum);
               }
         }
         return errors;
@@ -784,31 +821,35 @@ public:
               {
                   return errors;
               }
-              else if(reader->name()=="SetOfRobots")
+              else if(reader->name()=="SetOfRobots"&&reader->isStartElement())
               {
                   if(wasSet)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the RobotSet parameter has already been defined")+=linenum);
                   }
                   else
                   {
-                      set.LoadFromXML(reader);
+                      errors+=set.LoadFromXML(reader);
                       wasSet=true;
                   }
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParam)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameter parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -816,15 +857,19 @@ public:
                       wasParam=true;
                   }
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //unknown parameter
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading stop generator <State>: ")+=reader->name())+=linenum);
               }
 
         }
         if(set.second.size()>0)
         {
-            //error
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("SecondSet defined for stopGenState")+=linenum);
         }
 
         return errors;
@@ -941,19 +986,21 @@ public:
               {
                   return errors;
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParameters)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -972,15 +1019,19 @@ public:
                       inMP=false;
                   }
               }
-              else if (reader->name()=="Transmitter")
+              else if (reader->name()=="Transmitter"&&reader->isStartElement())
               {
                   if(!inMP)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("Transmitter defined in system initialization state outside of MP")+=linenum);
                   }
                   if(wasTransmitter)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Transmitter parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -992,15 +1043,19 @@ public:
                       }
                       else
                       {
-                          //error
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Out of bounds Transmitter")+=linenum);
                       }
                   }
               }
-              else if (reader->name()=="Sensor")
+              else if (reader->name()=="Sensor"&&reader->isStartElement())
               {
                   if(!inMP)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("Sensor defined in system initialization state outside of MP")+=linenum);
                   }
                   index = getSensorTable().indexOf(reader->readElementText());
                   if(index<SENSORS_NUMBER && index>=0)
@@ -1009,18 +1064,38 @@ public:
                   }
                   else
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("Out of bounds Sensor")+=linenum);
                   }
               }
-              else if (reader->name()=="ecp")
+              else if (reader->name()=="ecp"&&reader->isStartElement())
               {
                   genInit tmp;
-                  tmp.LoadFromXML(reader);
-                  inits.push_back(tmp);
+                  errors+=tmp.LoadFromXML(reader);
+                  bool mark = true;
+                  if(inits.size()>0)
+                  {
+                      foreach(genInit init, inits)
+                      {
+                          if(init.robot==tmp.robot)
+                          {
+                              char linenum[30];
+                              sprintf(linenum,"; line: %lld", reader->lineNumber());
+                              errors.push_back(QString("Robot in new init is the same as in one of the previous")+=linenum);
+                          }
+                      }
+                  }
+                  if(mark)
+                  {
+                    inits.push_back(tmp);
+                  }
               }
-              else
+              else if (reader->name()!="transition"&& reader->name()!="taskInit"&&reader->isStartElement())
               {
-                  //error - unexpeected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading system initialization <State>: ")+=reader->name())+=linenum);
               }
         }
         return errors;
@@ -1086,19 +1161,21 @@ public:
               {
                   return errors;
               }
-              else if(reader->name()=="PosX")
+              else if(reader->name()=="PosX"&&reader->isStartElement())
               {
                   this->setPos(reader->readElementText().toDouble(), this->pos().y());
               }
-              else if(reader->name()=="PosY")
+              else if(reader->name()=="PosY"&&reader->isStartElement())
               {
                   this->setPos(this->pos().x(),reader->readElementText().toDouble());
               }
-              else if (reader->name()=="Parameters")
+              else if (reader->name()=="Parameters"&&reader->isStartElement())
               {
                   if(wasParameters)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Parameters parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -1106,11 +1183,13 @@ public:
                       wasParameters=true;
                   }
               }
-              else if (reader->name()=="TimeSpan")
+              else if (reader->name()=="TimeSpan"&&reader->isStartElement())
               {
                   if(wasTimespan)
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("the Timespan parameter has already been defined")+=linenum);
                   }
                   else
                   {
@@ -1118,9 +1197,11 @@ public:
                       wasTimespan=true;
                   }
               }
-              else
+              else if (reader->name()!="transition"&&reader->isStartElement())
               {
-                  //error - unexpeected node
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
               }
 
         }

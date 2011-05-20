@@ -66,40 +66,59 @@ public:
               std::cout<<"ROBOTSET: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="SetOfRobots"&&reader->isEndElement())
             {
-                if(!wasFirst||!wasSecond)errors.push_back("both sets empty in robotset");
+                if(first.size()==0&&second.size()==0)
+                {
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("both sets empty in robotset")+=linenum);
+                }
                 return errors;
             }
             else if(reader->name()=="FirstSet")
             {
-                if(wasFirst)
+                if(reader->isStartElement())
                 {
-                    errors.push_back("first set defined more than once");
+                    if(wasFirst)
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("second set defined more than once")+=linenum);
+                    }
+                    else
+                    {
+                          wasFirst = true;
+                          tmpRobotVect = &first;
+                    }
                 }
                 else
                 {
                     wasFirst = true;
-                    if(reader->isStartElement())
-                          tmpRobotVect = &first;
-                    else
-                          tmpRobotVect = NULL;
+                    tmpRobotVect = NULL;
                 }
             }
             else if(reader->name()=="SecSet")
             {
-                if(wasSecond)
+                if(reader->isStartElement())
                 {
-                    errors.push_back("second set defined more than once");
+                    if(wasSecond)
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("second set defined more than once")+=linenum);
+                    }
+                    else
+                    {
+                          wasSecond = true;
+                          tmpRobotVect = &second;
+                    }
                 }
                 else
                 {
                     wasSecond = true;
-                    if(reader->isStartElement())
-                          tmpRobotVect = &second;
-                    else
-                          tmpRobotVect = NULL;
+                    tmpRobotVect = NULL;
                 }
             }
-           else if(reader->name()=="ROBOT")
+           else if(reader->name()=="ROBOT"&&reader->isStartElement())
             {
                 if (tmpRobotVect!=NULL)
                 {
@@ -110,20 +129,31 @@ public:
                     }
                     else
                     {
-                        errors.push_back("out of bounds robot");
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("Out of bounds Robot")+=linenum);
                     }
                 }
                 else
                 {
-                    errors.push_back("robot outside any set");
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("robot outside any set")+=linenum);
                 }
             }
-            else
+            else if (reader->isStartElement())
             {
-                QString("unexpected name while reading <SetOfRobots>: ")+=reader->name()
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back((QString("unexpected name while reading <SetOfRobots>: ")+=reader->name())+=linenum);
             }
         }
-        if(!wasFirst||!wasSecond)errors.push_back("both sets empty in <SetOfRobots>");
+        if(first.size()==0&&second.size()==0)
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("both sets empty in <SetOfRobots>")+=linenum);
+        }
         return errors;
     }
 

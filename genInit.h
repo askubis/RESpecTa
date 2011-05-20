@@ -56,13 +56,17 @@ public:
             else
             {
                 robot = (Robot)0;
-                errors.push_back("out of bound robot");
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("Out of bound Robot")+=linenum);
             }
         }
         else
         {
             robot = (Robot)0;
-            errors.push_back("no name in ecp");
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("no name in ecp")+=linenum);
         }
 
         while (!reader->atEnd())
@@ -71,7 +75,12 @@ public:
               std::cout<<"GENINIT: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="ecp"&&reader->isEndElement())
               {
-                  if(init_values.size()==0) errors.push_back(QString("no init values for the Robot: ").append(ROBOT_TABLE(robot)));
+                  if(init_values.size()==0)
+                  {
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("no init values for the Robot: ").append(QString().fromStdString(ROBOT_TABLE[robot])));
+                  }
                   return errors;
               }
               else
@@ -83,13 +92,19 @@ public:
                   }
                   else
                   {
-
-                      errors.push_back((QString("unexpected name while reading <ecp>: ")+=reader->name())+=append(ROBOT_TABLE(robot)));
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("Out of bounds GeneratorType")+=linenum);
                   }
 
               }
         }
-        if(init_values.size()==0) errors.push_back(QString("no init values for Robot: ").append(ROBOT_TABLE(robot)));
+        if(init_values.size()==0)
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("no init values for Robot: ").append(QString().fromStdString(ROBOT_TABLE[robot]))+=linenum);
+        }
         return errors;
     }
 

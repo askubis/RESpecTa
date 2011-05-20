@@ -101,6 +101,7 @@ connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
    mainLayout->addWidget(runGen);
    runGen->setVisible(false);
    StateWidgets[1]=runGen;
+   connect(runGen, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
    emptyGenForSetWidget* emptyForSet = new emptyGenForSetWidget(this,  mod  );
    mainLayout->addWidget(emptyForSet);

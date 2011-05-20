@@ -289,11 +289,10 @@ QStringList errors;
                     else state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
                     state->setName(reader->attributes().value("id").toString());
 std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
-                    errors += state->LoadFromXML(reader);
+                    errors+= state->LoadFromXML(reader);
                     scene->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
                     mod->addState(state, subName.toStdString());
-                    //TODO: display errors,
                   }
                   else
                   {

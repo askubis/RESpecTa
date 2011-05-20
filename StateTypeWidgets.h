@@ -239,6 +239,7 @@ public:
     void setCoords(Coordinates * newCoords){coords = newCoords;}
     void coordsUpdated();
 private:
+    int num;
     QListWidget * poseList;
     QComboBox * motionTypeCombo;
     QComboBox * coordTypeCombo;

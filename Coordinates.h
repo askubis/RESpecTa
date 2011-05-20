@@ -94,7 +94,9 @@ public:
             else
             {
                 coordType = (CoordType)0;
-                errors.push_back("Out of bounds CoordType");
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("Out of bounds CoordType")+=linenum);
             }
             index = (getMotionTypeTable().indexOf(reader->attributes().value("motionType").toString()));
             if(index<MOTIONTYPES_NUMBER && index>=0)
@@ -104,12 +106,16 @@ public:
             else
             {
                 motionType = (MotionType)0;
-                errors.push_back("Out of bounds MotionType");
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("Out of bounds MotionType")+=linenum);
             }
         }
         else
         {
-            errors.push_back("The trajectory has no coordinateType or motionType attribute");
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The trajectory has no coordinateType or motionType attribute")+=linenum);
             return errors;
         }
         while (!reader->atEnd())
@@ -123,15 +129,32 @@ public:
             {
                 return errors;
             }
-            else if (reader->name()=="Pose")
+            else if (reader->name()=="Pose"&&reader->isStartElement())
             {
+                bool mark = true;
                 Pose * tmp = new Pose();
                 errors+=tmp->LoadFromXML(reader);
-                poses.push_back(tmp);
+                if(poses.size()>0)
+                {
+                    Pose * pose = poses[0];
+                    if(pose->getA().size()!=tmp->getA().size())
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("The new pose has a different vectors length than the previous one: ")+=linenum);
+                        mark = false;
+                    }
+                }
+                if(mark==true)
+                {
+                    poses.push_back(tmp);
+                }
             }
             else
             {
-                errors.push_back(QString("unexpected name while reading <coordinates>: ")+=reader->name());
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back((QString("unexpected name while reading <coordinates>: ")+=reader->name())+=linenum);
             }
         }
             return errors;
