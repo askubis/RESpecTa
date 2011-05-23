@@ -1,6 +1,12 @@
 #include "Model.h"
 //#include "GraphFunctions.cpp"
 
+
+
+
+//TODO:
+//change filenames while saving and loading - need to have folderPath+=filename
+
 Model::Model()
 {
     subtasks = new std::map<std::string, MyGraphType *>();
@@ -137,7 +143,7 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
                 typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
                 TransitionMap transitionMap = get(transition_t(), (*tmp));
                 Transition * transition = boost::get(transitionMap, *OEIt);
-                if(transition->getCondition()==cond)
+                if(transition!=line && transition->getCondition()==cond)
                 {
                     res->getError(QString("There already exists a transition\nwith this condition from this state"));
                     return false;
@@ -254,11 +260,16 @@ QStringList Model::checkIfOK()
     //sprawdzić czy jest _end_ w subtaskach
     //sprawdzić dla tranzycji czy subtask gdzieś istnieje
     //kazy stan poza end i stop musi miec przynajmniej jeden stan wyjsciowy
-    //dla kazdego stanu tranzycje sa rozne//sprawdzac przy dodawaniu
+    //dla kazdego stanu tranzycje sa rozne, ostatnia ma warunek true
 
     //TODO:
 
     //czy z kazdego stanu da sie dojsc do end/stop(?)
+    //sprawdzic czy nie są używane stany/roboty niezainicjalizowane
+    //sprawdzanie czy nie są używane niezainicjalizowane sensory
+    //sprawdzić czy wszystko zainicjalizowane jest używane
+
+    //2 tablice bool jako initialized i used, sprawdzane w kazdym stanie czy initialized, sprawdzanie pod koniec czy used
     MyGraphType * tmp = (*subtasks)[mainName];
     if(tmp==NULL)std::cout<<"ZLE"<<std::endl;
 
@@ -365,11 +376,8 @@ QStringList Model::checkIfOK()
                 }
             }
         }
-
     }
     return errors;
-
-
 }
 
 

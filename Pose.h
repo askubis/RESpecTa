@@ -207,7 +207,7 @@ public:
                     }
                 }
             }
-            else
+            else if (reader->isStartElement())
             {
                 char linenum[30];
                 sprintf(linenum,"; line: %lld", reader->lineNumber());

@@ -96,8 +96,9 @@ void TransWidget::AcceptTrans()
         OKButton->setDisabled(false);
         sourceNameLabel->setText(edited->startItem()->getName());
         destNameLabel->setText(edited->endItem()->getName());
+        edited->setToolTip(QString().fromStdString(edited->Print()));
     }
-    else//that condition is already used for the source state
+    else //that condition is already used for the source state
     {
 
     }

@@ -2,15 +2,6 @@
 #include <QtGui>
 #include <QObject>
 
-//#include "GraphFunctions.h"
-//#include "GraphFunctions.cpp"
-
-
-
-
-
-
-
 
 StateWidget::StateWidget(QWidget *parent, Model * newmod )
 : QWidget(parent)
@@ -233,6 +224,11 @@ void StateWidget::InsertState()
 
 void StateWidget::createNewSubtask()
 {
+    if(taskNameEdit->text().contains("/"))
+    {
+        emit reportError(QString("The subtask name cannot contain \"/\""));
+        return;
+    }
 
     if(subtaskCombo->findText(taskNameEdit->text())!=-1)
     {
@@ -287,6 +283,16 @@ bool StateWidget::StateNameOK()
     if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")
     {
         emit reportError(QString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
+        return false;
+    }
+    if(stateNameEdit->text().toLower().contains("<<"))
+    {
+        emit reportError(QString("The StateName cannot contain \"<<\""));
+        return false;
+    }
+    if(stateNameEdit->text().toLower().contains("/"))
+    {
+        emit reportError(QString("The StateName cannot contain \"/\""));
         return false;
     }
     return true;

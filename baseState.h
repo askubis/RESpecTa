@@ -28,7 +28,7 @@ QT_END_NAMESPACE
 
 class Transition;
 class StateWidget;
-//! [0]
+
 class BaseState : public QGraphicsPolygonItem
 {
 public:
@@ -125,7 +125,7 @@ protected:
 
 
 };
-//! [0]
+
 
 #endif
 

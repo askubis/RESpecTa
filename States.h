@@ -124,6 +124,12 @@ public:
               std::cout<<"EmptyGenForSetState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasSet)
+                  {
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The RobotSet parameter was not defined for the EmptyGenForSetState")+=linenum);
+                  }
                   return errors;
               }
               else if(reader->name()=="SetOfRobots"&&reader->isStartElement())
@@ -168,7 +174,12 @@ public:
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
                   errors.push_back((QString("unexpected name while reading empty generator <State>: ")+=reader->name())+=linenum);
               }
-
+        }
+        if(!wasSet)
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The RobotSet parameter was not defined for the EmptyGenForSetState")+=linenum);
         }
         return errors;
     }
@@ -236,6 +247,13 @@ public:
               std::cout<<"EmptyGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasRobot)
+                  {
+                      robot = (Robot)0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The Robot parameter was not defined for the EmptyGentate")+=linenum);
+                  }
                   return errors;
               }
               else if (reader->name()=="ROBOT"&&reader->isStartElement())
@@ -305,6 +323,13 @@ public:
                   errors.push_back((QString("unexpected name while reading empty generator <State>: ")+=reader->name())+=linenum);
               }
         }
+        if(!wasRobot)
+        {
+            robot = (Robot)0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The Robot parameter was not defined for the EmptyGentate")+=linenum);
+        }
         return errors;
     }
 private:
@@ -360,6 +385,13 @@ public:
               std::cout<<"GetSensorState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasSensor)
+                  {
+                      sensor = (Sensor)0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The Sensor parameter was not defined for the GetSensorState")+=linenum);
+                  }
                   return errors;
               }
               else if (reader->name()=="Sensor"&&reader->isStartElement())
@@ -415,6 +447,13 @@ public:
                   errors.push_back((QString("unexpected name while reading get sensor <State>: ")+=reader->name())+=linenum);
               }
         }
+        if(!wasSensor)
+        {
+            sensor = (Sensor)0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The Sensor parameter was not defined for the GetSensorState")+=linenum);
+        }
         return errors;
     }
 private:
@@ -469,6 +508,13 @@ public:
               std::cout<<"InitiateSensorState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasSensor)
+                  {
+                      sensor = (Sensor)0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The Sensor parameter was not defined for the InitaiteSensorState")+=linenum);
+                  }
                   return errors;
               }
               else if (reader->name()=="Sensor"&&reader->isStartElement())
@@ -523,6 +569,13 @@ public:
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
                   errors.push_back((QString("unexpected name while reading initiate sensor <State>: ")+=reader->name())+=linenum);
               }
+        }
+        if(!wasSensor)
+        {
+            sensor = (Sensor)0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The Sensor parameter was not defined for the InitaiteSensorState")+=linenum);
         }
         return errors;
     }
@@ -622,7 +675,20 @@ public:
               std::cout<<"RunGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
-                  std::cout<<"TEST "<<stateName.toStdString()<< " poses: "<<coords->getPoses().size()<<std::endl;
+                  if(!wasRobot)
+                  {
+                      robot = (Robot)0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The Robot parameter was not defined for the RunGeneratorState")+=linenum);
+                  }
+                  if(!wasGenType)
+                  {
+                      genType = (GeneratorType)0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The GeneratorType parameter was not defined for the RunGeneratorState")+=linenum);
+                  }
                   return errors;
               }
               else if (reader->name()=="ROBOT"&&reader->isStartElement())
@@ -643,6 +709,7 @@ public:
                       }
                       else
                       {
+                          robot = (Robot)0;
                           char linenum[30];
                           sprintf(linenum,"; line: %lld", reader->lineNumber());
                           errors.push_back(QString("Out of bounds Robot")+=linenum);
@@ -718,6 +785,7 @@ public:
                       int index = getGeneratorTypeTable().indexOf(reader->readElementText());
                       if(index<GENERATORS_NUMBER && index>=0)
                       {
+                          wasGenType=true;
                           genType=(GeneratorType)index;
                       }
                       else
@@ -757,6 +825,20 @@ public:
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
                   errors.push_back((QString("unexpected name while reading run generator <State>: ")+=reader->name())+=linenum);
               }
+        }
+        if(!wasRobot)
+        {
+            robot = (Robot)0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The Robot parameter was not defined for the RunGeneratorState")+=linenum);
+        }
+        if(!wasGenType)
+        {
+            genType = (GeneratorType)0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The GeneratorType parameter was not defined for the RunGeneratorState")+=linenum);
         }
         return errors;
     }
@@ -819,6 +901,18 @@ public:
               std::cout<<"StopGenState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasSet)
+                  {
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The RobotSet parameter was not defined for the StopGeneratorState")+=linenum);
+                  }
+                  else if(set.second.size()>0)
+                  {
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("SecondSet defined for stopGenState")+=linenum);
+                  }
                   return errors;
               }
               else if(reader->name()=="SetOfRobots"&&reader->isStartElement())
@@ -865,13 +959,18 @@ public:
               }
 
         }
-        if(set.second.size()>0)
+        if(!wasSet)
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The RobotSet parameter was not defined for the StopGeneratorState")+=linenum);
+        }
+        else if(set.second.size()>0)
         {
             char linenum[30];
             sprintf(linenum,"; line: %lld", reader->lineNumber());
             errors.push_back(QString("SecondSet defined for stopGenState")+=linenum);
         }
-
         return errors;
     }
 private:
@@ -1159,6 +1258,13 @@ public:
               std::cout<<"WaitState: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="State"&&reader->isEndElement())
               {
+                  if(!wasTimespan)
+                  {
+                      Timespan=0;
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("The Timespan parameter was not defined for the WaitState")+=linenum);
+                  }
                   return errors;
               }
               else if(reader->name()=="PosX"&&reader->isStartElement())
@@ -1204,6 +1310,13 @@ public:
                   errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
               }
 
+        }
+        if(!wasTimespan)
+        {
+            Timespan=0;
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back(QString("The Timespan parameter was not defined for the WaitState")+=linenum);
         }
         return errors;
     }

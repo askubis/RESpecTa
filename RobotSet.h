@@ -138,21 +138,21 @@ public:
                 {
                     char linenum[30];
                     sprintf(linenum,"; line: %lld", reader->lineNumber());
-                    errors.push_back(QString("robot outside any set")+=linenum);
+                    errors.push_back(QString("Robot parameter defined outside any set")+=linenum);
                 }
             }
             else if (reader->isStartElement())
             {
                 char linenum[30];
                 sprintf(linenum,"; line: %lld", reader->lineNumber());
-                errors.push_back((QString("unexpected name while reading <SetOfRobots>: ")+=reader->name())+=linenum);
+                errors.push_back((QString("Unexpected name while reading <SetOfRobots>: ")+=reader->name())+=linenum);
             }
         }
         if(first.size()==0&&second.size()==0)
         {
             char linenum[30];
             sprintf(linenum,"; line: %lld", reader->lineNumber());
-            errors.push_back(QString("both sets empty in <SetOfRobots>")+=linenum);
+            errors.push_back(QString("Both sets empty in <SetOfRobots>")+=linenum);
         }
         return errors;
     }

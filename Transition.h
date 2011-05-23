@@ -17,7 +17,6 @@ class QGraphicsSceneMouseEvent;
 class QPainterPath;
 QT_END_NAMESPACE
 
-//! [0]
 class Transition : public QGraphicsLineItem
 {
 public:
@@ -96,6 +95,5 @@ private:
     QString condition;
     std::string subtask;
 };
-//! [0]
 
 #endif

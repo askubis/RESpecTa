@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         respecta.cpp \
     diagramscene.cpp \
-    diagramtextitem.cpp \
     editWidget.cpp \
     stateWidget.cpp \
     transWidget.cpp \
@@ -26,7 +25,6 @@ SOURCES += main.cpp\
 HEADERS  += respecta.h \
     diagramscene.h \
     Transition.h \
-    diagramtextitem.h \
     Graph.h \
     globals.h \
     Coordinates.h \

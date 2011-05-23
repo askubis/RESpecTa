@@ -83,7 +83,7 @@ public:
                   }
                   return errors;
               }
-              else
+              else if (reader->isStartElement())
               {
                   int index = getGeneratorTypeTable2().indexOf(reader->name().toString());
                   if(index<GENERATORS_NUMBER && index>=0)

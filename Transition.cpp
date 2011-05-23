@@ -7,7 +7,7 @@
 
 const qreal Pi = 3.14;
 
-//! [0]
+
 Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
@@ -18,9 +18,7 @@ Transition::Transition(BaseState *startItem, BaseState *endItem,
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
-//! [0]
 
-//! [1]
 QRectF Transition::boundingRect() const
 {
     qreal extra = (pen().width() + 20) / 2.0;
@@ -30,26 +28,20 @@ QRectF Transition::boundingRect() const
         .normalized()
         .adjusted(-extra, -extra, extra, extra);
 }
-//! [1]
 
-//! [2]
 QPainterPath Transition::shape() const
 {
     QPainterPath path = QGraphicsLineItem::shape();
     path.addPolygon(TransitionHead);
     return path;
 }
-//! [2]
 
-//! [3]
 void Transition::updatePosition()
 {
     QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
     setLine(line);
 }
-//! [3]
 
-//! [4]
 void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
           QWidget *)
 {
@@ -61,7 +53,6 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     qreal TransitionSize = 20;
     painter->setPen(myPen);
     painter->setBrush(myColor);
-//! [4] //! [5]
 
     QLineF centerLine(myStartItem->pos(), myEndItem->pos());
     QPolygonF endPolygon = myEndItem->polygon();
@@ -80,7 +71,6 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     }
 
     setLine(QLineF(intersectPoint, myStartItem->pos()));
-//! [5] //! [6]
 
     double angle = ::acos(line().dx() / line().length());
     if (line().dy() >= 0)
@@ -93,7 +83,7 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
         TransitionHead.clear();
         TransitionHead << line().p1() << TransitionP1 << TransitionP2;
-//! [6] //! [7]
+
         painter->drawLine(line());
         painter->drawPolygon(TransitionHead);
         if (isSelected()) {
@@ -105,4 +95,3 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         painter->drawLine(myLine);
     }
 }
-//! [7]

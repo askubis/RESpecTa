@@ -5,7 +5,6 @@
 #include "respecta.h"
 #include "baseState.h"
 #include "diagramscene.h"
-#include "diagramtextitem.h"
 #include "Transition.h"
 //#include <boost/graph/adjacency_list.hpp>
 
@@ -20,7 +19,16 @@
 #include "editWidget.h"
 const int InsertTextButton = 10;
 
-//! [0]
+//TODO:
+//zapisywanie ustawień widoku (pozycja, skala)
+
+//TODO:
+//zapisywanie ścieżki mroka
+
+//TODO:
+//panel boczny z wypisywaniem wszystkiego
+
+
 RESpecTa::RESpecTa(Model * newmod)
 {
     mod=newmod;
@@ -70,7 +78,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
     currentSubtask="MAIN";
 }
-//! [0]
+
 
 void RESpecTa::createEditMenu()
 {
@@ -182,6 +190,8 @@ void RESpecTa::LoadFile(QString fileName)
 
     errors+=LoadTransitions(fileName);
 
+    errors+=mod->checkIfOK();
+
     if(errors.size()==0)
     {
 
@@ -207,9 +217,8 @@ void RESpecTa::LoadFile(QString fileName)
             const char* test = x.toStdString().c_str();
             streamToWrite<<test;
             streamToWrite<<"\n";
-        }
+        }        
         file.close();
-
     }
 
 
@@ -244,10 +253,7 @@ QStringList errors;
                   {
                        type = (StateType)index;
                   }
-                  else
-                  {
-                      //error - out of bounds type
-                  }
+                  //else - //in switch
                   std::cout<<"TYPE "<<type<<std::endl;
                   switch (type)
                   {
@@ -280,14 +286,75 @@ QStringList errors;
                          {
                             state = new StopState();
                          }
-                          //error
+                        else
+                        {
+                            char linenum[30];
+                            sprintf(linenum,"; line: %lld", reader->lineNumber());
+                            errors.push_back(QString("Unknown type of State")+=linenum);
+                        }
                       break;
                   };
                   if(state!=NULL)
                   {
-                    if(type!=-1)state->setType(type);
-                    else state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
-                    state->setName(reader->attributes().value("id").toString());
+                      QString stateName = reader->attributes().value("id").toString();
+if(!mod->checkNameAvailable(stateName) && stateName!="_end_")
+{
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors+=(QString("This state name is already taken: ")+=stateName)+=linenum;
+    reader->readElementText();
+    delete state;
+    continue;
+}
+if(stateName.toLower()=="init" ^ type==SYSTEM_INITIALIZATION)
+{
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors+=QString("Only the SYSTEM INITIALIZATION statetype can have name INIT")+=linenum;
+    reader->readElementText();
+    delete state;
+    continue;
+}
+if(stateName.contains("<<"))
+{
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors+=(QString("The StateName cannot contain \"<<\""))+=linenum;
+    reader->readElementText();
+    delete state;
+    continue;
+}
+if(stateName.contains("/"))
+{
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors+=(QString("The StateName cannot contain \"/\""))+=linenum;
+    reader->readElementText();
+    delete state;
+    continue;
+}
+if(type==-1)
+{
+    if(stateName.toLower()=="_stop_"||stateName.toLower()=="_end_")
+    {
+        state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
+    }
+    else
+    {
+        char linenum[30];
+        sprintf(linenum,"; line: %lld", reader->lineNumber());
+        errors+=QString("Bad State ID for stopState or unknown State Type")+=linenum;
+        reader->readElementText();
+        delete state;
+        continue;
+    }
+}
+else
+{
+    state->setType(type);
+}
+
+                    state->setName(stateName);
 std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                     errors+= state->LoadFromXML(reader);
                     scene->setItemParams(state);
@@ -302,14 +369,23 @@ std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
               else
               {
 
-                  //error error line, no id or type in state
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back(QString("No ID or Type in <State>")+=linenum);
                   reader->readElementText();
 
               }
           }
           else if (reader->name()=="include"&&reader->isStartElement())
-          {              
+          {
                    QString subtaskName = reader->attributes().value("href").toString();
+if(subtaskName.contains("/"))
+{
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors+=QString("SubtaskName - containing \"/\"")+=linenum;
+    continue;
+}
 std::cout<<"subtask found "<<subtaskName.toStdString()<<std::endl;
                    subtaskName.chop(4);
                    mod->addSubtask(subtaskName);
@@ -337,7 +413,7 @@ QStringList RESpecTa::LoadTransitions(QString filename)
     {
           reader->readNextStartElement();
           std::cout<<"MainLoop Transition: "<<reader->name().toString().toStdString()<<std::endl;
-          if(reader->name().toString()=="State"&&reader->isStartElement())
+          if(reader->name().toString()=="State"&&reader->isStartElement() && !mod->checkNameAvailable(reader->attributes().value("id").toString()))
           {
               StateName = reader->attributes().value("id").toString();
           }
@@ -350,7 +426,9 @@ QStringList RESpecTa::LoadTransitions(QString filename)
               std::cout<<"LOADING TRANS"<<std::endl;
               if(StateName=="")
               {
-                  //error
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back(QString("Unknown State while loading Transition")+=linenum);
               }
               else
               {
@@ -376,6 +454,14 @@ QStringList RESpecTa::LoadTransitions(QString filename)
                           Transition * trans = new Transition(sourceState, targetState);
                           trans->setCondition(condition);
                           trans->setSubtask(subtask.toStdString());
+if(mod->checkTransCondAvailabe(trans, condition))
+{
+    delete trans;
+    char linenum[30];
+    sprintf(linenum,"; line: %lld", reader->lineNumber());
+    errors.push_back(QString("Transition condition is already used for the sourceState")+=linenum);
+    continue;
+}
                           if(mod->checkTransCondAvailabe(sourceState, condition))
                           {
                             scene->addItem(trans);
@@ -390,21 +476,27 @@ QStringList RESpecTa::LoadTransitions(QString filename)
                           else
                           {
                               delete trans;
-                              //error
+                              char linenum[30];
+                              sprintf(linenum,"; line: %lld", reader->lineNumber());
+                              errors.push_back(QString("Transition between States in different subtasks")+=linenum);
                           }
                       }
                       else
                       {
-                          //error
+                          char linenum[30];
+                          sprintf(linenum,"; line: %lld", reader->lineNumber());
+                          errors.push_back(QString("Start or End State not found in the map while loading transition")+=linenum);
                       }
                   }
                   else
                   {
-                      //error
+                      char linenum[30];
+                      sprintf(linenum,"; line: %lld", reader->lineNumber());
+                      errors.push_back(QString("No condition or target in Transition")+=linenum);
                   }
               }
           }
-          else if (reader->name()=="xi:include")
+          else if (reader->name()=="include")
           {
                    QString subtaskName = reader->attributes().value("href").toString();
                    errors+=LoadTransitions(subtaskName);
@@ -473,30 +565,6 @@ void RESpecTa::createHelpMenu()
 }
 
 
-//! [1]
-/*void RESpecTa::backgroundButtonGroupClicked(QAbstractButton *button)
-{
-    QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
-    foreach (QAbstractButton *myButton, buttons) {
-    if (myButton != button)
-        button->setChecked(false);
-    }
-    QString text = button->text();
-    if (text == tr("Blue Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background1.png"));
-    else if (text == tr("White Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background2.png"));
-    else if (text == tr("Gray Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background3.png"));
-    else
-        scene->setBackgroundBrush(QPixmap(":/images/background4.png"));
-
-    scene->update();
-    view->update();
-}*/
-//! [1]
-
-//! [2]
 void RESpecTa::buttonGroupClicked(int id)
 {
     QList<QAbstractButton *> buttons = buttonGroup->buttons();
@@ -511,9 +579,7 @@ void RESpecTa::buttonGroupClicked(int id)
         scene->setMode(DiagramScene::InsertItem);
     }
 }
-//! [2]
 
-//! [3]
 void RESpecTa::deleteItem()
 {
 
@@ -566,14 +632,12 @@ void RESpecTa::deleteTrans(Transition * trans)
 }
 
 
-//! [4]
+
 void RESpecTa::pointerGroupClicked(int)
 {
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 }
-//! [4]
 
-//! [5]
 void RESpecTa::bringToFront()
 {
     if (scene->selectedItems().isEmpty())
@@ -595,9 +659,7 @@ void RESpecTa::bringToFront()
         state->getNameTextItem()->setZValue(zValue+0.1);
     }
 }
-//! [5]
 
-//! [6]
 void RESpecTa::sendToBack()
 {
     if (scene->selectedItems().isEmpty())
@@ -619,9 +681,7 @@ void RESpecTa::sendToBack()
         state->getNameTextItem()->setZValue(zValue+0.1);
     }
 }
-//! [6]
 
-//! [7]
 void RESpecTa::itemInserted(BaseState *item)
 {
 
@@ -660,40 +720,18 @@ void RESpecTa::itemInserted(BaseState *item)
 
     //buttonGroup->button(int(item->diagramType()))->setChecked(false);
 }
-//! [7]
-
-
 
 bool RESpecTa::lineInserted(Transition *line)
 {
 
     bool test = mod->tryInsertTransition(line);
+    if(test)
+    {
+        emit itemSelectedSig(line);
+    }
     return test;
 }
 
-//! [8]
-/*void RESpecTa::textInsertedBaseState *(QGraphicsTextItem *)
-{
-    buttonGroup->button(InsertTextButton)->setChecked(false);
-    scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-}*/
-//! [8]
-
-//! [9]
-/*void RESpecTa::currentFontChanged(const QFont &)
-{
-    handleFontChange();
-}*/
-//! [9]
-
-//! [10]
-/*void RESpecTa::fontSizeChanged(const QString &)
-{
-    handleFontChange();
-}*/
-//! [10]
-
-//! [11]
 void RESpecTa::sceneScaleChanged(const QString &scale)
 {
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
@@ -702,20 +740,7 @@ void RESpecTa::sceneScaleChanged(const QString &scale)
     view->translate(oldMatrix.dx(), oldMatrix.dy());
     view->scale(newScale, newScale);
 }
-//! [11]
 
-//! [12]
-/*void RESpecTa::textColorChanged()
-{
-    textAction = qobject_cast<QAction *>(sender());
-    fontColorToolButton->setIcon(createColorToolButtonIcon(
-                ":/images/textpointer.png",
-                qVariantValue<QColor>(textAction->data())));
-    //textButtonTriggered();
-}*/
-//! [12]
-
-//! [13]
 void RESpecTa::itemColorChanged()
 {
     fillAction = qobject_cast<QAction *>(sender());
@@ -724,9 +749,7 @@ void RESpecTa::itemColorChanged()
                  qVariantValue<QColor>(fillAction->data())));
     fillButtonTriggered();
 }
-//! [13]
 
-//! [14]
 void RESpecTa::lineColorChanged()
 {
     lineAction = qobject_cast<QAction *>(sender());
@@ -735,69 +758,45 @@ void RESpecTa::lineColorChanged()
                  qVariantValue<QColor>(lineAction->data())));
     lineButtonTriggered();
 }
-//! [14]
 
-//! [15]
-/*void RESpecTa::textButtonTriggered()
-{
-    //scene->setTextColor(qVariantValue<QColor>(textAction->data()));
-}*/
-//! [15]
-
-//! [16]
 void RESpecTa::fillButtonTriggered()
 {
     scene->setItemColor(qVariantValue<QColor>(fillAction->data()));
 }
-//! [16]
 
-//! [17]
 void RESpecTa::lineButtonTriggered()
 {
     scene->setLineColor(qVariantValue<QColor>(lineAction->data()));
 }
-//! [17]
 
-//! [18]
-/*void RESpecTa::handleFontChange()
-{
-    QFont font = fontCombo->currentFont();
-    font.setPointSize(fontSizeCombo->currentText().toInt());
-    font.setWeight(boldAction->isChecked() ? QFont::Bold : QFont::Normal);
-    font.setItalic(italicAction->isChecked());
-    font.setUnderline(underlineAction->isChecked());
 
-    scene->setFont(font);
-}*/
-//! [18]
-
-//! [19]
 void RESpecTa::itemSelected(QGraphicsItem *item)
 {
-    emit itemSelectedSig(item);
-    /*DiagramTextItem *textItem =
-    qgraphicsitem_cast<DiagramTextItem *>(item);
-
-    QFont font = textItem->font();
-    QColor color = textItem->defaultTextColor();
-    fontCombo->setCurrentFont(font);
-    fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
-    boldAction->setChecked(font.weight() == QFont::Bold);
-    italicAction->setChecked(font.italic());
-    underlineAction->setChecked(font.underline());*/
+    if(item->type()==BaseState::Type)
+    {
+        BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+        if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
+        {
+            emit SignalDeleted();
+        }
+        else
+        {
+            emit itemSelectedSig(item);
+        }
+    }
+    else
+    {
+        emit itemSelectedSig(item);
+    }
 }
-//! [19]
 
-//! [20]
 void RESpecTa::about()
 {
     QMessageBox::about(this, tr("About Diagram Scene"),
                        tr("The <b>Diagram Scene</b> example shows "
                           "use of the graphics framework."));
 }
-//! [20]
 
-//! [21]
 void RESpecTa::createToolBox()
 {
     //buttonGroup = new QButtonGroup(this);
@@ -810,7 +809,7 @@ void RESpecTa::createToolBox()
     //layout->addWidget(createCellWidget(tr("State")),0, 1);
     //layout->addWidget(createCellWidget(tr("Input/Output"),
     //                  BaseState::Io), 1, 0);
-//! [21]
+
 
    /* QToolButton *textButton = new QToolButton;
     textButton->setCheckable(true);
@@ -852,16 +851,14 @@ void RESpecTa::createToolBox()
     backgroundWidget->setLayout(backgroundLayout);*/
 
 
-//! [22]
+
     //toolBox = new QToolBox;
     //toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     //toolBox->setMinimumWidth(itemWidget->sizeHint().width());
     //toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
     //toolBox->addItem(backgroundWidget, tr("Backgrounds"));
 }
-//! [22]
 
-//! [23]
 void RESpecTa::createActions()
 {
 
@@ -890,10 +887,9 @@ void RESpecTa::createActions()
 }
 
 
-//! [25]
+
 void RESpecTa::createToolbars()
 {
-//! [25]
     editToolBar = addToolBar(tr("Edit"));
     editToolBar->addAction(deleteAction);
     editToolBar->addAction(toFrontAction);
@@ -924,7 +920,6 @@ void RESpecTa::createToolbars()
     connect(fontColorToolButton, SIGNAL(clicked()),
             this, SLOT(textButtonTriggered()));
 */
-//! [26]
     /*fillColorToolButton = new QToolButton;
     fillColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
     fillColorToolButton->setMenu(createColorMenu(SLOT(itemColorChanged()),
@@ -934,7 +929,7 @@ void RESpecTa::createToolbars()
     ":/images/floodfill.png", Qt::white));
     connect(fillColorToolButton, SIGNAL(clicked()),
             this, SLOT(fillButtonTriggered()));*/
-//! [26]
+
 
     /*lineColorToolButton = new QToolButton;
     lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -985,14 +980,8 @@ void RESpecTa::createToolbars()
     pointerToolbar->addWidget(pointerButton);
     //pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
-
-
-
-//! [27]
 }
-//! [27]
 
-//! [28]
 QWidget *RESpecTa::createBackgroundCellWidget(const QString &text,
                         const QString &image)
 {
@@ -1012,9 +1001,7 @@ QWidget *RESpecTa::createBackgroundCellWidget(const QString &text,
 
     return widget;
 }
-//! [28]
 
-//! [29]
 QWidget *RESpecTa::createCellWidget(const QString &text)
 {
 
@@ -1036,9 +1023,7 @@ QWidget *RESpecTa::createCellWidget(const QString &text)
 
     return widget;
 }
-//! [29]
 
-//! [30]
 QMenu *RESpecTa::createColorMenu(const char *slot, QColor defaultColor)
 {
     QList<QColor> colors;
@@ -1061,9 +1046,7 @@ QMenu *RESpecTa::createColorMenu(const char *slot, QColor defaultColor)
     }
     return colorMenu;
 }
-//! [30]
 
-//! [31]
 QIcon RESpecTa::createColorToolButtonIcon(const QString &imageFile,
                         QColor color)
 {
@@ -1078,9 +1061,7 @@ QIcon RESpecTa::createColorToolButtonIcon(const QString &imageFile,
 
     return QIcon(pixmap);
 }
-//! [31]
 
-//! [32]
 QIcon RESpecTa::createColorIcon(QColor color)
 {
     QPixmap pixmap(20, 20);
@@ -1090,7 +1071,6 @@ QIcon RESpecTa::createColorIcon(QColor color)
 
     return QIcon(pixmap);
 }
-//! [32]
 
 void RESpecTa::InsertState(BaseState * newState)
 {
@@ -1176,4 +1156,5 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString 
 
     //state could be somehow chosen to be edited...
 }
+
 

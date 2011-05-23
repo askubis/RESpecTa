@@ -86,16 +86,12 @@ BaseState::BaseState(BaseState& old)
     //nameTextItem->setPlainText(QString().fromStdString(this->stateName));
 }
 
-//! [0]
 void BaseState::setMenu( QMenu *contextMenu)
-
 {
     myContextMenu = contextMenu;
 
 }
-//! [0]
 
-//! [1]
 void BaseState::removeTransition(Transition *Transition)
 {
     int index = Transitions.indexOf(Transition);
@@ -103,9 +99,7 @@ void BaseState::removeTransition(Transition *Transition)
     if (index != -1)
         Transitions.removeAt(index);
 }
-//! [1]
 
-//! [2]
 void BaseState::removeTransitions()
 {
     foreach (Transition *Transition, Transitions) {
@@ -115,16 +109,12 @@ void BaseState::removeTransitions()
         delete Transition;
     }
 }
-//! [2]
 
-//! [3]
 void BaseState::addTransition(Transition *Transition)
 {
     Transitions.append(Transition);
 }
-//! [3]
 
-//! [4]
 QPixmap BaseState::image() const
 {
     QPixmap pixmap(250, 250);
@@ -136,18 +126,14 @@ QPixmap BaseState::image() const
 
     return pixmap;
 }
-//! [4]
 
-//! [5]
 void BaseState::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     scene()->clearSelection();
     setSelected(true);
     myContextMenu->exec(event->screenPos());
 }
-//! [5]
 
-//! [6]
 QVariant BaseState::itemChange(GraphicsItemChange change,
                      const QVariant &value)
 {
@@ -159,7 +145,7 @@ QVariant BaseState::itemChange(GraphicsItemChange change,
 
     return value;
 }
-//! [6]
+
 
 
 
