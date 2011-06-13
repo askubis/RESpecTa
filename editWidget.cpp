@@ -47,6 +47,7 @@ transWidget = new TransWidget(tabWidget, newmod);
 void EditWidget::refreshAllWidgets()
 {
     stateWidget->refreshData();
+    transWidget->refreshData();
 }
 
 void EditWidget::SignalDeleted()

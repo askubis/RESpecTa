@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     baseState.cpp \
     Transition.cpp \
     TransDialog.cpp \
-    Model.cpp
+    Model.cpp \
+    subtaskDialog.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -39,7 +40,9 @@ HEADERS  += respecta.h \
     baseState.h \
     Model.h \
     TransDialog.h \
+    subtaskDialog.h \
     genInit.h
+
 
 FORMS    += respecta.ui
 

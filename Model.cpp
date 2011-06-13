@@ -18,10 +18,11 @@ void Model::save(QString myFile)
 {
     std::string filename = myFile.toStdString();
 myFile.chop(4);
-QString logPath = myFile;
+QString logPath =SaveFolder+ myFile;
 logPath.append(".log");
 int ind = myFile.lastIndexOf('/');
 myFile.remove(0,ind+1);
+std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
 
     for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
@@ -80,7 +81,11 @@ myFile.remove(0,ind+1);
         MyGraphType * tmp = (*it).second;
         if(((*it).first)==mainName)
         {
-            printStates(tmp, std::string(filename.c_str()),true);
+            if(!myFile.endsWith(".xml"))
+            {
+                myFile.append(QString(".xml"));
+            }
+            printStates(tmp, std::string(myFile.toStdString()),true);
         }
         else
         {
@@ -561,9 +566,12 @@ boost::graph_traits<MyGraphType>::vertex_iterator Model::findVertex ( MyGraphTyp
 
 void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 {
+
     boost::graph_traits<MyGraphType>::vertex_iterator first,last;
     tie(first, last) = vertices(*G);
-    QFile* file = new QFile(QString().fromStdString(FileName));
+    QString tmpSaveName = QString(SaveFolder).append(QString().fromStdString(FileName));
+    QFile* file = new QFile(tmpSaveName);
+    std::cout<<"SAVE: "<<tmpSaveName.toStdString()<<std::endl;
     file->open( QIODevice::WriteOnly);
     QXmlStreamWriter * writer = new QXmlStreamWriter(file);
     writer->setAutoFormatting(1);
@@ -580,7 +588,15 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     BaseState *State;
     Transition * transition;
 
+
+
+
+
     writer->writeStartElement("TaskDescription");
+    if(ifMain)
+    {
+        res->SaveGraphicsAttributes(writer);
+    }
     for (;first != last;first++)
     {
       State = boost::get(stateMap, *first);
@@ -617,7 +633,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
             if((*it).first == mainName)continue;
             std::string subtaskFileName = (*it).first + ".xml";
             writer->writeStartElement("xi:include");
-            writer->writeAttribute("href", QString().fromStdString(subtaskFileName));
+            writer->writeAttribute("href", QString(SaveFolder).append(QString().fromStdString(subtaskFileName)));
             writer->writeAttribute("parse", "xml");
             writer->writeAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
             writer->writeEndElement();
@@ -679,9 +695,21 @@ bool Model::checkStateNameAvailable(MyGraphType *G, QString given)
 
 void Model::setMainName(QString myFile)
 {
+    if(myFile.toStdString()==mainName && (*subtasks)[mainName]==NULL)
+    {
+        (*subtasks)[mainName]=new MyGraphType();
+        return;
+    }
     if(myFile.toStdString()==mainName)return;
     MyGraphType * tmp = (*subtasks)[mainName];
-    subtasks->insert(std::make_pair(myFile.toStdString(), tmp));
+    if(tmp!=NULL)
+    {
+        subtasks->insert(std::make_pair(myFile.toStdString(), tmp));
+    }
+    else
+    {
+        subtasks->insert(std::make_pair(myFile.toStdString(), new MyGraphType()));
+    }
     subtasks->erase(mainName);
     mainName = myFile.toStdString();
 
@@ -689,10 +717,12 @@ void Model::setMainName(QString myFile)
 
 BaseState * Model::getState(QString name, std::string subtaskName)
 {
+    std::cout<<"IN GET STATE"<<std::endl;
     if (!checkSubtaskExists(subtaskName))
     {
         return NULL;
     }
+    std::cout<<"Graph existst"<<std::endl;
     MyGraphType * graph = (*subtasks)[subtaskName];
     property_map<MyGraphType, state_t>::type State = get(state_t(), (*graph));
     graph_traits<MyGraphType>::vertex_iterator first, last;
@@ -713,8 +743,8 @@ bool Model::checkSubtaskExists(std::string Name)
         {
             return true;
         }
-        return false;
     }
+    return false;
 }
 
 void Model::deleteAll()
@@ -751,6 +781,66 @@ void Model::deleteAll()
         subtasks->erase(it);
     }
     addSubtask(QString().fromStdString(mainName));
+}
+
+
+
+void Model::changeSubtaskName(QString oldName, QString NewName)
+{
+    if(oldName.toStdString()==mainName) mainName = NewName.toStdString();
+    MyGraphType  * tmp;
+    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    {
+        if((*it).first == oldName.toStdString())
+        {
+            tmp = (*it).second;
+            subtasks->erase(it);
+            break;
+        }
+    }
+    (*subtasks)[NewName.toStdString()]= tmp;
+
+}
+
+void Model::DeleteSubtask(QString Name)
+{
+
+    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    {
+        if((*it).first != Name.toStdString()) continue;
+        MyGraphType * tmp = (*it).second;
+
+        property_map<MyGraphType, transition_t>::type TransitionMap  = get(transition_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
+        tie(startIt, endIt)=edges(*tmp);
+        for(;startIt!=endIt;)
+        {
+            Transition * transition = boost::get(TransitionMap, *startIt);
+            res->deleteTrans(transition);
+            tie(startIt, endIt)=edges(*tmp);
+           // boost::remove_edge(startIt, *tmp);
+            //delete transition;
+        }
+
+        property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::vertex_iterator first,last;
+        tie(first, last) = vertices(*tmp);
+        for (;first!=last;)
+        {
+            BaseState * state = boost::get(StateMap, (*first));
+            res->deleteState(state);
+            tie(first, last) = vertices(*tmp);
+           // boost::remove_vertex(first, *tmp);
+            //delete state;
+        }
+
+        if(Name.toStdString()!=mainName)
+        {
+            delete tmp;
+            subtasks->erase(it);
+        }
+        break;
+    }
 }
 
 

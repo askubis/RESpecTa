@@ -9,6 +9,7 @@ class RESpecTa;
 #include "baseState.h"
 #include "Model.h"
 #include "TransDialog.h"
+#include "subtaskDialog.h"
 //#include "Graph.h"
 
 class DiagramScene;
@@ -46,6 +47,8 @@ public:
    void deleteState(BaseState * state);
    void deleteTrans(Transition * trans);
 
+   void SaveGraphicsAttributes(QXmlStreamWriter * writer);
+
 signals:
    void itemSelectedSig(QGraphicsItem *item);
    void refreshWidgets();
@@ -53,7 +56,8 @@ signals:
 
 
 private slots:
-
+    void SubtasksChanged();
+    void OpenSubtaskEditDialog();
     void ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName);
     //QStringList getSubtasksList();
     void EditTransitionsOfState();
@@ -63,7 +67,7 @@ private slots:
     void insertTransition(std::pair<QString,QString>);
     void Load();
     void save();
-    void SaveAs();
+    bool SaveAs();
     void selectedSubtaskName(QString newString);
     void InsertState(BaseState * newState);
     void NewSubtaskInserted(QString newName);
@@ -89,8 +93,11 @@ private slots:
     void about();
 
 private:
+    QStringList loadGraphics(QXmlStreamReader * reader);
+    void closeEvent(QCloseEvent *event);
     void createFileMenu();
     void createEditMenu();
+    void createOptionsMenu();
     void createHelpMenu();
     void createToolBox();
     void createActions();
@@ -104,9 +111,12 @@ private:
     Model * mod;
     QString currentSubtask;
     QString SaveName;
+    QString SaveFolder;
 
     QWidget *editWidget;
     TransDialog * transDial;
+
+    SubtaskDialog * subDialog;
 
 
     QWidget *createBackgroundCellWidget(const QString &text,
@@ -119,6 +129,7 @@ private:
     DiagramScene *scene;
     QGraphicsView *view;
 
+    QAction *editSubtasks;
     QAction *exitAction;
     QAction *saveAction;
     QAction *saveAsAction;

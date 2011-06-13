@@ -6,27 +6,22 @@
 #include "baseState.h"
 #include "diagramscene.h"
 #include "Transition.h"
-//#include <boost/graph/adjacency_list.hpp>
-
-
 #include <cstdio>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 
-//#include "GraphFunctions.cpp"
-
 #include "editWidget.h"
 const int InsertTextButton = 10;
 
 //TODO:
-//zapisywanie ustawień widoku (pozycja, skala)
-
-//TODO:
-//zapisywanie ścieżki mroka
+//zapisywanie ustawień widoku (pozycja, skala) - najlepiej do pliku .xml lub innego pliku powiazanego z nazwa
 
 //TODO:
 //panel boczny z wypisywaniem wszystkiego
+
+//TODO:
+//zmiana stanu kursora przy przesuwaniu/wstawianiu
 
 
 RESpecTa::RESpecTa(Model * newmod)
@@ -35,6 +30,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
     createFileMenu();
     createEditMenu();
+    createOptionsMenu();
     createHelpMenu();
     //createActions();
     //createToolBox();
@@ -55,6 +51,10 @@ RESpecTa::RESpecTa(Model * newmod)
     transDial = new TransDialog(this, mod);
     connect(transDial, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
+
+    subDialog = new SubtaskDialog(this, mod);
+    connect(subDialog, SIGNAL(changed()), this, SLOT(SubtasksChanged()));
+    connect(subDialog, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
     editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
@@ -77,6 +77,8 @@ RESpecTa::RESpecTa(Model * newmod)
     setUnifiedTitleAndToolBarOnMac(true);
 
     currentSubtask="MAIN";
+
+
 }
 
 
@@ -126,11 +128,36 @@ void RESpecTa::createEditMenu()
 
 }
 
+void RESpecTa::createOptionsMenu()
+{
+    editSubtasks = new QAction(tr("Edit subtasks"), this);
+    editSubtasks->setShortcut(tr("Ctrl+E"));
+    editSubtasks->setStatusTip(tr("Edit names of the subtasks"));
+    connect(editSubtasks, SIGNAL(triggered()),
+            this, SLOT(OpenSubtaskEditDialog()));
+
+
+
+    itemMenu = menuBar()->addMenu(tr("&Options"));
+    itemMenu->addAction(editSubtasks);
+}
+
+void RESpecTa::OpenSubtaskEditDialog()
+{
+    subDialog->reloadName();
+    subDialog->exec();
+}
+
+void RESpecTa::SubtasksChanged()
+{
+    emit refreshWidgets();
+}
+
 void RESpecTa::createFileMenu()
 {
-    exitAction = new QAction(tr("E&xit"), this);
+    exitAction = new QAction(tr("&Quit"), this);
     exitAction->setShortcuts(QKeySequence::Quit);
-    exitAction->setStatusTip(tr("Quit Scenediagram example"));
+    exitAction->setStatusTip(tr("Quit RESpecTa"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     saveAction = new QAction(tr("&Save"), this);
@@ -158,15 +185,43 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::Load()
 {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, tr("Are you sure?"),
+                                    "Do you want to save your work before loading?",
+                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    if (reply == QMessageBox::Yes)
+    {
+        bool tmp = this->SaveAs();
+        if (tmp)
+        {
+
+        }
+        else
+        {
+            return;
+        }
+    }
+    else if (reply == QMessageBox::No)
+        ;
+    else
+        return;
+
+
     QString tmp;
     QString LoadName = QFileDialog::getOpenFileName(this,
-                                tr("QFileDialog::getOpenFileName()"),
+                                tr("Loading file"),
                                 tmp,
                                 tr("XML Files (*.xml)"));
     if(!LoadName.isEmpty())
     {
-        LoadFile(LoadName);
+        QString tmpName = LoadName;
+        int ind = tmpName.lastIndexOf('/');
+        tmpName.truncate(ind+1);
+        SaveFolder = tmpName;
+        mod->setSaveFolder(SaveFolder);
+        LoadName.remove(0,ind+1);//delete beginning till the last /
         SaveName = LoadName;
+        LoadFile(LoadName);
     }
 }
 
@@ -176,7 +231,7 @@ void RESpecTa::LoadFile(QString fileName)
 
     QString subName = fileName;
     subName.chop(4);//delete .xml
-    QString logPath = subName;
+    QString logPath =SaveFolder+subName;
     logPath.append(".log");
     int ind = subName.lastIndexOf('/');
     subName.remove(0,ind+1);//delete beginning till the last /
@@ -225,21 +280,30 @@ void RESpecTa::LoadFile(QString fileName)
     emit refreshWidgets();
 }
 
-QStringList RESpecTa::LoadStates(QString filename)
+QStringList RESpecTa::LoadStates(QString FileName)
 {
 QStringList errors;
-    std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
-    QString subName = filename;
-    if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
-    int ind = subName.lastIndexOf('/');
-    subName.remove(0,ind+1);//delete beginning till the last /
+    QString filename = QString(SaveFolder)+FileName;
+    std::cout<<"FILE state load::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
+    //QString subName = filename;
+    QString GraphName = FileName;
+    GraphName.chop(4);
     QFile* file = new QFile(filename);
     file->open( QIODevice::ReadOnly);
     QXmlStreamReader * reader = new QXmlStreamReader(file);
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"MainLoop State: "<<reader->name().toString().toStdString()<<std::endl;
+std::string startEnd = "START";
+if(reader->isEndElement())startEnd="END";
+
+
+          std::cout<<startEnd<<" MainLoop State: "<<reader->name().toString().toStdString()<<std::endl;
+if(reader->isEndDocument())std::cout<<"ENDDOC"<<std::endl;
+          if(reader->name().toString()=="Graphics"&&reader->isStartElement())
+          {
+              errors+=this->loadGraphics(reader);
+          }
           if(reader->name().toString()=="State")
           {
               if(reader->attributes().hasAttribute("id")&&reader->attributes().hasAttribute("type"))
@@ -297,7 +361,7 @@ QStringList errors;
                   if(state!=NULL)
                   {
                       QString stateName = reader->attributes().value("id").toString();
-if(!mod->checkNameAvailable(stateName) && stateName!="_end_")
+if(!mod->checkNameAvailable(stateName) && stateName.toLower()!="_end_")
 {
     char linenum[30];
     sprintf(linenum,"; line: %lld", reader->lineNumber());
@@ -359,7 +423,7 @@ std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                     errors+= state->LoadFromXML(reader);
                     scene->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
-                    mod->addState(state, subName.toStdString());
+                    mod->addState(state, GraphName.toStdString());
                   }
                   else
                   {
@@ -381,10 +445,8 @@ std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                    QString subtaskName = reader->attributes().value("href").toString();
 if(subtaskName.contains("/"))
 {
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors+=QString("SubtaskName - containing \"/\"")+=linenum;
-    continue;
+    int ind = subtaskName.lastIndexOf('/');
+    subtaskName.remove(0,ind+1);//delete beginning till the last /
 }
 std::cout<<"subtask found "<<subtaskName.toStdString()<<std::endl;
                    subtaskName.chop(4);
@@ -393,14 +455,18 @@ std::cout<<"subtask found "<<subtaskName.toStdString()<<std::endl;
                    errors+=LoadStates(subtaskName);
           }
     }
+    //errors+=reader->errorString();
+    //std::cout<<"error "<<reader->lineNumber()<<std::endl;
     file->close();
     return errors;
 }
 
-QStringList RESpecTa::LoadTransitions(QString filename)
+QStringList RESpecTa::LoadTransitions(QString FileName)
 {
+    QString filename = QString(SaveFolder);
+    filename+=FileName;
     QStringList errors;
-    std::cout<<"FILE::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
+    std::cout<<"FILE trans load::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
     QFile* file = new QFile(filename);
     QString subName = filename;
     if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
@@ -447,8 +513,10 @@ QStringList RESpecTa::LoadTransitions(QString filename)
                       {
                           target = strList[0];
                       }
+                      std::cout<<"SUBTASKNAME WITHOUT XML:"<<subName.toStdString()<<std::endl;
                       BaseState * sourceState = mod->getState(StateName, subName.toStdString());
                       BaseState * targetState = mod->getState(target, subName.toStdString());
+                      std::cout<<sourceState<<" "<<targetState<<std::endl;
                       if(sourceState!=NULL&&targetState!=NULL)
                       {
                           Transition * trans = new Transition(sourceState, targetState);
@@ -498,8 +566,10 @@ if(mod->checkTransCondAvailabe(trans, condition))
           }
           else if (reader->name()=="include")
           {
-                   QString subtaskName = reader->attributes().value("href").toString();
-                   errors+=LoadTransitions(subtaskName);
+              QString subtaskName = reader->attributes().value("href").toString();
+              int ind = subtaskName.lastIndexOf('/');
+              subtaskName.remove(0,ind+1);//delete beginning till the last /
+              errors+=LoadTransitions(subtaskName);
           }
     }
     return errors;
@@ -517,19 +587,26 @@ void RESpecTa::save()
     }
     else
     {
+        mod->setSaveFolder(SaveFolder);
         mod->save(SaveName);
     }
 }
 
-void RESpecTa::SaveAs()
+bool RESpecTa::SaveAs()
 {
     QString tmp;
     SaveName = QFileDialog::getSaveFileName(this,
-                                tr("QFileDialog::getOpenFileName()"),
+                                tr("Save to file"),
                                 tmp,
                                 tr("XML Files (*.xml)"));
     if (!SaveName.isEmpty())
     {
+        QString tmpName = SaveName;
+        int ind = tmpName.lastIndexOf('/');
+        tmpName.truncate(ind+1);
+        SaveFolder = tmpName;
+        mod->setSaveFolder(SaveFolder);
+
         if(SaveName.endsWith(".xml"))
             mod->save(SaveName);
         else
@@ -542,13 +619,21 @@ void RESpecTa::SaveAs()
                 reply = QMessageBox::question(this, tr("Warning"),
                                                 QString("The file exists,\nare you sure want\nto overwrite it"),
                                                 QMessageBox::Yes | QMessageBox::Abort);
-                if(reply==QMessageBox::Abort)return;
+                if(reply==QMessageBox::Abort)
+                {
+                    return false;
+                }
 
             }
             mod->save(SaveName);
         }
     }
+    else
+    {
+        return false;
+    }
     emit refreshWidgets();
+    return true;
 }
 
 void RESpecTa::createHelpMenu()
@@ -1155,6 +1240,109 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString 
     }
 
     //state could be somehow chosen to be edited...
+}
+
+
+void RESpecTa::closeEvent(QCloseEvent *event)
+{
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, tr("Are you sure?"),
+                                    "Do you want to save your work before closing?",
+                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    if (reply == QMessageBox::Yes)
+    {
+        bool tmp = this->SaveAs();
+        if (tmp)
+        {
+
+        }
+        else
+        {
+            event->ignore();
+        }
+    }
+    else if (reply == QMessageBox::No)
+        ;
+    else
+        event->ignore();
+}
+
+
+void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer)
+{
+
+    writer->writeStartElement("Graphics");
+    char tab[20];
+
+    sprintf(tab, "%d", view->x());
+    writer->writeTextElement("PosX", QString(tab));
+    sprintf(tab, "%d", view->y());
+    writer->writeTextElement("PosY", QString(tab));
+    QString scale = sceneScaleCombo->currentText();
+    double newScale = scale.left(scale.indexOf(tr("%"))).toDouble();
+    sprintf(tab, "%lf", newScale);
+    writer->writeTextElement("Scale", QString(tab));
+
+    writer->writeEndElement();
+    return;
+}
+
+QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
+{
+    bool wasX = false;
+    bool wasY = false;
+    bool wasScale = false;
+    QStringList errors;
+    while (!reader->atEnd())
+    {
+          reader->readNextStartElement();
+          std::cout<<"Graphics: "<<reader->name().toString().toStdString()<<std::endl;
+          if(reader->name()=="Graphics"&&reader->isEndElement())
+          {
+              if(!wasScale||!wasX||!wasY)
+              {
+                  char linenum[30];
+                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                  errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
+              }
+              return errors;
+          }
+          else if(reader->name()=="PosX"&&reader->isStartElement())
+          {
+              wasX=true;
+              double X = reader->readElementText().toDouble();
+              view->setGeometry(X, view->y(), view->width(), view->height());
+
+          }
+          else if(reader->name()=="PosY"&&reader->isStartElement())
+          {
+              wasY=true;
+              double Y = reader->readElementText().toDouble();
+              view->setGeometry(view->x(), Y, view->width(), view->height());
+          }
+          else if (reader->name()=="Scale"&&reader->isStartElement())
+          {
+              wasScale=true;
+              this->sceneScaleChanged(reader->readElementText());
+              //TODO: change combo
+          }
+
+          else if (reader->isStartElement())
+          {
+              char linenum[30];
+              sprintf(linenum,"; line: %lld", reader->lineNumber());
+              errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
+          }
+
+    }
+    if(!wasScale||!wasX||!wasY)
+    {
+        char linenum[30];
+        sprintf(linenum,"; line: %lld", reader->lineNumber());
+        errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
+    }
+    return errors;
 }
 
 

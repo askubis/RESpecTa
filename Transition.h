@@ -50,7 +50,7 @@ public:
     std::string Print()
     {
         std::string toRet;
-        toRet+="\nCondition: ";
+        toRet+="Condition: ";
         toRet+=condition.toStdString();
         if(subtask!="")
         {

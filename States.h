@@ -982,7 +982,7 @@ private:
 class sysInitState:public BaseState
 {
 public:
-    sysInitState():BaseState(){}
+    sysInitState():BaseState(){transmitter=(Transmitter)-1;}
     sysInitState(sysInitState& old):BaseState(old)
     {
         this->inits=old.inits;
@@ -1007,13 +1007,13 @@ public:
         if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
         {
             writer->writeStartElement("mp");
-            if(transmitter<TRANSMITTERS_NUMBER)
+            if(transmitter<TRANSMITTERS_NUMBER&&transmitter>=0)
             {
                 writer->writeTextElement("Transmitter", QString().fromStdString(TRANSMITTER_TABLE[transmitter]));
             }
             for(std::vector<Sensor>::iterator it = sensors.begin();it!=sensors.end();it++)
             {
-                writer->writeTextElement("SENSOR", QString().fromStdString(SENSOR_TABLE[(*it)]));
+                writer->writeTextElement("Sensor", QString().fromStdString(SENSOR_TABLE[(*it)]));
             }
             writer->writeEndElement();
 

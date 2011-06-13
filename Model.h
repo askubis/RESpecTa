@@ -14,6 +14,9 @@ public:
     Model();
     void deleteAll();
 
+    void DeleteSubtask(QString Name);
+    void changeSubtaskName(QString oldName, QString NewName);
+
     bool checkTransCondAvailabe(BaseState * source,QString cond);
     bool checkSubtaskExists(std::string Name);
     BaseState * getState(QString name, std::string subtaskName);
@@ -52,13 +55,19 @@ public:
     std::string getMainName(){return mainName;}
 
     bool checkTransCondAvailabe(Transition * tr,QString cond);
-    signals:
+
+    void setSaveFolder(QString newSaveFolder){SaveFolder=newSaveFolder;}
+
+
+signals:
     void reportError(QString);
 
 private:
     RESpecTa * res;
     std::string mainName;
     std::map<std::string, MyGraphType *> * subtasks;
+    QString SaveFolder;
+
 };
 
 #endif // MODEL_H
