@@ -107,6 +107,7 @@ private:
     QStringList LoadStates(QString filename);
     QStringList LoadTransitions(QString filename);
 
+    QStringList scales;
 
     Model * mod;
     QString currentSubtask;

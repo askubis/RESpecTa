@@ -19,6 +19,7 @@ const int InsertTextButton = 10;
 
 //TODO:
 //panel boczny z wypisywaniem wszystkiego
+//view->centerAt(Item)
 
 //TODO:
 //zmiana stanu kursora przy przesuwaniu/wstawianiu
@@ -1054,7 +1055,6 @@ void RESpecTa::createToolbars()
             this, SLOT(pointerGroupClicked(int)));
 
     sceneScaleCombo = new QComboBox;
-    QStringList scales;
     scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
     sceneScaleCombo->addItems(scales);
     sceneScaleCombo->setCurrentIndex(2);
@@ -1269,19 +1269,22 @@ void RESpecTa::closeEvent(QCloseEvent *event)
 }
 
 
+
+
 void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer)
 {
 
     writer->writeStartElement("Graphics");
     char tab[20];
-
-    sprintf(tab, "%d", view->x());
-    writer->writeTextElement("PosX", QString(tab));
-    sprintf(tab, "%d", view->y());
-    writer->writeTextElement("PosY", QString(tab));
     QString scale = sceneScaleCombo->currentText();
-    double newScale = scale.left(scale.indexOf(tr("%"))).toDouble();
-    sprintf(tab, "%lf", newScale);
+    int newScale = scale.left(scale.indexOf(tr("%"))).toInt();
+
+    sprintf(tab, "%d", (view->mapFromScene(0,0)).x()*100/newScale);
+    writer->writeTextElement("PosX", QString(tab));
+    sprintf(tab, "%d", (view->mapFromScene(0,0)).y()*100/newScale);
+    writer->writeTextElement("PosY", QString(tab));
+
+    sprintf(tab, "%d", newScale);
     writer->writeTextElement("Scale", QString(tab));
 
     writer->writeEndElement();
@@ -1293,6 +1296,8 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
     bool wasX = false;
     bool wasY = false;
     bool wasScale = false;
+    int X, Y;
+    int scaleInt;
     QStringList errors;
     while (!reader->atEnd())
     {
@@ -1306,26 +1311,41 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
                   errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
               }
+              else
+              {
+                  view->centerOn(-X+(view->size().width()*50/scaleInt), -Y+(view->size().height()*50/scaleInt));
+              }
               return errors;
           }
           else if(reader->name()=="PosX"&&reader->isStartElement())
           {
               wasX=true;
-              double X = reader->readElementText().toDouble();
-              view->setGeometry(X, view->y(), view->width(), view->height());
-
+              X = reader->readElementText().toInt();
           }
           else if(reader->name()=="PosY"&&reader->isStartElement())
           {
               wasY=true;
-              double Y = reader->readElementText().toDouble();
-              view->setGeometry(view->x(), Y, view->width(), view->height());
+              Y = reader->readElementText().toInt();
           }
           else if (reader->name()=="Scale"&&reader->isStartElement())
           {
               wasScale=true;
-              this->sceneScaleChanged(reader->readElementText());
-              //TODO: change combo
+              QString ScaleString = reader->readElementText();
+              scaleInt = ScaleString.toInt();
+              ScaleString.append("%");
+              this->sceneScaleChanged(ScaleString);
+              QStringList tmpScales = scales;
+              if(tmpScales.contains(ScaleString))
+              {
+                  sceneScaleCombo->setCurrentIndex(tmpScales.indexOf(ScaleString));
+              }
+              else
+              {
+                tmpScales<<ScaleString;
+                sceneScaleCombo->clear();
+                sceneScaleCombo->addItems(tmpScales);
+                sceneScaleCombo->setCurrentIndex(tmpScales.indexOf(ScaleString));
+              }
           }
 
           else if (reader->isStartElement())
@@ -1341,6 +1361,10 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
         char linenum[30];
         sprintf(linenum,"; line: %lld", reader->lineNumber());
         errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
+    }
+    else
+    {
+        view->centerOn(-X+(view->size().width()*50/scaleInt), -Y+(view->size().height()*50/scaleInt));
     }
     return errors;
 }
