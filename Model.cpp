@@ -3,13 +3,9 @@
 
 
 
-
-//TODO:
-//change filenames while saving and loading - need to have folderPath+=filename
-
 Model::Model()
 {
-    subtasks = new std::map<std::string, MyGraphType *>();
+    subtasks = new std::map<QString, MyGraphType *>();
     mainName = "MAIN";
     subtasks->insert(std::make_pair(mainName, new MyGraphType()));
 }
@@ -24,11 +20,11 @@ int ind = myFile.lastIndexOf('/');
 myFile.remove(0,ind+1);
 std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
 
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
         if((*it).first==mainName)continue;
 
-        if(myFile==QString().fromStdString((*it).first) )
+        if(myFile==(*it).first)
         {
             res->getError(QString("a subtask exists with a name you wanted to\nsave your graph with, choose other filename"));
             res->clearSaveName();
@@ -37,11 +33,11 @@ std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
     }
 
 
-   if(myFile.toStdString()!=mainName)
+   if(myFile!=mainName)
    {
-     subtasks->insert(std::make_pair(myFile.toStdString(), (*subtasks)[mainName]));
+     subtasks->insert(std::make_pair(myFile, (*subtasks)[mainName]));
      subtasks->erase(mainName);
-     mainName = myFile.toStdString();
+     mainName = myFile;
    }
 
 
@@ -76,7 +72,7 @@ std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
 
     }
 
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if(((*it).first)==mainName)
@@ -85,11 +81,11 @@ std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
             {
                 myFile.append(QString(".xml"));
             }
-            printStates(tmp, std::string(myFile.toStdString()),true);
+            printStates(tmp, myFile.toStdString(),true);
         }
         else
         {
-            printStates(tmp, std::string((*it).first+".xml"), false);
+            printStates(tmp, (*it).first.toStdString()+".xml", false);
         }
     }
     return;
@@ -97,7 +93,7 @@ std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
 
 void Model::deleteTransition(Transition * transition)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if((findEdge(tmp, transition) )!=edges(*tmp).second)
@@ -109,7 +105,7 @@ void Model::deleteTransition(Transition * transition)
 
 void Model::deleteState(BaseState * state)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if((findVertex(tmp, state) )!=vertices(*tmp).second)
@@ -117,7 +113,7 @@ void Model::deleteState(BaseState * state)
     }
 }
 
-bool Model::addState(BaseState * item, std::string subtaskName)
+bool Model::addState(BaseState * item, QString subtaskName)
 {
     if(item ==NULL)
     {
@@ -136,7 +132,7 @@ bool Model::addState(BaseState * item, std::string subtaskName)
 
 bool Model::checkTransCondAvailabe(Transition * line,QString cond)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if (findEdge(tmp, line)!=edges(*tmp).second)
@@ -158,8 +154,8 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
             //boost::add_edge( (*(findVertex(tmp, line->startItem()))), (*(findVertex(tmp, line->endItem()))), line, (*tmp) );
             return true;
         }
-        return false;
     }
+    return false;
 }
 
 bool Model::checkTransCondAvailabe(BaseState * source,QString cond)
@@ -184,7 +180,7 @@ bool Model::checkTransCondAvailabe(BaseState * source,QString cond)
 
 bool Model::tryInsertTransition(Transition * line)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if (((findVertex(tmp, line->startItem()) )!=vertices(*tmp).second) && ((findVertex(tmp, line->endItem()) )!=vertices(*tmp).second ))
@@ -214,7 +210,7 @@ bool Model::tryInsertTransition(Transition * line)
 
 bool Model::checkNameAvailable(QString name)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if (!checkStateNameAvailable(tmp, name))
@@ -227,15 +223,15 @@ bool Model::checkNameAvailable(QString name)
 
 void Model::addSubtask(QString name)
 {
-    subtasks->insert(std::make_pair(name.toStdString(), new MyGraphType()));
+    subtasks->insert(std::make_pair(name, new MyGraphType()));
 }
 
 QStringList Model::getTasksNameLists()
 {
     QStringList subtaskList;
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
     {
-        subtaskList<<(*it).first.c_str();
+        subtaskList<<(*it).first;
     }
     return subtaskList;
 }
@@ -243,14 +239,14 @@ QStringList Model::getTasksNameLists()
 QStringList Model::getTasksNameListsWithoutMain()
 {
     QStringList subtaskList;
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
     {
-        if((*it).first!=mainName)subtaskList<<(*it).first.c_str();
+        if((*it).first!=mainName)subtaskList<<(*it).first;
     }
     return subtaskList;
 }
 
-QStringList Model::getAllStateNames(std::string sub)
+QStringList Model::getAllStateNames(QString sub)
 {
     MyGraphType * tmp = (*subtasks)[sub];
     return getStateNames( (*tmp));
@@ -286,14 +282,14 @@ QStringList Model::checkIfOK()
     {
         errors.push_back(QString( "No STOP state in main task!"));
     }
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         if((*it).first==mainName) continue;
         MyGraphType * tmp2 = (*it).second;
         if ( checkNameAvailable(QString("_end_"), tmp2) )
         {
-                std::string tmpSubName = (*it).first;
-                sprintf(tab, "No END state in subtask: %s", tmpSubName.c_str());
+                QString tmpSubName = (*it).first;
+                sprintf(tab, "No END state in subtask: %s", tmpSubName.toStdString().c_str());
                 errors.push_back(QString( tab));
         }
     }
@@ -301,7 +297,7 @@ QStringList Model::checkIfOK()
     typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
     boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
     typedef  property_map<MyGraphType, state_t>::type StateMap;
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         //std::cout<<(*it).first<<" "<<boost::num_vertices(*((*it).second))<<std::endl;
         //std::cout<<(*it).first<<" "<<boost::num_edges(*((*it).second))<<std::endl;
@@ -313,10 +309,10 @@ QStringList Model::checkIfOK()
             Transition * transition = boost::get(transitionMap, *startIt);
             if(transition->getSubtask() == "")continue;//no use to check
             bool exists= false;
-            for(std::map<std::string, MyGraphType *>::iterator it2 = subtasks->begin(); it2!=subtasks->end();it2++)
+            for(std::map<QString, MyGraphType *>::iterator it2 = subtasks->begin(); it2!=subtasks->end();it2++)
             {
                 if((*it2).first==mainName) continue;
-                if (!checkNameAvailable(QString().fromStdString( transition->getSubtask()), (*it2).second))
+                if (!checkNameAvailable(transition->getSubtask(), (*it2).second))
                 {
                      exists = true;
                      break;
@@ -335,7 +331,7 @@ QStringList Model::checkIfOK()
                 srcState = boost::get(stateMap, u);
                 destState = boost::get(stateMap, v);
 
-                sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
+                sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask().toStdString().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
                 errors.push_back(QString(tab));
             }
         }
@@ -396,9 +392,9 @@ bool Model::checkNameAvailable(QString name, MyGraphType * G)
 }
 
 
-std::string Model::getSubtaskName(QString StateName)
+QString Model::getSubtaskName(QString StateName)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
         if (!checkStateNameAvailable( tmp, StateName))
@@ -406,14 +402,14 @@ std::string Model::getSubtaskName(QString StateName)
            return (*it).first;
         }
     }
-    return std::string("");
+    return QString("");
 }
 
 bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName)
 {
     //check if the state wasn't deleted
-    std::string subtaskName = getSubtaskName(oldStateName);
-    if(subtaskName==std::string(""))
+    QString subtaskName = getSubtaskName(oldStateName);
+    if(subtaskName==QString(""))
     {
         res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
         return false;
@@ -434,8 +430,8 @@ bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString ol
 
 void Model::MoveTransitionUp(BaseState * st, int index)
 {
-    std::string subtaskName = getSubtaskName(st->getName());
-    if(subtaskName==std::string(""))
+    QString subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==QString(""))
     {
         res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
         return;
@@ -473,8 +469,8 @@ void Model::MoveTransitionUp(BaseState * st, int index)
 
 void Model::MoveTransitionDown(BaseState * st, int index)
 {
-    std::string subtaskName = getSubtaskName(st->getName());
-    if(subtaskName==std::string(""))
+    QString subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==QString(""))
     {
         res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
         return;
@@ -510,8 +506,8 @@ void Model::MoveTransitionDown(BaseState * st, int index)
 std::vector<Transition *> Model::getTransitions(BaseState * st)
 {
     std::vector<Transition *> tranVect;
-    std::string subtaskName = getSubtaskName(st->getName());
-    if(subtaskName==std::string(""))
+    QString subtaskName = getSubtaskName(st->getName());
+    if(subtaskName==QString(""))
     {
         res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
         return tranVect;
@@ -533,12 +529,21 @@ std::vector<Transition *> Model::getTransitions(BaseState * st)
 
 bool Model::checkTransitonExists(Transition * trans)
 {
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
     {
         MyGraphType * tmpGraph = (*it).second;
         if(findEdge(tmpGraph,trans)!= edges(*tmpGraph).second) return true;
     }
     return false;
+}
+
+QString Model::getSubNameOfTrans(Transition * trans)
+{
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end() ;it++)
+    {
+        MyGraphType * tmpGraph = (*it).second;
+        if(findEdge(tmpGraph,trans)!= edges(*tmpGraph).second) return (*it).first;
+    }
 }
 
 boost::graph_traits<MyGraphType>::edge_iterator Model::findEdge ( MyGraphType * graph, Transition * toFind)
@@ -566,6 +571,8 @@ boost::graph_traits<MyGraphType>::vertex_iterator Model::findVertex ( MyGraphTyp
 
 void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 {
+    QString SubName = QString().fromStdString(FileName);
+    SubName.chop(4);
 
     boost::graph_traits<MyGraphType>::vertex_iterator first,last;
     tie(first, last) = vertices(*G);
@@ -593,10 +600,8 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 
 
     writer->writeStartElement("TaskDescription");
-    if(ifMain)
-    {
-        res->SaveGraphicsAttributes(writer);
-    }
+    res->SaveGraphicsAttributes(writer, SubName);
+
     for (;first != last;first++)
     {
       State = boost::get(stateMap, *first);
@@ -628,10 +633,10 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 
     if(ifMain)
     {
-        for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+        for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
         {
             if((*it).first == mainName)continue;
-            std::string subtaskFileName = (*it).first + ".xml";
+            std::string subtaskFileName = (*it).first.toStdString() + ".xml";
             writer->writeStartElement("xi:include");
             writer->writeAttribute("href", QString(SaveFolder).append(QString().fromStdString(subtaskFileName)));
             writer->writeAttribute("parse", "xml");
@@ -695,27 +700,27 @@ bool Model::checkStateNameAvailable(MyGraphType *G, QString given)
 
 void Model::setMainName(QString myFile)
 {
-    if(myFile.toStdString()==mainName && (*subtasks)[mainName]==NULL)
+    if(myFile==mainName && (*subtasks)[mainName]==NULL)
     {
         (*subtasks)[mainName]=new MyGraphType();
         return;
     }
-    if(myFile.toStdString()==mainName)return;
+    if(myFile==mainName)return;
     MyGraphType * tmp = (*subtasks)[mainName];
     if(tmp!=NULL)
     {
-        subtasks->insert(std::make_pair(myFile.toStdString(), tmp));
+        subtasks->insert(std::make_pair(myFile, tmp));
     }
     else
     {
-        subtasks->insert(std::make_pair(myFile.toStdString(), new MyGraphType()));
+        subtasks->insert(std::make_pair(myFile, new MyGraphType()));
     }
     subtasks->erase(mainName);
-    mainName = myFile.toStdString();
+    mainName = myFile;
 
 }
 
-BaseState * Model::getState(QString name, std::string subtaskName)
+BaseState * Model::getState(QString name, QString subtaskName)
 {
     std::cout<<"IN GET STATE"<<std::endl;
     if (!checkSubtaskExists(subtaskName))
@@ -735,21 +740,52 @@ BaseState * Model::getState(QString name, std::string subtaskName)
     return NULL;
 }
 
-bool Model::checkSubtaskExists(std::string Name)
+bool Model::checkSubtaskExists(QString Name)
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    return subtasks->find(Name)!=subtasks->end();
+}
+
+void Model::DeleteTask(QString Name)
+{
+    if(subtasks->find(Name)==subtasks->end())return;
+    MyGraphType * tmp = (*subtasks)[Name];
+    if(tmp!=NULL)
     {
-        if((*it).first==Name)
+        property_map<MyGraphType, transition_t>::type TransitionMap  = get(transition_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
+        tie(startIt, endIt)=edges(*tmp);
+        for(;startIt!=endIt;)
         {
-            return true;
+            Transition * transition = boost::get(TransitionMap, *startIt);
+            res->deleteTrans(transition);
+            tie(startIt, endIt)=edges(*tmp);
+           // boost::remove_edge(startIt, *tmp);
+            //delete transition;
+        }
+
+        property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::vertex_iterator first,last;
+        tie(first, last) = vertices(*tmp);
+        for (;first!=last;)
+        {
+            BaseState * state = boost::get(StateMap, (*first));
+            res->deleteState(state);
+            tie(first, last) = vertices(*tmp);
+           // boost::remove_vertex(first, *tmp);
+            //delete state;
+        }
+
+        if(Name!=mainName)
+        {
+            delete tmp;
+            subtasks->erase(subtasks->find(Name));
         }
     }
-    return false;
 }
 
 void Model::deleteAll()
 {
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
 
@@ -780,34 +816,34 @@ void Model::deleteAll()
         delete tmp;
         subtasks->erase(it);
     }
-    addSubtask(QString().fromStdString(mainName));
+    addSubtask(mainName);
 }
 
 
 
 void Model::changeSubtaskName(QString oldName, QString NewName)
 {
-    if(oldName.toStdString()==mainName) mainName = NewName.toStdString();
+    if(oldName==mainName) mainName = NewName;
     MyGraphType  * tmp;
-    for (std::map<std::string, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
-        if((*it).first == oldName.toStdString())
+        if((*it).first == oldName)
         {
             tmp = (*it).second;
             subtasks->erase(it);
             break;
         }
     }
-    (*subtasks)[NewName.toStdString()]= tmp;
+    (*subtasks)[NewName]= tmp;
 
 }
 
 void Model::DeleteSubtask(QString Name)
 {
 
-    for(std::map<std::string, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
-        if((*it).first != Name.toStdString()) continue;
+        if((*it).first != Name) continue;
         MyGraphType * tmp = (*it).second;
 
         property_map<MyGraphType, transition_t>::type TransitionMap  = get(transition_t(), (*tmp));
@@ -834,13 +870,19 @@ void Model::DeleteSubtask(QString Name)
             //delete state;
         }
 
-        if(Name.toStdString()!=mainName)
+        if(Name!=mainName)
         {
             delete tmp;
             subtasks->erase(it);
         }
         break;
     }
+}
+
+int Model::vertNum(QString Name)
+{
+    if(subtasks->find(Name)==subtasks->end())return 0;
+    return boost::num_vertices(*((*subtasks)[Name]));
 }
 
 

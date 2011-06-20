@@ -155,7 +155,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             bool test = emit lineInserted(transition);
             if(test)
             {
-                transition->setSubtask(transitionAttributes.second.toStdString());
+                transition->setSubtask(transitionAttributes.second);
                 transition->setColor(myLineColor);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);

@@ -34,24 +34,6 @@ this->setMaximumWidth(230);
 
 
 
-    QHBoxLayout *taskLayout = new QHBoxLayout;
-    QLabel * taskLabel = new QLabel(tr("Task:"));
-    taskNameEdit = new QLineEdit();
-    createTaskButton = new QPushButton (tr("Create"));
-    createTaskButton->setDisabled(true);
-    connect(taskNameEdit, SIGNAL(textChanged(QString)), this, SLOT(lengthSubtaskChanged(QString)));
-connect(createTaskButton, SIGNAL(clicked()), this, SLOT(createNewSubtask()));
-    taskLayout->addWidget(taskLabel);
-    taskLayout->addWidget(taskNameEdit);
-    taskLayout->addWidget(createTaskButton);
-
-    subtaskCombo = new QComboBox(this);
-    connect(subtaskCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(SubtaskIndexChanged(QString)));
-    subtaskCombo->addItems(mod->getTasksNameLists());
-
-    StateLayout->addLayout(taskLayout);
-    StateLayout->addWidget(subtaskCombo);
-
 
     nameLabel = new QLabel(tr("State Name:"));
     stateNameEdit = new QLineEdit;
@@ -150,18 +132,8 @@ void StateWidget::lengthChanged(QString newString)
 }
 
 
-void StateWidget::lengthSubtaskChanged(QString newString)
-{
-    if(newString.size()>0)
-    {        createTaskButton->setDisabled(false);    }
-    else
-    {        createTaskButton->setDisabled(true);    }
-}
 
-void StateWidget::SubtaskIndexChanged(QString newString)
-{
-    emit selectedSubtaskName(newString);
-}
+
 
 void StateWidget::AcceptState()
 {
@@ -222,29 +194,10 @@ void StateWidget::InsertState()
     emit InsertState(toInsertState);
 }
 
-void StateWidget::createNewSubtask()
-{
-    if(taskNameEdit->text().contains("/"))
-    {
-        emit reportError(QString("The subtask name cannot contain \"/\""));
-        return;
-    }
 
-    if(subtaskCombo->findText(taskNameEdit->text())!=-1)
-    {
-        emit reportError(taskNameEdit->text().append(" is a name already\ntaken for a subtask"));
-    }
-    else
-    {
-        subtaskCombo->addItem(taskNameEdit->text());
-        emit SubtaskInserted(taskNameEdit->text());
-    }
-}
 
 void StateWidget::refreshData()
 {
-    subtaskCombo->clear();
-    subtaskCombo->addItems(mod->getTasksNameLists());
 }
 
 void StateWidget::StateSelected(BaseState * state)
@@ -255,7 +208,6 @@ void StateWidget::StateSelected(BaseState * state)
     edited = state;
     OKButton->setDisabled(false);
     stateNameEdit->setText(state->getName());
-    subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString(state->getName())))));
     paramEdit->setText(state->getParameters());
     stateTypeCombo->setCurrentIndex(state->getType());
     StateWidgets[tmpWidget]->setVisible(false);
@@ -270,14 +222,9 @@ void StateWidget::StateSelected(BaseState * state)
 
 bool StateWidget::StateNameOK()
 {
-    if (stateNameEdit->text().toLower()=="init" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
+    if (stateNameEdit->text().toLower()=="_init_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
     {
         emit reportError(QString("INIT name is dedicated only to SYSTEM_INITIALIZATION state"));
-        return false;
-    }
-    if (stateNameEdit->text().toLower()=="init" && subtaskCombo->currentText()!=QString().fromStdString(mod->getMainName()))
-    {
-        emit reportError(QString("INIT name is dedicated only to the main task"));
         return false;
     }
     if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")

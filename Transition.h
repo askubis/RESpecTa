@@ -41,8 +41,8 @@ public:
 
     QString getCondition() {return condition;}
     void setCondition(QString newCondition) {condition=newCondition;}
-    std::string getSubtask() {return subtask;}
-    void setSubtask(std::string newSubtask) {subtask=newSubtask;}
+    QString getSubtask() {return subtask;}
+    void setSubtask(QString newSubtask) {subtask=newSubtask;}
 
     //BaseState* getSub() {return sub;}
     //void setSub(BaseState* newSubtask) {sub=newSubtask;}
@@ -55,7 +55,7 @@ public:
         if(subtask!="")
         {
             toRet+="\nSubtask: ";
-            toRet+=subtask;
+            toRet+=subtask.toStdString();
         }
         return toRet;
     }
@@ -68,7 +68,8 @@ public:
         QString tmpString;
         if(subtask != "")
         {
-              tmpString.fromStdString(subtask).append(QString(">>")).append(QString(tmpState->getName()));
+              tmpString = subtask;
+              tmpString.append(QString(">>")).append(QString(tmpState->getName()));
         }
         else
         {
@@ -93,7 +94,7 @@ private:
     QPolygonF TransitionHead;
 
     QString condition;
-    std::string subtask;
+    QString subtask;
 };
 
 #endif

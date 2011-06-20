@@ -19,9 +19,12 @@ private:
     QListWidget * subtaskList;
     QLineEdit * nameEdit;
     QPushButton * changeNameButton;
+    QPushButton * AddButton;
 
 signals:
-    void changed();
+    void added(QString);
+    void removed(QString);
+    void changed(QString, QString);
     void reportError(QString);
 
 private slots:

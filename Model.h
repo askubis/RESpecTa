@@ -13,28 +13,32 @@ class Model
 public:
     Model();
     void deleteAll();
+    void DeleteTask(QString Name);
+    int vertNum(QString Name);
+
+    QString getSubNameOfTrans(Transition * trans);
 
     void DeleteSubtask(QString Name);
     void changeSubtaskName(QString oldName, QString NewName);
 
     bool checkTransCondAvailabe(BaseState * source,QString cond);
-    bool checkSubtaskExists(std::string Name);
-    BaseState * getState(QString name, std::string subtaskName);
+    bool checkSubtaskExists(QString Name);
+    BaseState * getState(QString name, QString subtaskName);
     void setMainName(QString newName);
     void save(QString filename);
     void deleteTransition(Transition * transition);
     void deleteState(BaseState * state);
-    bool addState(BaseState * item, std::string subtaskName);
+    bool addState(BaseState * item, QString subtaskName);
     bool tryInsertTransition(Transition * trans);
     bool checkNameAvailable(QString name);
     void addSubtask(QString name);
     QStringList getTasksNameLists();
     QStringList getTasksNameListsWithoutMain();
-    QStringList getAllStateNames(std::string sub);
+    QStringList getAllStateNames(QString sub);
     //bool checkStateNameIsAvailable( MyGraphType &G, QString given);
     QStringList checkIfOK();
     bool checkNameAvailable(QString name, MyGraphType * G);
-    std::string getSubtaskName(QString StateName);
+    QString getSubtaskName(QString StateName);
     bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);
 
     void MoveTransitionUp(BaseState * st, int index);
@@ -52,7 +56,7 @@ public:
 
 
     void setView(RESpecTa * newres){res=newres;}
-    std::string getMainName(){return mainName;}
+    QString getMainName(){return mainName;}
 
     bool checkTransCondAvailabe(Transition * tr,QString cond);
 
@@ -64,8 +68,8 @@ signals:
 
 private:
     RESpecTa * res;
-    std::string mainName;
-    std::map<std::string, MyGraphType *> * subtasks;
+    QString mainName;
+    std::map<QString, MyGraphType *> * subtasks;
     QString SaveFolder;
 
 };

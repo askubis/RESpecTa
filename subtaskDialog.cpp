@@ -23,7 +23,7 @@ SubtaskDialog::SubtaskDialog(QWidget * parent,Model * mod): QDialog(parent)
    connect(DeleteButton, SIGNAL(clicked()), this, SLOT(DeleteClicked()));
    mainLayout->addWidget(DeleteButton, 8,1);
 
-   QPushButton * AddButton = new QPushButton("Add");
+   AddButton = new QPushButton("Add");
    connect(AddButton, SIGNAL(clicked()), this, SLOT(AddClicked()));
    mainLayout->addWidget(AddButton, 9,0);
 
@@ -34,6 +34,9 @@ SubtaskDialog::SubtaskDialog(QWidget * parent,Model * mod): QDialog(parent)
    nameEdit = new QLineEdit();
    mainLayout->addWidget(nameEdit, 7,0, 1, 2);
    connect(nameEdit, SIGNAL(textChanged(QString)), this, SLOT(LengthChanged(QString)));
+
+   changeNameButton->setDisabled(true);
+   AddButton->setDisabled(true);
 
 
 
@@ -55,32 +58,48 @@ void SubtaskDialog::ChangeClicked()
         return;
     }
     QStringList list = model->getTasksNameLists();
-    model->changeSubtaskName(list[subtaskList->currentIndex().row()], nameEdit->text());
-    reloadName();
-    emit changed();
+    if(list[subtaskList->currentIndex().row()]!= nameEdit->text())
+    {
+        model->changeSubtaskName(list[subtaskList->currentIndex().row()], nameEdit->text());
+        emit changed(list[subtaskList->currentIndex().row()], nameEdit->text());
+        reloadName();
+    }
 }
 
 void SubtaskDialog::AddClicked()
 {
-    model->addSubtask(nameEdit->text());
-    reloadName();
-    emit changed();
+    if(model->checkSubtaskExists(nameEdit->text()))
+    {
+        emit reportError(QString("Subtask with that name already exists"));
+        return;
+    }
+    else
+    {
+        model->addSubtask(nameEdit->text());
+        emit added(nameEdit->text());
+        reloadName();
+    }
 }
 
 void SubtaskDialog::DeleteClicked()
 {
     QStringList list = model->getTasksNameLists();
     model->DeleteSubtask(list[subtaskList->currentIndex().row()]);
+    emit removed(list[subtaskList->currentIndex().row()]);
     reloadName();
-    emit changed();
+
 }
 
 void SubtaskDialog::LengthChanged(QString newString)
 {
     if(newString.size()>0)
-    {        changeNameButton->setDisabled(false);    }
+    {        changeNameButton->setDisabled(false);
+             AddButton->setDisabled(false);
+    }
     else
-    {        changeNameButton->setDisabled(true);    }
+    {        changeNameButton->setDisabled(true);
+             AddButton->setDisabled(true);
+    }
 }
 
 void SubtaskDialog::OKPressed()

@@ -53,7 +53,7 @@ void TransDialog::openForAState(BaseState * tmp)
     {
         transCondList->addItem(tr->getCondition());
         transTargList->addItem(tr->endItem()->getName());
-        transSubList->addItem(QString().fromStdString(tr->getSubtask()));
+        transSubList->addItem(tr->getSubtask());
     }
     RowChanged(0);
 

@@ -17,12 +17,11 @@ transWidget = new TransWidget(tabWidget, newmod);
     //tabWidget->setTabEnabled(1, false);
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
 
-    connect(stateWidget, SIGNAL(SubtaskInserted(QString)), transWidget, SLOT(SubtaskInserted(QString)));
-    connect(stateWidget, SIGNAL(SubtaskInserted(QString)), (RESpecTa *)this->parentWidget(), SLOT(NewSubtaskInserted(QString)));
+
 
     connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
     connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * , QString)), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * ,QString)));
-    connect (stateWidget, SIGNAL(selectedSubtaskName(QString)), (RESpecTa *)this->parentWidget(),SLOT(selectedSubtaskName(QString)));
+
 
 
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));

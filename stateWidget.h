@@ -53,12 +53,8 @@ private:
 
     QPushButton *OKButton;
     QPushButton *InsertButton;
-    QPushButton *createTaskButton;
-
-    QLineEdit * taskNameEdit;
 
     QComboBox *stateTypeCombo;
-    QComboBox *subtaskCombo;
 
 
     MyTypeWidget* StateWidgets[STATE_TYPES_NUMBER];
@@ -66,9 +62,7 @@ private:
     int tmpWidget;
 
 signals:
-    void SubtaskInserted(QString newSubtaskName);
     void InsertState(BaseState * newState);
-    void selectedSubtaskName(QString newString);
     void reportError(QString msgString);
     void ReplaceState(BaseState * oldState, BaseState * newState, QString oldName);
 
@@ -79,10 +73,6 @@ private slots:
 
     void forwardError(QString msgString){emit reportError(msgString);}
     void setStateSubclass(int chosen);
-    void createNewSubtask();
-    void SubtaskIndexChanged(QString);
-
-    void lengthSubtaskChanged(QString newString);
     void lengthChanged(QString text);
 
     void AcceptState();

@@ -39,7 +39,8 @@ class RESpecTa : public QMainWindow
 public:
     RESpecTa(){}
     RESpecTa(Model * newmod );
-   void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
+
+    void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
    //MyGraphType * getGraph (){return myGraph;}
    //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
    void getError(QString x){reportError(x);}
@@ -47,7 +48,7 @@ public:
    void deleteState(BaseState * state);
    void deleteTrans(Transition * trans);
 
-   void SaveGraphicsAttributes(QXmlStreamWriter * writer);
+   void SaveGraphicsAttributes(QXmlStreamWriter * writer, QString SubName);
 
 signals:
    void itemSelectedSig(QGraphicsItem *item);
@@ -56,7 +57,10 @@ signals:
 
 
 private slots:
-    void SubtasksChanged();
+    void TabChanged(int);
+    void SubtaskAdded(QString);
+    void SubtaskRemoved(QString);
+    void SubtaskChanged(QString, QString);
     void OpenSubtaskEditDialog();
     void ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName);
     //QStringList getSubtasksList();
@@ -93,7 +97,7 @@ private slots:
     void about();
 
 private:
-    QStringList loadGraphics(QXmlStreamReader * reader);
+    QStringList loadGraphics(QXmlStreamReader * reader, QString subName);
     void closeEvent(QCloseEvent *event);
     void createFileMenu();
     void createEditMenu();
@@ -127,8 +131,11 @@ private:
     QIcon createColorToolButtonIcon(const QString &image, QColor color);
     QIcon createColorIcon(QColor color);
 
-    DiagramScene *scene;
-    QGraphicsView *view;
+    std::map<QString,QWidget *> widgets;
+    QTabWidget * tabWidget;
+    std::map<QString,DiagramScene *> scenes;
+    std::map<QString,QGraphicsView *> views;
+    std::map<QString, QHBoxLayout *> layouts;
 
     QAction *editSubtasks;
     QAction *exitAction;

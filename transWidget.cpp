@@ -92,7 +92,7 @@ void TransWidget::AcceptTrans()
     if (mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
     {
         edited->setCondition(conditionLineEdit->text());
-        edited->setSubtask(stateCombo->currentText().toStdString());
+        edited->setSubtask(stateCombo->currentText());
         OKButton->setDisabled(false);
         sourceNameLabel->setText(edited->startItem()->getName());
         destNameLabel->setText(edited->endItem()->getName());
@@ -143,7 +143,7 @@ void TransWidget::subtaskChanged(QString name)
         stateCombo->clear();
         if(name.toStdString()!="None")
         {
-            stateCombo->addItems(mod->getAllStateNames(name.toStdString()));
+            stateCombo->addItems(mod->getAllStateNames(name));
         }
     }
 }
@@ -165,13 +165,13 @@ void TransWidget::TransSelected(Transition * trans)
     sourceNameLabel->setText(trans->startItem()->getName());
     destNameLabel->setText(trans->endItem()->getName());
     conditionLineEdit->setText(trans->getCondition());
-    if(mod->getSubtaskName(QString().fromStdString(trans->getSubtask()))==std::string(""))
+    if(mod->getSubtaskName(trans->getSubtask())==QString(""))
     {
         trans->setSubtask("");
     }
     else
     {
-        subtaskCombo->setCurrentIndex(subtaskCombo->findText(QString().fromStdString(mod->getSubtaskName(QString().fromStdString(trans->getSubtask())))));
-        stateCombo->setCurrentIndex(stateCombo->findText(QString().fromStdString(trans->getSubtask())));
+        subtaskCombo->setCurrentIndex(subtaskCombo->findText(mod->getSubtaskName(trans->getSubtask())));
+        stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()));
     }
 }

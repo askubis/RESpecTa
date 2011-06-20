@@ -15,9 +15,6 @@
 const int InsertTextButton = 10;
 
 //TODO:
-//zapisywanie ustawień widoku (pozycja, skala) - najlepiej do pliku .xml lub innego pliku powiazanego z nazwa
-
-//TODO:
 //panel boczny z wypisywaniem wszystkiego
 //view->centerAt(Item)
 
@@ -35,26 +32,16 @@ RESpecTa::RESpecTa(Model * newmod)
     createHelpMenu();
     //createActions();
     //createToolBox();
-
-    scene = new DiagramScene(itemMenu, this, mod);
-    scene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    connect(scene, SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
-    connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
-    connect(scene, SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
-    connect(scene, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     createToolbars();
-
-    //myGraph = new MyGraphType();
-    //subtasks = new std::map<std::string, MyGraphType*> ();
-
-    //subtasks->insert(std::make_pair<QString, MyGraphType *>("kopytko", NULL));
 
     transDial = new TransDialog(this, mod);
     connect(transDial, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
 
     subDialog = new SubtaskDialog(this, mod);
-    connect(subDialog, SIGNAL(changed()), this, SLOT(SubtasksChanged()));
+    connect(subDialog, SIGNAL(changed(QString, QString)), this, SLOT(SubtaskChanged(QString, QString)));
+    connect(subDialog, SIGNAL(added(QString)), this, SLOT(SubtaskAdded(QString)));
+    connect(subDialog, SIGNAL(removed(QString)), this, SLOT(SubtaskRemoved(QString)));
     connect(subDialog, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
     editWidget = new EditWidget(this, mod);
@@ -63,17 +50,46 @@ RESpecTa::RESpecTa(Model * newmod)
    // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
     editWidget->resize(10,800);
 
+    currentSubtask="MAIN";
+
+    scenes[currentSubtask] = new DiagramScene(itemMenu, this, mod);
+    scenes[currentSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
+
+    connect(scenes[currentSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
+    connect(scenes[currentSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scenes[currentSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
+    connect(scenes[currentSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+
+
+    QWidget * mainWidget = new QWidget();
+
+
+    tabWidget = new QTabWidget;
+
 
     QHBoxLayout *layout = new QHBoxLayout;
+    layouts[currentSubtask]=new QHBoxLayout;
+
     //layout->addWidget(toolBox);
-    view = new QGraphicsView(scene);
-    layout->addWidget(view);
+    views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
+    layouts[currentSubtask]->addWidget(views[currentSubtask]);
+
+    tabWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    layout->addWidget(tabWidget);
+    editWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
     layout->addWidget(editWidget);
+    mainWidget->setLayout(layout);
 
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
+    widgets[currentSubtask] = new QWidget;
+    widgets[currentSubtask]->setLayout(layouts[currentSubtask]);
+    //layouts[currentSubtask]
 
-    setCentralWidget(widget);
+    tabWidget->addTab(widgets[currentSubtask], "MAIN");
+    tabWidget->setMovable(true);
+
+
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabChanged(int)));
+    setCentralWidget(mainWidget);
     setWindowTitle(tr("RESpecTa"));
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -149,11 +165,104 @@ void RESpecTa::OpenSubtaskEditDialog()
     subDialog->exec();
 }
 
-void RESpecTa::SubtasksChanged()
+void RESpecTa::SubtaskAdded(QString newSubtask)
 {
+
+    scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
+    scenes[newSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
+
+    connect(scenes[newSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
+    connect(scenes[newSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
+    connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+
+    layouts[newSubtask] = new QHBoxLayout;
+    views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
+    layouts[newSubtask]->addWidget(views[newSubtask]);
+
+
+    widgets[newSubtask] = new QWidget;
+    widgets[newSubtask]->setLayout(layouts[newSubtask]);
+
+    tabWidget->addTab(widgets[newSubtask], newSubtask);
+
+    mod->addSubtask(newSubtask);
+
     emit refreshWidgets();
 }
 
+void RESpecTa::SubtaskRemoved(QString oldSubtask)
+{
+     mod->DeleteTask(oldSubtask);
+    if(oldSubtask!=mod->getMainName())
+    {
+        std::map<QString,QHBoxLayout *>::iterator layoutIt = layouts.find(oldSubtask);
+        delete (*layoutIt).second;
+        layouts.erase(layoutIt);
+
+        std::map<QString,QGraphicsView *>::iterator viewIt = views.find(oldSubtask);
+        delete (*viewIt).second;
+        views.erase(viewIt);
+
+        std::map<QString,QWidget *>::iterator widgetIt = widgets.find(oldSubtask);
+        delete (*widgetIt).second;
+        widgets.erase(widgetIt);
+
+        std::map<QString,DiagramScene *>::iterator sceneIt = scenes.find(oldSubtask);
+        delete (*sceneIt).second;
+        scenes.erase(sceneIt);
+
+
+        int i;
+        for(i = 0;i<tabWidget->count();i++)
+        {
+            if(tabWidget->tabText(i)==oldSubtask)
+            {
+                break;
+            }
+        }
+
+        tabWidget->removeTab(i);
+    }
+
+    emit refreshWidgets();
+}
+
+void RESpecTa::SubtaskChanged(QString oldName, QString newName)
+{
+    if(oldName==currentSubtask)currentSubtask=newName;
+    std::map<QString,DiagramScene *>::iterator sceneIt = scenes.find(oldName);
+    scenes[newName]=(*sceneIt).second;
+    scenes.erase(sceneIt);
+
+    std::map<QString,QWidget *>::iterator widgetIt = widgets.find(oldName);
+    widgets[newName]=(*widgetIt).second;
+    widgets.erase(widgetIt);
+
+    std::map<QString,QGraphicsView *>::iterator viewIt = views.find(oldName);
+    views[newName]=(*viewIt).second;
+    views.erase(viewIt);
+
+    std::map<QString,QHBoxLayout *>::iterator layoutIt = layouts.find(oldName);
+    layouts[newName]=(*layoutIt).second;
+    layouts.erase(layoutIt);
+
+    int i;
+    for(i = 0;i<tabWidget->count();i++)
+    {
+        if(tabWidget->tabText(i)==oldName)
+        {
+            break;
+        }
+    }
+
+    tabWidget->removeTab(i);
+
+    tabWidget->addTab(widgets[newName], newName);
+
+
+    emit refreshWidgets();
+}
 void RESpecTa::createFileMenu()
 {
     exitAction = new QAction(tr("&Quit"), this);
@@ -228,7 +337,13 @@ void RESpecTa::Load()
 
 void RESpecTa::LoadFile(QString fileName)
 {
-    mod->deleteAll();
+    //mod->deleteAll(); zbędne skoro wykonujemy subtaskRemoved
+
+    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    {
+        SubtaskRemoved((*it).first);
+        it = scenes.begin();
+    }
 
     QString subName = fileName;
     subName.chop(4);//delete .xml
@@ -239,7 +354,8 @@ void RESpecTa::LoadFile(QString fileName)
 
     QStringList errors;
 
-
+    QString oldMain = mod->getMainName();
+    std::cout<<"MAIN "<<oldMain.toStdString()<<std::endl;
     mod->setMainName(subName);
 
     errors+=LoadStates(fileName);
@@ -277,7 +393,11 @@ void RESpecTa::LoadFile(QString fileName)
         file.close();
     }
 
-
+    if(mod->vertNum(oldMain)==0)
+    {
+        SubtaskRemoved(oldMain);
+    }
+    this->sceneScaleChanged(sceneScaleCombo->currentText());
     emit refreshWidgets();
 }
 
@@ -289,6 +409,10 @@ QStringList errors;
     //QString subName = filename;
     QString GraphName = FileName;
     GraphName.chop(4);
+    if(scenes.find(GraphName)==scenes.end())
+    {
+        this->SubtaskAdded(GraphName);
+    }
     QFile* file = new QFile(filename);
     file->open( QIODevice::ReadOnly);
     QXmlStreamReader * reader = new QXmlStreamReader(file);
@@ -303,7 +427,7 @@ if(reader->isEndElement())startEnd="END";
 if(reader->isEndDocument())std::cout<<"ENDDOC"<<std::endl;
           if(reader->name().toString()=="Graphics"&&reader->isStartElement())
           {
-              errors+=this->loadGraphics(reader);
+              errors+=this->loadGraphics(reader, GraphName);
           }
           if(reader->name().toString()=="State")
           {
@@ -422,9 +546,9 @@ else
                     state->setName(stateName);
 std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                     errors+= state->LoadFromXML(reader);
-                    scene->setItemParams(state);
+                    scenes[GraphName]->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
-                    mod->addState(state, GraphName.toStdString());
+                    mod->addState(state, GraphName);
                   }
                   else
                   {
@@ -444,15 +568,14 @@ std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
           else if (reader->name()=="include"&&reader->isStartElement())
           {
                    QString subtaskName = reader->attributes().value("href").toString();
-if(subtaskName.contains("/"))
-{
-    int ind = subtaskName.lastIndexOf('/');
-    subtaskName.remove(0,ind+1);//delete beginning till the last /
-}
-std::cout<<"subtask found "<<subtaskName.toStdString()<<std::endl;
-                   subtaskName.chop(4);
-                   mod->addSubtask(subtaskName);
-                   subtaskName.append(".xml");
+        if(subtaskName.contains("/"))//TODO: a co jeśli jest subtask w innym folderze?
+        {
+            int ind = subtaskName.lastIndexOf('/');
+            subtaskName.remove(0,ind+1);//delete beginning till the last /
+        }
+                   //subtaskName.chop(4);
+                   //mod->addSubtask(subtaskName);
+                   //subtaskName.append(".xml");
                    errors+=LoadStates(subtaskName);
           }
     }
@@ -515,14 +638,14 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
                           target = strList[0];
                       }
                       std::cout<<"SUBTASKNAME WITHOUT XML:"<<subName.toStdString()<<std::endl;
-                      BaseState * sourceState = mod->getState(StateName, subName.toStdString());
-                      BaseState * targetState = mod->getState(target, subName.toStdString());
+                      BaseState * sourceState = mod->getState(StateName, subName);
+                      BaseState * targetState = mod->getState(target, subName);
                       std::cout<<sourceState<<" "<<targetState<<std::endl;
                       if(sourceState!=NULL&&targetState!=NULL)
                       {
                           Transition * trans = new Transition(sourceState, targetState);
                           trans->setCondition(condition);
-                          trans->setSubtask(subtask.toStdString());
+                          trans->setSubtask(subtask);
 if(mod->checkTransCondAvailabe(trans, condition))
 {
     delete trans;
@@ -533,10 +656,10 @@ if(mod->checkTransCondAvailabe(trans, condition))
 }
                           if(mod->checkTransCondAvailabe(sourceState, condition))
                           {
-                            scene->addItem(trans);
+                            scenes[subName]->addItem(trans);
                             mod->tryInsertTransition(trans);
                             trans->updatePosition();
-                            scene->setMode(DiagramScene::MoveItem);
+                            scenes[subName]->setMode(DiagramScene::MoveItem);
                             trans->setToolTip(QString().fromStdString(trans->Print()));
                             trans->setZValue(-1000.0);
                             sourceState->addTransition(trans);
@@ -589,6 +712,11 @@ void RESpecTa::save()
     else
     {
         mod->setSaveFolder(SaveFolder);
+        QString subName =SaveName;
+        subName.chop(4);
+        int ind = subName.lastIndexOf('/');
+        subName.remove(0,ind+1);//delete beginning till the last /
+        if(mod->getMainName()!= subName)SubtaskChanged(mod->getMainName(), subName);
         mod->save(SaveName);
     }
 }
@@ -626,6 +754,11 @@ bool RESpecTa::SaveAs()
                 }
 
             }
+            QString subName =SaveName;
+            subName.chop(4);
+            int ind = subName.lastIndexOf('/');
+            subName.remove(0,ind+1);//delete beginning till the last /
+            if(mod->getMainName()!= subName)SubtaskChanged(mod->getMainName(), subName);
             mod->save(SaveName);
         }
     }
@@ -653,24 +786,25 @@ void RESpecTa::createHelpMenu()
 
 void RESpecTa::buttonGroupClicked(int id)
 {
-    QList<QAbstractButton *> buttons = buttonGroup->buttons();
+    /*QList<QAbstractButton *> buttons = buttonGroup->buttons();
     foreach (QAbstractButton *button, buttons) {
     if (buttonGroup->button(id) != button)
         button->setChecked(false);
     }
     if (id == InsertTextButton) {
-        scene->setMode(DiagramScene::InsertText);
+        scenes[0]->setMode(DiagramScene::InsertText);
     } else {
         //scene->setItemType(BaseState::DiagramType(id));
-        scene->setMode(DiagramScene::InsertItem);
-    }
+        scenes[0]->setMode(DiagramScene::InsertItem);
+    }*/
 }
 
 void RESpecTa::deleteItem()
 {
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
 
     //check why there's a bug with deleting transitions attached to a deleted node
-    foreach (QGraphicsItem *item, scene->selectedItems())
+    foreach (QGraphicsItem *item, scenes[index]->selectedItems())
     {
         if (item->type() == Transition::Type)
         {
@@ -680,7 +814,7 @@ void RESpecTa::deleteItem()
         }
     }
 
-    foreach (QGraphicsItem *item, scene->selectedItems())
+    foreach (QGraphicsItem *item, scenes[index]->selectedItems())
     {
          if (item->type() == BaseState::Type)
          {
@@ -701,35 +835,35 @@ void RESpecTa::deleteState(BaseState * state)
 
     state->removeTransitions();
 
+    QString sub = mod->getSubtaskName(state->getName());
     mod->deleteState(state);
 
-    scene->removeItem(state);
+    scenes[sub]->removeItem(state);
 
     delete state;
 }
 
 void RESpecTa::deleteTrans(Transition * trans)
 {
+    QString sub = mod->getSubNameOfTrans(trans);
     mod->deleteTransition(trans);
 
-    scene->removeItem(trans);
+    scenes[sub]->removeItem(trans);
     delete trans;
-
 }
-
-
 
 void RESpecTa::pointerGroupClicked(int)
 {
-    scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
+    //scenes[0]->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 }
 
 void RESpecTa::bringToFront()
 {
-    if (scene->selectedItems().isEmpty())
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
+    if (scenes[index]->selectedItems().isEmpty())
         return;
 
-    QGraphicsItem *selectedItem = scene->selectedItems().first();
+    QGraphicsItem *selectedItem = scenes[index]->selectedItems().first();
     QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
 
     qreal zValue = 0;
@@ -748,10 +882,12 @@ void RESpecTa::bringToFront()
 
 void RESpecTa::sendToBack()
 {
-    if (scene->selectedItems().isEmpty())
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
+
+    if (scenes[index]->selectedItems().isEmpty())
         return;
 
-    QGraphicsItem *selectedItem = scene->selectedItems().first();
+    QGraphicsItem *selectedItem = scenes[index]->selectedItems().first();
     QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
 
     qreal zValue = 0;
@@ -770,41 +906,37 @@ void RESpecTa::sendToBack()
 
 void RESpecTa::itemInserted(BaseState *item)
 {
-
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
     pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-    scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-    //Vertex v_new;
+    scenes[index]->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 
-    //item->setSubtaskName(currentSubtask);
-    if(currentSubtask.toStdString()==mod->getMainName() && item->getName().toLower()==QString("_end_"))
+    if(currentSubtask==mod->getMainName() && item->getName().toLower()==QString("_end_"))
     {
         item->setName(QString("_STOP_"));
     }
-    bool check = mod->addState(item, currentSubtask.toStdString());
-    if(check)
+    if((currentSubtask==mod->getMainName()&& item->getName()=="INIT") ||item->getName()!="INIT")
     {
-        item->setToolTip(QString().fromStdString(item->Print()));
+        bool check = mod->addState(item, currentSubtask);
+        if(check)
+        {
+            item->setToolTip(QString().fromStdString(item->Print()));
+        }
+        else
+        {
+            scenes[index]->removeItem(item);
+            delete item;
+        }
     }
     else
     {
-        scene->removeItem(item);
+        scenes[index]->removeItem(item);
         delete item;
+        reportError(QString("Only Main task can have INIT state"));
     }
-
-    //item->setStatusTip(item->Print());
-
-
-    //boost::remove_vertex(v_new, (*myGraph));
-/*  property_map<MyGraphType, state_t>::type State = get(state_t(), (*myGraph));
-    BaseState * tmp = boost::get(State, ((boost::vertices((*myGraph))).first)[v_new]);
-    delete tmp;
-    boost::remove_vertex(v_new, (*myGraph));
-    DELETING THE VERTEX
-    */
-
-
-
-    //buttonGroup->button(int(item->diagramType()))->setChecked(false);
+    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    {
+        (*it).second->setMode(DiagramScene::MoveItem);
+    }
 }
 
 bool RESpecTa::lineInserted(Transition *line)
@@ -815,17 +947,25 @@ bool RESpecTa::lineInserted(Transition *line)
     {
         emit itemSelectedSig(line);
     }
+    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    {
+        (*it).second->setMode(DiagramScene::MoveItem);
+    }
     return test;
 }
 
 void RESpecTa::sceneScaleChanged(const QString &scale)
 {
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
-    QMatrix oldMatrix = view->matrix();
-    view->resetMatrix();
-    view->translate(oldMatrix.dx(), oldMatrix.dy());
-    view->scale(newScale, newScale);
+    for(std::map<QString,QGraphicsView *>::iterator it = views.begin();it!=views.end();it++)
+    {
+        QMatrix oldMatrix = (*it).second->matrix();
+        (*it).second->resetMatrix();
+        (*it).second->translate(oldMatrix.dx(), oldMatrix.dy());
+        (*it).second->scale(newScale, newScale);
+    }
 }
+
 
 void RESpecTa::itemColorChanged()
 {
@@ -847,12 +987,12 @@ void RESpecTa::lineColorChanged()
 
 void RESpecTa::fillButtonTriggered()
 {
-    scene->setItemColor(qVariantValue<QColor>(fillAction->data()));
+    //scenes[0]->setItemColor(qVariantValue<QColor>(fillAction->data()));
 }
 
 void RESpecTa::lineButtonTriggered()
 {
-    scene->setLineColor(qVariantValue<QColor>(lineAction->data()));
+    //scenes[0]->setLineColor(qVariantValue<QColor>(lineAction->data()));
 }
 
 
@@ -1168,15 +1308,21 @@ void RESpecTa::InsertState(BaseState * newState)
     }
     else
     {
-        scene->setMode(DiagramScene::InsertItem);
-        scene->setToInsertState(newState);
+        for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode(DiagramScene::InsertItem);
+            (*it).second->setToInsertState(newState);
+        }
     }
 }
 
 void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 {
-    scene->setMode(DiagramScene::InsertLine);
-    scene->setTransitionAttributes(thePair);
+    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    {
+        (*it).second->setMode(DiagramScene::InsertLine);
+        (*it).second->setTransitionAttributes(thePair);
+    }
 }
 
 
@@ -1197,18 +1343,20 @@ void RESpecTa::reportError(QString msgString)
 
 void RESpecTa::addEndState()
 {
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
     StopState * tmp = new StopState();
     tmp->setType(StateType(STATE_TYPES_NUMBER));
     tmp->setName("_END_");
-    scene->setMode(DiagramScene::InsertItem);
-    scene->setToInsertState(tmp);
+    scenes[index]->setMode(DiagramScene::InsertItem);
+    scenes[index]->setToInsertState(tmp);
 }
 void RESpecTa::EditTransitionsOfState()
 {
-    if(scene->selectedItems().isEmpty())return;
-    if(scene->selectedItems().first()->type()==BaseState::Type)
+    QString index = tabWidget->tabText(tabWidget->currentIndex());
+    if(scenes[index]->selectedItems().isEmpty())return;
+    if(scenes[index]->selectedItems().first()->type()==BaseState::Type)
     {
-        BaseState * state = qgraphicsitem_cast<BaseState *>(scene->selectedItems().first());
+        BaseState * state = qgraphicsitem_cast<BaseState *>(scenes[index]->selectedItems().first());
         transDial->openForAState(state);
         //transDial->setModal(true);
         transDial->exec();
@@ -1218,6 +1366,7 @@ void RESpecTa::EditTransitionsOfState()
 
 void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName)
 {
+    QString index = mod->getSubtaskName(oldStateName);
     bool check = mod->ReplaceState(oldState,newState, oldStateName);//need to use oldStateName given, cannot check it if the state was deleted
     if(check)
     {
@@ -1229,17 +1378,15 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString 
             newState->addTransition(T);
         }
         newState->setPos(oldState->pos().x(), oldState->pos().y());
-        scene->removeItem(oldState);
-        scene->setItemParams(newState);
+        scenes[index]->removeItem(oldState);
+        scenes[index]->setItemParams(newState);
         newState->setToolTip(QString().fromStdString(newState->Print()));
         delete oldState;
-        scene->selectedItems().clear();
-        scene->selectedItems().push_back(newState);
+        scenes[index]->selectedItems().clear();
+        scenes[index]->selectedItems().push_back(newState);
         newState->setSelected(true);
         emit itemSelected(newState);
     }
-
-    //state could be somehow chosen to be edited...
 }
 
 
@@ -1271,7 +1418,7 @@ void RESpecTa::closeEvent(QCloseEvent *event)
 
 
 
-void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer)
+void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer, QString SubName)
 {
 
     writer->writeStartElement("Graphics");
@@ -1279,19 +1426,22 @@ void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer)
     QString scale = sceneScaleCombo->currentText();
     int newScale = scale.left(scale.indexOf(tr("%"))).toInt();
 
-    sprintf(tab, "%d", (view->mapFromScene(0,0)).x()*100/newScale);
+    sprintf(tab, "%d", (int)(views[SubName]->mapFromScene(0,0)).x()*100/newScale);
     writer->writeTextElement("PosX", QString(tab));
-    sprintf(tab, "%d", (view->mapFromScene(0,0)).y()*100/newScale);
+    sprintf(tab, "%d", (views[SubName]->mapFromScene(0,0)).y()*100/newScale);
     writer->writeTextElement("PosY", QString(tab));
 
-    sprintf(tab, "%d", newScale);
-    writer->writeTextElement("Scale", QString(tab));
+    if(SubName ==mod->getMainName())
+    {
+        sprintf(tab, "%d", newScale);
+        writer->writeTextElement("Scale", QString(tab));
+    }
 
     writer->writeEndElement();
     return;
 }
 
-QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
+QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader, QString subName)
 {
     bool wasX = false;
     bool wasY = false;
@@ -1305,7 +1455,7 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
           std::cout<<"Graphics: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="Graphics"&&reader->isEndElement())
           {
-              if(!wasScale||!wasX||!wasY)
+              if(!wasX||!wasY)
               {
                   char linenum[30];
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
@@ -1313,7 +1463,13 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
               }
               else
               {
-                  view->centerOn(-X+(view->size().width()*50/scaleInt), -Y+(view->size().height()*50/scaleInt));
+                  if(!wasScale)
+                  {
+                      QString scaleTmpString = sceneScaleCombo->currentText();
+                      scaleTmpString.chop(1);
+                      scaleInt = scaleTmpString.toInt();
+                  }
+                  views[subName]->centerOn(-X+(views[subName]->size().width()*50/scaleInt), -Y+(views[subName]->size().height()*50/scaleInt));
               }
               return errors;
           }
@@ -1331,7 +1487,10 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
           {
               wasScale=true;
               QString ScaleString = reader->readElementText();
-              scaleInt = ScaleString.toInt();
+              scaleInt =(int) ScaleString.toDouble();
+              char tmp[10];
+              sprintf (tmp,"%d",scaleInt);
+              ScaleString = QString(tmp);
               ScaleString.append("%");
               this->sceneScaleChanged(ScaleString);
               QStringList tmpScales = scales;
@@ -1356,7 +1515,7 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
           }
 
     }
-    if(!wasScale||!wasX||!wasY)
+    if(!wasX||!wasY)
     {
         char linenum[30];
         sprintf(linenum,"; line: %lld", reader->lineNumber());
@@ -1364,9 +1523,24 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader)
     }
     else
     {
-        view->centerOn(-X+(view->size().width()*50/scaleInt), -Y+(view->size().height()*50/scaleInt));
+        if(!wasScale)
+        {
+            QString scaleTmpString = sceneScaleCombo->currentText();
+            scaleTmpString.chop(1);
+            scaleInt = scaleTmpString.toInt();
+        }
+        views[subName]->centerOn(-X+(views[subName]->size().width()*50/scaleInt), -Y+(views[subName]->size().height()*50/scaleInt));
     }
     return errors;
 }
+
+
+void RESpecTa::TabChanged(int newIndex)
+{
+    setCurrentSubtask(tabWidget->tabText(newIndex));
+
+}
+
+
 
 

@@ -54,7 +54,7 @@ public:
     {
         nameTextItem->setPos(this->pos().x()-50,this->pos().y()-50);
     }
-    virtual QStringList LoadFromXML(QXmlStreamReader *){}
+    virtual QStringList LoadFromXML(QXmlStreamReader *){return QStringList();}
 
 
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
