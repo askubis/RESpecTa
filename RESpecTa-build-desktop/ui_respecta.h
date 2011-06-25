@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'respecta.ui'
 **
-** Created: Thu May 19 15:45:16 2011
+** Created: Mon Jun 20 14:31:16 2011
 **      by: Qt User Interface Compiler version 4.7.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

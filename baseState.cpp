@@ -146,6 +146,17 @@ QVariant BaseState::itemChange(GraphicsItemChange change,
     return value;
 }
 
+int BaseState::outTransitionsCount()
+{
+    int i=0;
+    foreach(Transition* tr, Transitions)
+    {
+        if(tr->startItem()==this)
+            i++;
+    }
+    return i;
+}
+
 
 
 

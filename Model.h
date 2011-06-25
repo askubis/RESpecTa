@@ -15,6 +15,8 @@ public:
     void deleteAll();
     void DeleteTask(QString Name);
     int vertNum(QString Name);
+    MyGraphType * getGraph(QString Name);
+    BaseState * getState(MyGraphType * graph, int i);
 
     QString getSubNameOfTrans(Transition * trans);
 
@@ -62,6 +64,12 @@ public:
 
     void setSaveFolder(QString newSaveFolder){SaveFolder=newSaveFolder;}
 
+    void setChanged(bool newChanged);
+    bool wasChanged(){return changed;}
+    void setBlock(bool block){changeBlocked=block;}
+
+
+
 
 signals:
     void reportError(QString);
@@ -71,6 +79,8 @@ private:
     QString mainName;
     std::map<QString, MyGraphType *> * subtasks;
     QString SaveFolder;
+    bool changed;
+    bool changeBlocked;
 
 };
 

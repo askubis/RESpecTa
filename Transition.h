@@ -2,7 +2,7 @@
 
 #ifndef Transition_H
 #define Transition_H
-
+class Transition;
 #include <QGraphicsLineItem>
 
 #include "baseState.h"

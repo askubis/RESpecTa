@@ -3,8 +3,8 @@
 # Project created by QtCreator 2011-03-03T12:48:05
 #
 #-------------------------------------------------
-
-QT       += core gui
+CONFIG  += qt
+QT       += core gui xml
 
 TARGET = RESpecTa
 TEMPLATE = app
@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     Transition.cpp \
     TransDialog.cpp \
     Model.cpp \
-    subtaskDialog.cpp
+    subtaskDialog.cpp \
+    TreeModel.cpp \
+    TreeItem.cpp \
+    States.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -41,7 +44,10 @@ HEADERS  += respecta.h \
     Model.h \
     TransDialog.h \
     subtaskDialog.h \
-    genInit.h
+    genInit.h \
+    TreeModel.h \
+    TreeItem.h \
+    myTreeView.h
 
 
 FORMS    += respecta.ui

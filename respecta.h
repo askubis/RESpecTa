@@ -10,7 +10,10 @@ class RESpecTa;
 #include "Model.h"
 #include "TransDialog.h"
 #include "subtaskDialog.h"
+#include "TreeModel.h"
 //#include "Graph.h"
+#include "TreeItem.h"
+#include "myTreeView.h"
 
 class DiagramScene;
 //class Model;
@@ -40,6 +43,7 @@ public:
     RESpecTa(){}
     RESpecTa(Model * newmod );
 
+    void WasChanged();
     void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
    //MyGraphType * getGraph (){return myGraph;}
    //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
@@ -57,6 +61,8 @@ signals:
 
 
 private slots:
+    void FindOnList();
+    void GoToState();
     void TabChanged(int);
     void SubtaskAdded(QString);
     void SubtaskRemoved(QString);
@@ -118,6 +124,8 @@ private:
     QString SaveName;
     QString SaveFolder;
 
+    myTreeView *TreeView;
+    TreeModel *treeModel;
     QWidget *editWidget;
     TransDialog * transDial;
 
@@ -133,6 +141,7 @@ private:
 
     std::map<QString,QWidget *> widgets;
     QTabWidget * tabWidget;
+    QLineEdit * findLineEdit;
     std::map<QString,DiagramScene *> scenes;
     std::map<QString,QGraphicsView *> views;
     std::map<QString, QHBoxLayout *> layouts;

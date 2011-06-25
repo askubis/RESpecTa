@@ -8,6 +8,8 @@ Model::Model()
     subtasks = new std::map<QString, MyGraphType *>();
     mainName = "MAIN";
     subtasks->insert(std::make_pair(mainName, new MyGraphType()));
+    changed=false;
+    changeBlocked=false;
 }
 
 void Model::save(QString myFile)
@@ -88,6 +90,7 @@ std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
             printStates(tmp, (*it).first.toStdString()+".xml", false);
         }
     }
+    setChanged(false);
     return;
 }
 
@@ -101,6 +104,7 @@ void Model::deleteTransition(Transition * transition)
     }
     transition->startItem()->removeTransition(transition);
     transition->endItem()->removeTransition(transition);
+    setChanged(true);
 }
 
 void Model::deleteState(BaseState * state)
@@ -111,6 +115,7 @@ void Model::deleteState(BaseState * state)
         if((findVertex(tmp, state) )!=vertices(*tmp).second)
             boost::remove_vertex((*(findVertex(tmp, state))), (*tmp));
     }
+    setChanged(true);
 }
 
 bool Model::addState(BaseState * item, QString subtaskName)
@@ -126,6 +131,7 @@ bool Model::addState(BaseState * item, QString subtaskName)
     }
 
     boost::add_vertex(item, (*(*subtasks)[subtaskName]));
+    setChanged(true);
     return true;
 
 }
@@ -201,6 +207,7 @@ bool Model::tryInsertTransition(Transition * line)
             }
 
             boost::add_edge( (*(findVertex(tmp, line->startItem()))), (*(findVertex(tmp, line->endItem()))), line, (*tmp) );
+            setChanged(true);
             return true;
         }
     }
@@ -224,6 +231,7 @@ bool Model::checkNameAvailable(QString name)
 void Model::addSubtask(QString name)
 {
     subtasks->insert(std::make_pair(name, new MyGraphType()));
+    changed=1;
 }
 
 QStringList Model::getTasksNameLists()
@@ -420,6 +428,7 @@ bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString ol
     boost::graph_traits<MyGraphType>::vertex_iterator first =findVertex(tmpGraph, oldState);
     {//changing
         boost::put(stateMap, *first, newState);
+        setChanged(true);
         return true;
     }
     return false;
@@ -464,6 +473,7 @@ void Model::MoveTransitionUp(BaseState * st, int index)
     tryInsertTransition(transVect[0]);
     for(int i=2;i<transVect.size();i++)
         tryInsertTransition(transVect[i]);
+    setChanged(true);
 
 }
 
@@ -501,6 +511,7 @@ void Model::MoveTransitionDown(BaseState * st, int index)
     tryInsertTransition(transVect[0]);
     for(int i=2;i<transVect.size();i++)
         tryInsertTransition(transVect[i]);
+    setChanged(true);
 }
 
 std::vector<Transition *> Model::getTransitions(BaseState * st)
@@ -717,6 +728,7 @@ void Model::setMainName(QString myFile)
     }
     subtasks->erase(mainName);
     mainName = myFile;
+    setChanged(true);
 
 }
 
@@ -781,6 +793,7 @@ void Model::DeleteTask(QString Name)
             subtasks->erase(subtasks->find(Name));
         }
     }
+    setChanged(true);
 }
 
 void Model::deleteAll()
@@ -817,6 +830,7 @@ void Model::deleteAll()
         subtasks->erase(it);
     }
     addSubtask(mainName);
+    setChanged(true);
 }
 
 
@@ -835,6 +849,7 @@ void Model::changeSubtaskName(QString oldName, QString NewName)
         }
     }
     (*subtasks)[NewName]= tmp;
+    setChanged(true);
 
 }
 
@@ -877,6 +892,7 @@ void Model::DeleteSubtask(QString Name)
         }
         break;
     }
+    setChanged(true);
 }
 
 int Model::vertNum(QString Name)
@@ -885,6 +901,32 @@ int Model::vertNum(QString Name)
     return boost::num_vertices(*((*subtasks)[Name]));
 }
 
+MyGraphType * Model::getGraph(QString Name)
+{
+    if(subtasks->find(Name)!=subtasks->end())
+        return (*subtasks)[Name];
+    return NULL;
+}
+
+BaseState * Model::getState(MyGraphType * tmp, int index)
+{
+    if(index>boost::num_vertices(*tmp))return NULL;
+    boost::graph_traits<MyGraphType>::vertex_iterator first, last;
+    tie(first, last) = vertices(*tmp);
+    for(int i=0;i<index;i++, first++)
+    {}
+    typedef  property_map<MyGraphType, state_t>::type StateMap;
+    StateMap stateMap = get(state_t(), (*tmp));
+
+    BaseState * state = boost::get(stateMap, *first);
+    return state;
+}
+
+void Model::setChanged(bool newChanged)
+{
+    changed=newChanged;
+    if(!changeBlocked && changed)res->WasChanged();
+}
 
 
 

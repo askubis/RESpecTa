@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Mon Jun 20 14:05:18 2011
+** Created: Sat Jun 25 23:34:34 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_RESpecTa[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      33,   14, // methods
+      35,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -37,35 +37,37 @@ static const uint qt_meta_data_RESpecTa[] = {
 
  // slots: signature, parameters, type, tag, flags
       80,    9,    9,    9, 0x08,
-      96,    9,    9,    9, 0x08,
-     118,    9,    9,    9, 0x08,
-     144,  142,    9,    9, 0x08,
-     176,    9,    9,    9, 0x08,
-     231,  200,    9,    9, 0x08,
-     275,    9,    9,    9, 0x08,
+      93,    9,    9,    9, 0x08,
+     105,    9,    9,    9, 0x08,
+     121,    9,    9,    9, 0x08,
+     143,    9,    9,    9, 0x08,
+     169,  167,    9,    9, 0x08,
+     201,    9,    9,    9, 0x08,
+     256,  225,    9,    9, 0x08,
      300,    9,    9,    9, 0x08,
-     324,  314,    9,    9, 0x08,
-     355,  350,  345,    9, 0x08,
-     381,    9,    9,    9, 0x08,
-     426,    9,    9,    9, 0x08,
-     433,    9,    9,    9, 0x08,
-     440,    9,  345,    9, 0x08,
-     459,  449,    9,    9, 0x08,
-     497,  488,    9,    9, 0x08,
-     529,  521,    9,    9, 0x08,
-     560,  557,    9,    9, 0x08,
-     584,    9,    9,    9, 0x08,
-     597,  557,    9,    9, 0x08,
-     622,    9,    9,    9, 0x08,
-     637,    9,    9,    9, 0x08,
-     650,   10,    9,    9, 0x08,
-     681,  675,    9,    9, 0x08,
-     708,    9,    9,    9, 0x08,
-     727,    9,    9,    9, 0x08,
-     746,    9,    9,    9, 0x08,
-     768,    9,    9,    9, 0x08,
-     790,   10,    9,    9, 0x08,
-     819,    9,    9,    9, 0x08,
+     325,    9,    9,    9, 0x08,
+     349,  339,    9,    9, 0x08,
+     380,  375,  370,    9, 0x08,
+     406,    9,    9,    9, 0x08,
+     451,    9,    9,    9, 0x08,
+     458,    9,    9,    9, 0x08,
+     465,    9,  370,    9, 0x08,
+     484,  474,    9,    9, 0x08,
+     522,  513,    9,    9, 0x08,
+     554,  546,    9,    9, 0x08,
+     585,  582,    9,    9, 0x08,
+     609,    9,    9,    9, 0x08,
+     622,  582,    9,    9, 0x08,
+     647,    9,    9,    9, 0x08,
+     662,    9,    9,    9, 0x08,
+     675,   10,    9,    9, 0x08,
+     706,  700,    9,    9, 0x08,
+     733,    9,    9,    9, 0x08,
+     752,    9,    9,    9, 0x08,
+     771,    9,    9,    9, 0x08,
+     793,    9,    9,    9, 0x08,
+     815,   10,    9,    9, 0x08,
+     844,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -73,9 +75,9 @@ static const uint qt_meta_data_RESpecTa[] = {
 static const char qt_meta_stringdata_RESpecTa[] = {
     "RESpecTa\0\0item\0itemSelectedSig(QGraphicsItem*)\0"
     "refreshWidgets()\0SignalDeleted()\0"
-    "TabChanged(int)\0SubtaskAdded(QString)\0"
-    "SubtaskRemoved(QString)\0,\0"
-    "SubtaskChanged(QString,QString)\0"
+    "FindOnList()\0GoToState()\0TabChanged(int)\0"
+    "SubtaskAdded(QString)\0SubtaskRemoved(QString)\0"
+    ",\0SubtaskChanged(QString,QString)\0"
     "OpenSubtaskEditDialog()\0"
     "oldState,newState,oldStateName\0"
     "ReplaceState(BaseState*,BaseState*,QString)\0"
@@ -128,41 +130,43 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: itemSelectedSig((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
         case 1: refreshWidgets(); break;
         case 2: SignalDeleted(); break;
-        case 3: TabChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 4: SubtaskAdded((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 5: SubtaskRemoved((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 6: SubtaskChanged((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 7: OpenSubtaskEditDialog(); break;
-        case 8: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 9: EditTransitionsOfState(); break;
-        case 10: addEndState(); break;
-        case 11: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 12: { bool _r = lineInserted((*reinterpret_cast< Transition*(*)>(_a[1])));
+        case 3: FindOnList(); break;
+        case 4: GoToState(); break;
+        case 5: TabChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: SubtaskAdded((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 7: SubtaskRemoved((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 8: SubtaskChanged((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 9: OpenSubtaskEditDialog(); break;
+        case 10: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 11: EditTransitionsOfState(); break;
+        case 12: addEndState(); break;
+        case 13: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 14: { bool _r = lineInserted((*reinterpret_cast< Transition*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
-        case 13: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
-        case 14: Load(); break;
-        case 15: save(); break;
-        case 16: { bool _r = SaveAs();
+        case 15: insertTransition((*reinterpret_cast< std::pair<QString,QString>(*)>(_a[1]))); break;
+        case 16: Load(); break;
+        case 17: save(); break;
+        case 18: { bool _r = SaveAs();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
-        case 17: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 18: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 19: NewSubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 20: buttonGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 21: deleteItem(); break;
-        case 22: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 23: bringToFront(); break;
-        case 24: sendToBack(); break;
-        case 25: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 26: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 27: itemColorChanged(); break;
-        case 28: lineColorChanged(); break;
-        case 29: fillButtonTriggered(); break;
-        case 30: lineButtonTriggered(); break;
-        case 31: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
-        case 32: about(); break;
+        case 19: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 20: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 21: NewSubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 22: buttonGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 23: deleteItem(); break;
+        case 24: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 25: bringToFront(); break;
+        case 26: sendToBack(); break;
+        case 27: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 28: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 29: itemColorChanged(); break;
+        case 30: lineColorChanged(); break;
+        case 31: fillButtonTriggered(); break;
+        case 32: lineButtonTriggered(); break;
+        case 33: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
+        case 34: about(); break;
         default: ;
         }
-        _id -= 33;
+        _id -= 35;
     }
     return _id;
 }

@@ -9,6 +9,16 @@ public:
     std::vector < std::pair<GeneratorType, int> > init_values;
 
     genInit(){}
+    genInit(const genInit& other)
+    {
+        this->robot=other.robot;
+        this->init_values=other.init_values;
+        /*for(int i=0;i!=other.init_values.size();i++)
+        {
+            this->init_values.push_back(other.init_values[i]);
+        }*/
+
+    }
 
 
     std::string Print()

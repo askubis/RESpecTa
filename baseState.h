@@ -2,6 +2,7 @@
 #ifndef BaseState_H
 #define BaseState_H
 
+class BaseState;
 #include <QGraphicsPixmapItem>
 #include <QList>
 
@@ -25,9 +26,9 @@ QT_END_NAMESPACE
 #include "Coordinates.h"
 #include <fstream>
 
-
+class TreeItem;
+//#include "TreeItem.h"
 class Transition;
-class StateWidget;
 
 class BaseState : public QGraphicsPolygonItem
 {
@@ -50,12 +51,14 @@ public:
     //void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
     void updateSize();
 
+
     void updateTextPositions()
     {
         nameTextItem->setPos(this->pos().x()-50,this->pos().y()-50);
     }
     virtual QStringList LoadFromXML(QXmlStreamReader *){return QStringList();}
-
+    virtual int itemCount(){return 0;}
+    virtual TreeItem * getChild(int i, TreeItem * parent){return 0;}
 
   //  enum DiagramType { Step, Conditional, StartEnd, Io };
 
@@ -64,7 +67,7 @@ public:
     BaseState();
     BaseState(BaseState& old);
 
-    ~BaseState(){delete nameTextItem;}
+    virtual ~BaseState(){delete nameTextItem;}
 
     void setMenu( QMenu *contextMenu);
 
@@ -99,6 +102,7 @@ public:
         }
         return x;
     }
+    int outTransitionsCount();
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -110,9 +114,9 @@ private:
    // DiagramType myDiagramType;
     QPolygonF myPolygon;
     QMenu *myContextMenu;
-    QList<Transition *> Transitions;
 
 protected:
+    QList<Transition *> Transitions;
 
     QString stateName;
     //QString subtaskName;

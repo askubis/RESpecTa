@@ -14,9 +14,6 @@
 #include "editWidget.h"
 const int InsertTextButton = 10;
 
-//TODO:
-//panel boczny z wypisywaniem wszystkiego
-//view->centerAt(Item)
 
 //TODO:
 //zmiana stanu kursora przy przesuwaniu/wstawianiu
@@ -74,6 +71,30 @@ RESpecTa::RESpecTa(Model * newmod)
     views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
     layouts[currentSubtask]->addWidget(views[currentSubtask]);
 
+    treeModel = new TreeModel( this, mod, mod->getMainName());
+
+    QWidget * listWidget = new QWidget(this);
+    QHBoxLayout *findLayout = new QHBoxLayout;
+    QWidget * findWidget = new QWidget(listWidget);
+    QVBoxLayout *listLayout = new QVBoxLayout;
+    findLineEdit = new QLineEdit;
+    findLayout->addWidget(findLineEdit);
+    QPushButton * findButton = new QPushButton("Find");
+    findLayout->addWidget(findButton);
+    connect(findButton, SIGNAL(clicked()), this, SLOT(FindOnList()));
+
+    findWidget->setLayout(findLayout);
+    listLayout->addWidget(findWidget);
+    listWidget->setLayout(listLayout);
+
+
+
+    TreeView = new myTreeView(listWidget);
+    TreeView->setModel(treeModel);
+    listLayout->addWidget(TreeView);
+
+    listWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+    layout->addWidget(listWidget);
     tabWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     layout->addWidget(tabWidget);
     editWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
@@ -96,6 +117,9 @@ RESpecTa::RESpecTa(Model * newmod)
     currentSubtask="MAIN";
 
 
+
+
+
 }
 
 
@@ -109,14 +133,14 @@ void RESpecTa::createEditMenu()
             this, SLOT(bringToFront()));
 
     sendBackAction = new QAction(QIcon(":/images/sendtoback.png"),
-                                 tr("Send to &Back"), this);
-    sendBackAction->setShortcut(tr("Ctrl+B"));
+                                 tr("Send to Bac&k"), this);
+    sendBackAction->setShortcut(tr("Ctrl+K"));
     sendBackAction->setStatusTip(tr("Send item to back"));
     connect(sendBackAction, SIGNAL(triggered()),
         this, SLOT(sendToBack()));
 
     deleteAction = new QAction(QIcon(":/images/delete.png"),
-                               tr("&Delete"), this);
+                               tr("Delete"), this);
     deleteAction->setShortcut(tr("Delete"));
     deleteAction->setStatusTip(tr("Delete item from diagram"));
     connect(deleteAction, SIGNAL(triggered()),
@@ -124,16 +148,22 @@ void RESpecTa::createEditMenu()
 
     insertEndStateAction = new QAction(QIcon(":/images/_END_image.jpg"),
                                tr("&End"), this);
-    insertEndStateAction->setShortcut(tr("End"));
+    insertEndStateAction->setShortcut(tr("Ctrl+E"));
     insertEndStateAction->setStatusTip(tr("Insert End state for main task or subtask"));
     connect(insertEndStateAction, SIGNAL(triggered()),
         this, SLOT(addEndState()));
 
     showTransitions = new QAction(tr("&Transitions"), this);
-    showTransitions->setShortcut(tr("Home"));
+    showTransitions->setShortcut(tr("Ctrl+T"));
     showTransitions->setStatusTip(tr("Show transitions of this State"));
     connect(showTransitions, SIGNAL(triggered()),
         this, SLOT(EditTransitionsOfState()));
+
+    QAction * GoToState = new QAction(tr("&Go To State"), this);
+    GoToState->setShortcut(tr("Ctrl+G"));
+    GoToState->setStatusTip(tr("Center on the state selected on the list"));
+    connect(GoToState, SIGNAL(triggered()),
+        this, SLOT(GoToState()));
 
 
     itemMenu = menuBar()->addMenu(tr("&Edit"));
@@ -142,13 +172,14 @@ void RESpecTa::createEditMenu()
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
     itemMenu->addAction(showTransitions);
+    itemMenu->addAction(GoToState);
 
 }
 
 void RESpecTa::createOptionsMenu()
 {
-    editSubtasks = new QAction(tr("Edit subtasks"), this);
-    editSubtasks->setShortcut(tr("Ctrl+E"));
+    editSubtasks = new QAction(tr("E&dit subtasks"), this);
+    editSubtasks->setShortcut(tr("Ctrl+D"));
     editSubtasks->setStatusTip(tr("Edit names of the subtasks"));
     connect(editSubtasks, SIGNAL(triggered()),
             this, SLOT(OpenSubtaskEditDialog()));
@@ -295,27 +326,29 @@ void RESpecTa::createFileMenu()
 
 void RESpecTa::Load()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, tr("Are you sure?"),
-                                    "Do you want to save your work before loading?",
-                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (reply == QMessageBox::Yes)
+    if(mod->wasChanged())
     {
-        bool tmp = this->SaveAs();
-        if (tmp)
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Are you sure?"),
+                                        "Do you want to save your work before loading?",
+                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (reply == QMessageBox::Yes)
         {
+            bool tmp = this->SaveAs();
+            if (tmp)
+            {
 
+            }
+            else
+            {
+                return;
+            }
         }
+        else if (reply == QMessageBox::No)
+            ;
         else
-        {
             return;
-        }
     }
-    else if (reply == QMessageBox::No)
-        ;
-    else
-        return;
-
 
     QString tmp;
     QString LoadName = QFileDialog::getOpenFileName(this,
@@ -337,6 +370,7 @@ void RESpecTa::Load()
 
 void RESpecTa::LoadFile(QString fileName)
 {
+    mod->setBlock(true);
     //mod->deleteAll(); zbędne skoro wykonujemy subtaskRemoved
 
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
@@ -399,6 +433,8 @@ void RESpecTa::LoadFile(QString fileName)
     }
     this->sceneScaleChanged(sceneScaleCombo->currentText());
     emit refreshWidgets();
+    mod->setChanged(false);
+    mod->setBlock(false);
 }
 
 QStringList RESpecTa::LoadStates(QString FileName)
@@ -1392,27 +1428,29 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString 
 
 void RESpecTa::closeEvent(QCloseEvent *event)
 {
-
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, tr("Are you sure?"),
-                                    "Do you want to save your work before closing?",
-                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (reply == QMessageBox::Yes)
+    if(mod->wasChanged())
     {
-        bool tmp = this->SaveAs();
-        if (tmp)
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Are you sure?"),
+                                        "Do you want to save your work before closing?",
+                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (reply == QMessageBox::Yes)
         {
+            bool tmp = this->SaveAs();
+            if (tmp)
+            {
 
+            }
+            else
+            {
+                event->ignore();
+            }
         }
+        else if (reply == QMessageBox::No)
+            ;
         else
-        {
             event->ignore();
-        }
     }
-    else if (reply == QMessageBox::No)
-        ;
-    else
-        event->ignore();
 }
 
 
@@ -1539,6 +1577,66 @@ void RESpecTa::TabChanged(int newIndex)
 {
     setCurrentSubtask(tabWidget->tabText(newIndex));
 
+    TreeModel * newModel = new TreeModel(this, mod, currentSubtask);
+    TreeView->setModel(newModel);
+    delete treeModel;
+    treeModel = newModel;
+
+}
+
+void RESpecTa::WasChanged()
+{
+    TreeModel * newModel = new TreeModel(this, mod, currentSubtask);
+    TreeView->setModel(newModel);
+    delete treeModel;
+    treeModel = newModel;
+}
+
+void RESpecTa::GoToState()
+{
+    std::cout<<TreeView->getSelectedIndexes().size()<<std::endl;
+    if(TreeView->getSelectedIndexes().size()<=0)
+        return;
+    if(TreeView->getSelectedIndexes().size()==2)//why
+    {
+        QModelIndex ind = TreeView->getSelectedIndexes().first();
+        TreeStateItem * it = treeModel->getItemOrParent(ind);
+        BaseState * st = it->getState();
+        views[currentSubtask]->centerOn(st);
+        foreach(QGraphicsItem * grIt, scenes[currentSubtask]->selectedItems())
+        {
+            grIt->setSelected(false);
+        }
+        scenes[currentSubtask]->selectedItems().clear();
+        scenes[currentSubtask]->selectedItems().push_back(st);
+        st->setSelected(true);
+        this->itemSelected(st);
+        return ;
+    }
+    foreach(QModelIndex ind, TreeView->getSelectedIndexes())
+    {
+        if(treeModel->getItem(ind)->getType()==0)
+        {
+            TreeStateItem * stateIt = (TreeStateItem *)treeModel->getItem(ind);
+            BaseState * st = stateIt->getState();
+            views[currentSubtask]->centerOn(st);
+            foreach(QGraphicsItem * grIt, scenes[currentSubtask]->selectedItems())
+            {
+                grIt->setSelected(false);
+            }
+            scenes[currentSubtask]->selectedItems().clear();
+            scenes[currentSubtask]->selectedItems().push_back(st);
+            st->setSelected(true);
+            this->itemSelected(st);
+            return ;
+        }
+    }
+}
+
+void RESpecTa::FindOnList()
+{
+    QString textToFind = findLineEdit->text();
+    TreeView->keyboardSearch(textToFind);
 }
 
 
