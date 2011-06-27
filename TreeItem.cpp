@@ -63,7 +63,7 @@ TreeItem * TreeCoordItem::child(int i)
     if (childItems.contains(i))
         return childItems[i];
     int index = i;
-    if(coords->getMotionType()>=0&&coords->getMotionType()<MOTIONTYPES_NUMBER)
+    if(isProper(coords->getMotionType()))
     {
         if(index==0)
         {
@@ -77,7 +77,7 @@ TreeItem * TreeCoordItem::child(int i)
             index--;
         }
     }
-    if(coords->getCoordType()>=0&&coords->getCoordType()<COORDTYPES_NUMBER)
+    if(isProper(coords->getCoordType()))
     {
         if(index==0)
         {

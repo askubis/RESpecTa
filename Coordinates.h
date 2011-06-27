@@ -86,10 +86,10 @@ public:
         QStringList errors;
         if(reader->attributes().hasAttribute("coordinateType")&&reader->attributes().hasAttribute("motionType"))
         {
-            int index = (getCoordTypeTable().indexOf(reader->attributes().value("coordinateType").toString()));
-            if(index<COORDTYPES_NUMBER && index>=0)
+            CoordType Cindex = (CoordType)(getCoordTypeTable().indexOf(reader->attributes().value("coordinateType").toString()));
+            if(isProper(coordType))
             {
-                 coordType = (CoordType)index;
+                 coordType = Cindex;
             }
             else
             {
@@ -98,10 +98,10 @@ public:
                 sprintf(linenum,"; line: %lld", reader->lineNumber());
                 errors.push_back(QString("Out of bounds CoordType")+=linenum);
             }
-            index = (getMotionTypeTable().indexOf(reader->attributes().value("motionType").toString()));
-            if(index<MOTIONTYPES_NUMBER && index>=0)
+            MotionType Mindex = (MotionType)(getMotionTypeTable().indexOf(reader->attributes().value("motionType").toString()));
+            if(isProper(Mindex))
             {
-                 motionType = (MotionType)index;
+                 motionType = Mindex;
             }
             else
             {

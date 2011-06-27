@@ -58,10 +58,10 @@ public:
         QStringList errors;
         if(reader->attributes().hasAttribute("name"))
         {
-            int index = (getRobotTable().indexOf(reader->attributes().value("name").toString()));
-            if(index<ROBOTS_NUMBER && index>=0)
+            Robot index = (Robot)(getRobotTable().indexOf(reader->attributes().value("name").toString()));
+            if(isProper(index))
             {
-                 robot = (Robot)index;
+                 robot = index;
             }
             else
             {
@@ -82,7 +82,6 @@ public:
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<"GENINIT: "<<reader->name().toString().toStdString()<<std::endl;
               if(reader->name()=="ecp"&&reader->isEndElement())
               {
                   if(init_values.size()==0)
@@ -95,10 +94,10 @@ public:
               }
               else if (reader->isStartElement())
               {
-                  int index = getGeneratorTypeTable2().indexOf(reader->name().toString());
-                  if(index<GENERATORS_NUMBER && index>=0)
+                  GeneratorType index = (GeneratorType)(getGeneratorTypeTable2().indexOf(reader->name().toString()));
+                  if(isProper(index))
                   {
-                      init_values.push_back(std::make_pair((GeneratorType)index,reader->readElementText().toInt()));
+                      init_values.push_back(std::make_pair(index,reader->readElementText().toInt()));
                   }
                   else
                   {

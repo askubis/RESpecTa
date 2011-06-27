@@ -26,7 +26,6 @@ QStringList StopState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"StopState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               return errors;
@@ -84,7 +83,6 @@ QStringList EmptyGenForSetState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"EmptyGenForSetState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasSet)
@@ -250,7 +248,6 @@ QStringList EmptyGenState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"EmptyGenState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasRobot)
@@ -273,10 +270,10 @@ QStringList EmptyGenState::LoadFromXML(QXmlStreamReader * reader)
               else
               {
                   wasRobot=true;
-                  int index = getRobotTable().indexOf(reader->readElementText());
-                  if(index<ROBOTS_NUMBER && index>=0)
+                  Robot index = (Robot)(getRobotTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
-                      robot = (Robot)index;
+                      robot = index;
                   }
                   else
                   {
@@ -429,7 +426,6 @@ QStringList GetSensorState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"GetSensorState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasSensor)
@@ -452,10 +448,10 @@ QStringList GetSensorState::LoadFromXML(QXmlStreamReader * reader)
               else
               {
                   wasSensor=true;
-                  int index = getSensorTable().indexOf(reader->readElementText());
-                  if(index<SENSORS_NUMBER && index>=0)
+                  Sensor index = (Sensor)(getSensorTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
-                      sensor = (Sensor)index;
+                      sensor = index;
                   }
                   else
                   {
@@ -580,7 +576,6 @@ QStringList InitiateSensorState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"InitiateSensorState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasSensor)
@@ -603,10 +598,10 @@ QStringList InitiateSensorState::LoadFromXML(QXmlStreamReader * reader)
               else
               {
                   wasSensor=true;
-                  int index = getSensorTable().indexOf(reader->readElementText());
-                  if(index<SENSORS_NUMBER && index>=0)
+                  Sensor index = (Sensor)(getSensorTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
-                      sensor = (Sensor)index;
+                      sensor = index;
                   }
                   else
                   {
@@ -761,7 +756,6 @@ QStringList RunGenState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"RunGenState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasRobot)
@@ -791,10 +785,10 @@ QStringList RunGenState::LoadFromXML(QXmlStreamReader * reader)
               else
               {
                   wasRobot=true;
-                  int index = getRobotTable().indexOf(reader->readElementText());
-                  if(index<ROBOTS_NUMBER && index>=0)
+                  Robot index = (Robot)(getRobotTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
-                      robot = (Robot)index;
+                      robot = index;
                   }
                   else
                   {
@@ -871,11 +865,11 @@ QStringList RunGenState::LoadFromXML(QXmlStreamReader * reader)
               }
               else
               {
-                  int index = getGeneratorTypeTable().indexOf(reader->readElementText());
-                  if(index<GENERATORS_NUMBER && index>=0)
+                  GeneratorType index = (GeneratorType)(getGeneratorTypeTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
                       wasGenType=true;
-                      genType=(GeneratorType)index;
+                      genType=index;
                   }
                   else
                   {
@@ -1072,7 +1066,6 @@ QStringList StopGenState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"StopGenState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasSet)
@@ -1219,7 +1212,7 @@ void sysInitState::Print(QXmlStreamWriter * writer)
     if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
     {
         writer->writeStartElement("mp");
-        if(transmitter<TRANSMITTERS_NUMBER&&transmitter>=0)
+        if(isProper(transmitter))
         {
             writer->writeTextElement("Transmitter", QString().fromStdString(TRANSMITTER_TABLE[transmitter]));
         }
@@ -1292,7 +1285,6 @@ QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
             return errors;
         }
           reader->readNextStartElement();
-          std::cout<<"SysIniState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               return errors;
@@ -1346,10 +1338,10 @@ QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
               }
               else
               {
-                  index = getTransmitterTable().indexOf(reader->readElementText());
-                  if(index<TRANSMITTERS_NUMBER&&index>=0)
+                  Transmitter index = (Transmitter)(getTransmitterTable().indexOf(reader->readElementText()));
+                  if(isProper(index))
                   {
-                      transmitter=(Transmitter)index;
+                      transmitter=index;
                       wasTransmitter=true;
                   }
                   else
@@ -1416,7 +1408,7 @@ QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
 TreeItem * sysInitState::getChild(int i, TreeItem * parent)
 {
     int index = i;
-    if(transmitter>=0&&transmitter<TRANSMITTERS_NUMBER)
+    if(isProper(transmitter))
     {
         if(index==0)
         {
@@ -1524,7 +1516,6 @@ QStringList WaitState::LoadFromXML(QXmlStreamReader * reader)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"WaitState: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="State"&&reader->isEndElement())
           {
               if(!wasTimespan)

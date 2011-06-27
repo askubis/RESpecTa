@@ -32,10 +32,10 @@ public:
     int row();
     TreeModel * getModel(){return Model;}
     int getType(){return Type;}
-    virtual int childNodesCount(){}
-    virtual QString Name(){}
-    virtual QString Attr(){}
-    virtual TreeItem *child(int i){}
+    virtual int childNodesCount(){return 0;}
+    virtual QString Name(){return QString();}
+    virtual QString Attr(){return QString();}
+    virtual TreeItem *child(int i){return NULL;}
 
     int Type;//TODO change
 protected:
@@ -69,6 +69,7 @@ public:
     ~TreeTransItem(){}
 
     void setTrans(Transition * _tr){Type = 1; tr = _tr;}
+    Transition * getTrans(){return tr;}
     int childNodesCount(){if(tr->getSubtask().size()>0)return 1; else return 0;}
     TreeItem *child(int i);
 
@@ -88,9 +89,9 @@ public:
     int childNodesCount()
     {
         int i=0;
-        if(coords->getMotionType()>=0&&coords->getMotionType()<MOTIONTYPES_NUMBER)
+        if(isProper(coords->getMotionType()))
             i++;
-        if(coords->getCoordType()>=0&&coords->getCoordType()<COORDTYPES_NUMBER)
+        if(isProper(coords->getCoordType()))
             i++;
 
         i+=coords->getPoses().size();

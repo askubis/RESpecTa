@@ -132,7 +132,6 @@ public:
         {
             //get coordinateType and motionType
               reader->readNextStartElement();
-              std::cout<<"POSE: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="Pose"&&reader->isEndElement())
             {
                 if(!wasA||!wasV||!wasC)
@@ -147,7 +146,6 @@ public:
                     sprintf(linenum,"; line: %lld", reader->lineNumber());
                     errors.push_back(QString("a, c and v vectors are not of the same length")+=linenum);
                 }
-                std::cout<<"A "<<a.size()<<" V "<<v.size()<<" C "<<coordinates.size()<<" line "<<reader->lineNumber()<<std::endl;
                 return errors;
             }
             else if (reader->name()=="Accelerations"&&reader->isStartElement())
@@ -227,7 +225,6 @@ public:
             sprintf(linenum,"; line: %lld", reader->lineNumber());
             errors.push_back(QString("a, c and v vectors are not of the same length")+=linenum);
         }
-        std::cout<<"A "<<a.size()<<" V "<<v.size()<<" C "<<coordinates.size()<<" line "<<reader->lineNumber()<<std::endl;
         return errors;
     }
 

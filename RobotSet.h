@@ -63,7 +63,6 @@ public:
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
-              std::cout<<"ROBOTSET: "<<reader->name().toString().toStdString()<<std::endl;
             if(reader->name().toString()=="SetOfRobots"&&reader->isEndElement())
             {
                 if(first.size()==0&&second.size()==0)

@@ -27,16 +27,13 @@ int TreeModel::columnCount(const QModelIndex &/*parent*/) const
     return 2;
 }
 
-TreeItem * TreeModel::getItem(const QModelIndex index)
-{
-    return (TreeItem*)(index.internalPointer());
-}
 
-TreeStateItem * TreeModel::getItemOrParent(QModelIndex index)
+QGraphicsItem * TreeModel::getItemOrParent(QModelIndex index)
 {
     for(TreeItem * it = (TreeItem*)index.internalPointer();;it=it->parent())
     {
-        if(it->getType()==0)return (TreeStateItem *)it;//if State then return
+        if(it->getType()==0)return ((TreeStateItem *)it)->getState();//if State then return
+        if(it->getType()==1)return ((TreeTransItem *)it)->getTrans();//if Trans then return
         if(it->getType()==101)return NULL;
     }
 }

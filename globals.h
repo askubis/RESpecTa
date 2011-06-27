@@ -28,6 +28,11 @@ static QStringList getStateTypeTable()
     return items;
 }
 
+/*static bool isProper(StateType value)
+{
+    return (value>=0 && value<STATE_TYPES_NUMBER);
+}*/
+
 //***************   GENERATOR TYPES   ***************//
 enum GeneratorType {ECP_GEN_TEACH_IN, ECP_GEN_NEWSMOOTH, ECP_GEN_WEIGHT_MEASURE, ECP_GEN_TRANSPARENT, ECP_GEN_TFF_NOSE_RUN,
      ECP_ST_BIAS_EDP_FORCE, ECP_GEN_TFF_RUBIK_GRAB, ECP_GEN_TFF_RUBIK_FACE_ROTATE, ECP_ST_GRIPPER_OPENING,
@@ -60,6 +65,11 @@ static QStringList getGeneratorTypeTable2()
     return items;
 }
 
+static bool isProper(GeneratorType value)
+{
+    return (value>=0 && value<GENERATORS_NUMBER);
+}
+
 //***************   ROBOTS   ***************//
 enum Robot {ROBOT_UNDEFINED, irp6ot_m, irp6p_m, festival, conveyor,
             ROBOT_ELECTRON, bird_hand, ROBOT_SPEECHRECOGNITION,
@@ -77,6 +87,11 @@ static QStringList getRobotTable()
     return items;
 }
 
+static bool isProper(Robot value)
+{
+    return (value>=0 && value<ROBOTS_NUMBER);
+}
+
 //***************   SENSORS   ***************//
 enum Sensor {SENSOR_CAMERA_ON_TRACK, SENSOR_CAMERA_SA,
         SENSORS_NUMBER};
@@ -90,6 +105,11 @@ static QStringList getSensorTable()
         items<<QString().fromStdString(SENSOR_TABLE[i]);
     }
     return items;
+}
+
+static bool isProper(Sensor value)
+{
+    return (value>=0 && value<SENSORS_NUMBER);
 }
 
 //***************   COORD TYPES   ***************//
@@ -107,6 +127,11 @@ static QStringList getCoordTypeTable()
     return items;
 }
 
+static bool isProper(CoordType value)
+{
+    return (value>=0 && value<COORDTYPES_NUMBER);
+}
+
 //***************   MOTION TYPES   ***************//
 enum MotionType {ABSOLUTE, RELATIVE,
              MOTIONTYPES_NUMBER};
@@ -122,6 +147,11 @@ static QStringList getMotionTypeTable()
     return items;
 }
 
+static bool isProper(MotionType value)
+{
+    return (value>=0 && value<MOTIONTYPES_NUMBER);
+}
+
 //***************   TRANSMITTERS   ***************//
 enum Transmitter {TRANSMITTER_RC_WINDOWS,
             TRANSMITTERS_NUMBER};
@@ -135,6 +165,11 @@ static QStringList getTransmitterTable()
         items<<QString().fromStdString(TRANSMITTER_TABLE[i]);
     }
     return items;
+}
+
+static bool isProper(Transmitter value)
+{
+    return (value>=0 && value<TRANSMITTERS_NUMBER);
 }
 
 

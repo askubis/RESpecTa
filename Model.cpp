@@ -20,7 +20,6 @@ QString logPath =SaveFolder+ myFile;
 logPath.append(".log");
 int ind = myFile.lastIndexOf('/');
 myFile.remove(0,ind+1);
-std::cout<<"SAVE1: "<<myFile.toStdString()<<std::endl;
 
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
@@ -271,16 +270,100 @@ QStringList Model::checkIfOK()
     //kazy stan poza end i stop musi miec przynajmniej jeden stan wyjsciowy
     //dla kazdego stanu tranzycje sa rozne, ostatnia ma warunek true
 
-    //TODO:
-
-    //czy z kazdego stanu da sie dojsc do end/stop(?)
     //sprawdzic czy nie są używane stany/roboty niezainicjalizowane
     //sprawdzanie czy nie są używane niezainicjalizowane sensory
     //sprawdzić czy wszystko zainicjalizowane jest używane
 
-    //2 tablice bool jako initialized i used, sprawdzane w kazdym stanie czy initialized, sprawdzanie pod koniec czy used
+    //TODO:
+
+    //czy z kazdego stanu da sie dojsc do end/stop(?)
+    bool SensorUsed[SENSORS_NUMBER], SensorInitialized[SENSORS_NUMBER];
+    for(int i=0;i<SENSORS_NUMBER;i++)
+    {
+        Sensor sen = (Sensor)i;
+        SensorUsed[sen]=false;
+        SensorInitialized[sen]=false;
+    }
+    //bool RobotUsed[ROBOTS_NUMBER], RobotInitialized[ROBOTS_NUMBER];
+    bool genUsed[ROBOTS_NUMBER][GENERATORS_NUMBER], genInitialized[ROBOTS_NUMBER][GENERATORS_NUMBER];//wystarcza za roboty
+    for(int i=0;i<ROBOTS_NUMBER;i++)
+    {
+        Robot rob = (Robot)i;
+        for(int j=0;j<GENERATORS_NUMBER;j++)
+        {
+            GeneratorType genType = (GeneratorType)j;
+            genUsed[rob][genType]=false;
+            genInitialized[rob][genType]=false;
+        }
+    }
+    sysInitState * tmpState = (sysInitState *)getState("INIT", mainName);
+    foreach(genInit init, tmpState->getInits())
+    {
+        //RobotInitialized[init.robot]=true;
+        for(std::vector < std::pair<GeneratorType, int> >::iterator it = init.init_values.begin();it!=init.init_values.end();it++)
+        {
+            genInitialized[init.robot][(*it).first]=true;
+        }
+    }
+    foreach(Sensor sen, tmpState->getSensors())
+    {
+        SensorInitialized[sen]=true;
+    }
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    {
+        MyGraphType * gr = (*it).second;
+        typedef  property_map<MyGraphType, state_t>::type st_map;
+        st_map stateMap = get(state_t(), (*gr));
+        boost::graph_traits<MyGraphType>::vertex_iterator first, last;
+        tie(first, last) = vertices(*gr);
+        for(;first!=last;first++)
+        {
+            BaseState * state = boost::get(stateMap, *first);
+            //check
+            GetSensorState * tmpSensState;
+            RunGenState * tmpRunState;
+            switch(state->getType())
+            {
+                case GET_SENSOR_READING:
+                tmpSensState = (GetSensorState *)state;
+                SensorUsed[tmpSensState->getSensor()]=true;
+                break;
+                case RUN_GENERATOR:
+                tmpRunState = (RunGenState *)state;
+                genUsed[tmpRunState->getRobot()][tmpRunState->getGenType()]=true;
+                break;
+                default:
+                break;
+            }
+        }
+    }
+    for(int i=0;i<SENSORS_NUMBER;i++)
+    {
+        Sensor sen = (Sensor)i;
+        if(SensorUsed[i]^SensorInitialized[i])
+        {
+            errors+=QString("Sensor initizalized but not used, or used but not initizalized ").append(QString().fromStdString(SENSOR_TABLE[sen]));
+        }
+    }
+    for(int i=0;i<ROBOTS_NUMBER;i++)
+    {
+        Robot rob = (Robot)i;
+        for(int j=0;j<GENERATORS_NUMBER;j++)
+        {
+            GeneratorType genType = (GeneratorType)j;
+            if(genUsed[rob][genType]^genInitialized[rob][genType])
+            {
+                errors+=QString("Generator initizalized but not used, or used but not initizalized ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob]));
+            }
+        }
+
+    }
+
+
+
+
+
     MyGraphType * tmp = (*subtasks)[mainName];
-    if(tmp==NULL)std::cout<<"ZLE"<<std::endl;
 
     if( checkNameAvailable(QString("init"), tmp))
     {
@@ -589,7 +672,6 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     tie(first, last) = vertices(*G);
     QString tmpSaveName = QString(SaveFolder).append(QString().fromStdString(FileName));
     QFile* file = new QFile(tmpSaveName);
-    std::cout<<"SAVE: "<<tmpSaveName.toStdString()<<std::endl;
     file->open( QIODevice::WriteOnly);
     QXmlStreamWriter * writer = new QXmlStreamWriter(file);
     writer->setAutoFormatting(1);
@@ -734,12 +816,10 @@ void Model::setMainName(QString myFile)
 
 BaseState * Model::getState(QString name, QString subtaskName)
 {
-    std::cout<<"IN GET STATE"<<std::endl;
     if (!checkSubtaskExists(subtaskName))
     {
         return NULL;
     }
-    std::cout<<"Graph existst"<<std::endl;
     MyGraphType * graph = (*subtasks)[subtaskName];
     property_map<MyGraphType, state_t>::type State = get(state_t(), (*graph));
     graph_traits<MyGraphType>::vertex_iterator first, last;

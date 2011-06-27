@@ -31,8 +31,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    TreeItem * getItem(const QModelIndex index);
-    TreeStateItem * getItemOrParent( QModelIndex index);
+    QGraphicsItem * getItemOrParent( QModelIndex index);
 
     QString graphName;
     Model * mod;

@@ -293,7 +293,7 @@ public:
     int itemCount()
     {
         int i=0;//Type
-        if(transmitter>=0&&transmitter<TRANSMITTERS_NUMBER)i++;
+        if(isProper(transmitter))i++;
         i+=sensors.size();
         i+=inits.size();
         if(parameters.size()>0)i++;

@@ -389,7 +389,6 @@ void RESpecTa::LoadFile(QString fileName)
     QStringList errors;
 
     QString oldMain = mod->getMainName();
-    std::cout<<"MAIN "<<oldMain.toStdString()<<std::endl;
     mod->setMainName(subName);
 
     errors+=LoadStates(fileName);
@@ -441,7 +440,6 @@ QStringList RESpecTa::LoadStates(QString FileName)
 {
 QStringList errors;
     QString filename = QString(SaveFolder)+FileName;
-    std::cout<<"FILE state load::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
     //QString subName = filename;
     QString GraphName = FileName;
     GraphName.chop(4);
@@ -459,8 +457,6 @@ std::string startEnd = "START";
 if(reader->isEndElement())startEnd="END";
 
 
-          std::cout<<startEnd<<" MainLoop State: "<<reader->name().toString().toStdString()<<std::endl;
-if(reader->isEndDocument())std::cout<<"ENDDOC"<<std::endl;
           if(reader->name().toString()=="Graphics"&&reader->isStartElement())
           {
               errors+=this->loadGraphics(reader, GraphName);
@@ -471,15 +467,12 @@ if(reader->isEndDocument())std::cout<<"ENDDOC"<<std::endl;
               {
                   BaseState * state=NULL;
                   StateType type;
-                  std::cout<<"HasID "<<reader->attributes().value("id").toString().toStdString()<<std::endl;
-                  std::cout<<"HasTYPE "<<reader->attributes().value("type").toString().toStdString()<<std::endl;
                   int index = (getStateTypeTable().indexOf(reader->attributes().value("type").toString()));
                   if(index<STATE_TYPES_NUMBER)
                   {
                        type = (StateType)index;
                   }
                   //else - //in switch
-                  std::cout<<"TYPE "<<type<<std::endl;
                   switch (type)
                   {
                       case 0:
@@ -580,7 +573,6 @@ else
 }
 
                     state->setName(stateName);
-std::cout<<"LOADING STATE: "<<state->getName().toStdString()<<std::endl;
                     errors+= state->LoadFromXML(reader);
                     scenes[GraphName]->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
@@ -626,7 +618,6 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
     QString filename = QString(SaveFolder);
     filename+=FileName;
     QStringList errors;
-    std::cout<<"FILE trans load::::::::::::::::::::::::::::;"<<filename.toStdString()<<std::endl;
     QFile* file = new QFile(filename);
     QString subName = filename;
     if(subName.endsWith(".xml"))subName.chop(4);//delete .xml
@@ -638,7 +629,6 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"MainLoop Transition: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name().toString()=="State"&&reader->isStartElement() && !mod->checkNameAvailable(reader->attributes().value("id").toString()))
           {
               StateName = reader->attributes().value("id").toString();
@@ -649,7 +639,6 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
           }
           else if(reader->name().toString()=="transition"&&reader->isStartElement())
           {
-              std::cout<<"LOADING TRANS"<<std::endl;
               if(StateName=="")
               {
                   char linenum[30];
@@ -673,10 +662,8 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
                       {
                           target = strList[0];
                       }
-                      std::cout<<"SUBTASKNAME WITHOUT XML:"<<subName.toStdString()<<std::endl;
                       BaseState * sourceState = mod->getState(StateName, subName);
                       BaseState * targetState = mod->getState(target, subName);
-                      std::cout<<sourceState<<" "<<targetState<<std::endl;
                       if(sourceState!=NULL&&targetState!=NULL)
                       {
                           Transition * trans = new Transition(sourceState, targetState);
@@ -1490,7 +1477,6 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader, QString subName)
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-          std::cout<<"Graphics: "<<reader->name().toString().toStdString()<<std::endl;
           if(reader->name()=="Graphics"&&reader->isEndElement())
           {
               if(!wasX||!wasY)
@@ -1590,46 +1576,27 @@ void RESpecTa::WasChanged()
     TreeView->setModel(newModel);
     delete treeModel;
     treeModel = newModel;
+    emit SignalDeleted();//żeby nie było problemu, gdyedytujemy coś i zmienimy podzadanie
 }
 
 void RESpecTa::GoToState()
 {
-    std::cout<<TreeView->getSelectedIndexes().size()<<std::endl;
     if(TreeView->getSelectedIndexes().size()<=0)
         return;
-    if(TreeView->getSelectedIndexes().size()==2)//why
+    if(TreeView->getSelectedIndexes().size()<=2)//why
     {
         QModelIndex ind = TreeView->getSelectedIndexes().first();
-        TreeStateItem * it = treeModel->getItemOrParent(ind);
-        BaseState * st = it->getState();
-        views[currentSubtask]->centerOn(st);
+        QGraphicsItem * it = treeModel->getItemOrParent(ind);
+        views[currentSubtask]->centerOn(it);
         foreach(QGraphicsItem * grIt, scenes[currentSubtask]->selectedItems())
         {
             grIt->setSelected(false);
         }
         scenes[currentSubtask]->selectedItems().clear();
-        scenes[currentSubtask]->selectedItems().push_back(st);
-        st->setSelected(true);
-        this->itemSelected(st);
+        scenes[currentSubtask]->selectedItems().push_back(it);
+        it->setSelected(true);
+        this->itemSelected(it);
         return ;
-    }
-    foreach(QModelIndex ind, TreeView->getSelectedIndexes())
-    {
-        if(treeModel->getItem(ind)->getType()==0)
-        {
-            TreeStateItem * stateIt = (TreeStateItem *)treeModel->getItem(ind);
-            BaseState * st = stateIt->getState();
-            views[currentSubtask]->centerOn(st);
-            foreach(QGraphicsItem * grIt, scenes[currentSubtask]->selectedItems())
-            {
-                grIt->setSelected(false);
-            }
-            scenes[currentSubtask]->selectedItems().clear();
-            scenes[currentSubtask]->selectedItems().push_back(st);
-            st->setSelected(true);
-            this->itemSelected(st);
-            return ;
-        }
     }
 }
 
