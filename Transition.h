@@ -1,5 +1,3 @@
-
-
 #ifndef Transition_H
 #define Transition_H
 class Transition;
@@ -44,9 +42,6 @@ public:
     QString getSubtask() {return subtask;}
     void setSubtask(QString newSubtask) {subtask=newSubtask;}
 
-    //BaseState* getSub() {return sub;}
-    //void setSub(BaseState* newSubtask) {sub=newSubtask;}
-
     std::string Print()
     {
         std::string toRet;
@@ -78,7 +73,6 @@ public:
         writer->writeAttribute("target", tmpString);
         writer->writeEndElement();
     }
-
 
 public slots:
     void updatePosition();

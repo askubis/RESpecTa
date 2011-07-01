@@ -27,7 +27,6 @@ int TreeModel::columnCount(const QModelIndex &/*parent*/) const
     return 2;
 }
 
-
 QGraphicsItem * TreeModel::getItemOrParent(QModelIndex index)
 {
     for(TreeItem * it = (TreeItem*)index.internalPointer();;it=it->parent())
@@ -47,18 +46,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = (TreeItem*)(index.internalPointer());
-
-
     switch (index.column())
     {
         case 0:
         if(item)
             return item->Name();
-
         case 1:
         if(item)
             return item->Attr();
-
         default:
             return QVariant();
     }
@@ -68,7 +63,6 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
-
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
@@ -85,7 +79,6 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                 return QVariant();
         }
     }
-
     return QVariant();
 }
 
@@ -96,7 +89,6 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
         return QModelIndex();
 
     TreeItem *parentItem;
-
     if (!parent.isValid())
         parentItem = rootItem;
     else
@@ -116,7 +108,6 @@ QModelIndex TreeModel::parent(const QModelIndex &child) const
 
     TreeItem *childItem = (TreeItem*)(child.internalPointer());
     TreeItem *parentItem = childItem->parent();
-
     if (!parentItem || parentItem == rootItem)
         return QModelIndex();
 
@@ -129,14 +120,12 @@ int TreeModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     TreeItem *parentItem;
-
     if (!parent.isValid())
         parentItem = rootItem;
     else
         parentItem = (TreeItem*)(parent.internalPointer());
 
     return parentItem->childNodesCount();
-
 }
 
 

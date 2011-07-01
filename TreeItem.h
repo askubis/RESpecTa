@@ -13,9 +13,7 @@ class TreeGraphItem;
 
 #include "TreeModel.h"
 
-//#include <QDomNode>
 #include <QHash>
-//#include "baseState.h"
 class BaseState;
 #include "Transition.h"
 #include "Coordinates.h"
@@ -76,7 +74,7 @@ public:
     QString Name(){return QString("->")+=tr->getCondition();}
     QString Attr(){return tr->endItem()->getName();}
 private:
-    Transition * tr;//{return 0;}
+    Transition * tr;//1
 };
 
 class TreeCoordItem : public TreeItem
@@ -96,7 +94,7 @@ public:
 
         i+=coords->getPoses().size();
         return i;
-    }//check boundaries
+    }
     TreeItem *child(int i);
 
     QString Name(){return QString("Coordinates");}
@@ -161,7 +159,7 @@ class TreeTextItem : public TreeItem
 {
 public:
     TreeTextItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
-    //~TreeTextItem(){}
+    ~TreeTextItem(){}
 
     void setNameAttr(QString _name, QString _attr){Type = 100; name=_name; attr=_attr;}
     int childNodesCount(){return 0;}
@@ -191,7 +189,5 @@ public:
 private:
     MyGraphType * gr;//101
 };
-
-
 
 #endif // TREEITEM_H

@@ -12,64 +12,66 @@ class Model
 
 public:
     Model();
-    void deleteAll();
-    void DeleteTask(QString Name);
+
+
+        //*************     COUNT   ***********//
     int vertNum(QString Name);
-    MyGraphType * getGraph(QString Name);
-    BaseState * getState(MyGraphType * graph, int i);
 
-    QString getSubNameOfTrans(Transition * trans);
-
-    void DeleteSubtask(QString Name);
-    void changeSubtaskName(QString oldName, QString NewName);
-
-    bool checkTransCondAvailabe(BaseState * source,QString cond);
-    bool checkSubtaskExists(QString Name);
-    BaseState * getState(QString name, QString subtaskName);
-    void setMainName(QString newName);
-    void save(QString filename);
+        //*************     DELETE  ***********//
+    void deleteAll();
     void deleteTransition(Transition * transition);
     void deleteState(BaseState * state);
+    void DeleteTask(QString Name);
+
+        //*************     ADD     ***********//
+    void addSubtask(QString name);
     bool addState(BaseState * item, QString subtaskName);
     bool tryInsertTransition(Transition * trans);
-    bool checkNameAvailable(QString name);
-    void addSubtask(QString name);
-    QStringList getTasksNameLists();
-    QStringList getTasksNameListsWithoutMain();
-    QStringList getAllStateNames(QString sub);
-    //bool checkStateNameIsAvailable( MyGraphType &G, QString given);
-    QStringList checkIfOK();
-    bool checkNameAvailable(QString name, MyGraphType * G);
-    QString getSubtaskName(QString StateName);
-    bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);
 
+        //*************     CHANGE  ***********//
+    void changeSubtaskName(QString oldName, QString NewName);
+    bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);
     void MoveTransitionUp(BaseState * st, int index);
     void MoveTransitionDown(BaseState * st, int index);
 
+        //*************     GET     ***********//
+    BaseState * getState(QString name, QString subtaskName);
+    BaseState * getState(MyGraphType * graph, int i);
     std::vector<Transition *> getTransitions(BaseState * state);
-
-    bool checkTransitonExists(Transition * trans);
+    MyGraphType * getGraph(QString Name);
+    QString getSubtaskName(QString StateName);
+    QString getMainName(){return mainName;}
+    QString getSubNameOfTrans(Transition * trans);
+    QStringList getStateNames(MyGraphType G);
+    QStringList getTasksNameLists();
+    QStringList getTasksNameListsWithoutMain();
+    QStringList getAllStateNames(QString sub);
 
     boost::graph_traits<MyGraphType>::edge_iterator findEdge ( MyGraphType * graph, Transition * toFind);
     boost::graph_traits<MyGraphType>::vertex_iterator findVertex ( MyGraphType * graph, BaseState * toFind);
-    void printStates(MyGraphType *G, std::string FileName, bool ifMain);
-    bool checkStateNameAvailable(MyGraphType *G, QString given);
-    QStringList getStateNames(MyGraphType G);
 
-
+        //*************     SET     ***********//
+    void setMainName(QString newName);
     void setView(RESpecTa * newres){res=newres;}
-    QString getMainName(){return mainName;}
-
-    bool checkTransCondAvailabe(Transition * tr,QString cond);
-
     void setSaveFolder(QString newSaveFolder){SaveFolder=newSaveFolder;}
 
+        //*************     CHECK   ***********//
+    bool checkTransCondAvailabe(BaseState * source,QString cond);
+    bool checkSubtaskExists(QString Name);
+    bool checkNameAvailable(QString name, MyGraphType * G);
+    bool checkNameAvailable(QString name);
+    bool checkTransitonExists(Transition * trans);
+    bool checkTransCondAvailabe(Transition * tr,QString cond);
+
+        //*************     SAVE    ***********//
+    void save(QString filename);
+    void printStates(MyGraphType *G, std::string FileName, bool ifMain);
+    QStringList checkIfOK();
+
+        //*************     OTHER   ***********//
     void setChanged(bool newChanged);
     bool wasChanged(){return changed;}
     void setBlock(bool block){changeBlocked=block;}
-
-
-
 
 signals:
     void reportError(QString);
@@ -81,7 +83,6 @@ private:
     QString SaveFolder;
     bool changed;
     bool changeBlocked;
-
 };
 
 #endif // MODEL_H

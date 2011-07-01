@@ -15,31 +15,31 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod )
     //myItemType = BaseState::Step;
     line = 0;
     //textItem = 0;
-    myItemColor = Qt::white;
-    myTextColor = Qt::black;
-    myLineColor = Qt::black;
+    //myItemColor = Qt::white;
+    //myTextColor = Qt::black;
+    //myLineColor = Qt::black;
     //toInsert = new BaseState();
 }
 
 void DiagramScene::setLineColor(const QColor &color)
 {
-    myLineColor = color;
+   /* myLineColor = color;
     if (isItemChange(Transition::Type)) {
         Transition *item =
             qgraphicsitem_cast<Transition *>(selectedItems().first());
         item->setColor(myLineColor);
         update();
-    }
+    }*/
 }
 
 void DiagramScene::setItemColor(const QColor &color)
 {
-    myItemColor = color;
+    /*myItemColor = color;
     if (isItemChange(BaseState::Type)) {
         BaseState *item =
             qgraphicsitem_cast<BaseState *>(selectedItems().first());
         item->setBrush(myItemColor);
-    }
+    }*/
 }
 
 void DiagramScene::setMode(Mode mode)
@@ -57,7 +57,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         case InsertItem:
             //
             toInsert->setMenu(myItemMenu);
-            toInsert->setBrush(myItemColor);
+            toInsert->setBrush(Qt::white);
             addItem(toInsert);
             toInsert->setPos(mouseEvent->scenePos());
 
@@ -74,7 +74,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         case InsertLine:
             line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
                                         mouseEvent->scenePos()));
-            line->setPen(QPen(myLineColor, 2));
+            line->setPen(QPen(Qt::black, 2));
             addItem(line);
             break;
 
@@ -156,7 +156,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(test)
             {
                 transition->setSubtask(transitionAttributes.second);
-                transition->setColor(myLineColor);
+                transition->setColor(Qt::black);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);
                 transition->setZValue(-1000.0);
@@ -185,19 +185,11 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
-bool DiagramScene::isItemChange(int type)
-{
-    foreach (QGraphicsItem *item, selectedItems()) {
-        if (item->type() == type)
-            return true;
-    }
-    return false;
-}
 
 void DiagramScene::setItemParams(BaseState * toInsert)
 {
     toInsert->setMenu(myItemMenu);
-    toInsert->setBrush(myItemColor);
+    toInsert->setBrush(Qt::white);
     addItem(toInsert);
 
     QGraphicsTextItem * textItem = toInsert->getNameTextItem();

@@ -155,8 +155,6 @@ public:
         }
         return errors;
     }
-
-
 };
 
 #endif // ROBOTSET_H

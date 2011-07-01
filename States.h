@@ -30,10 +30,6 @@ class QXmlStreamReader;
 
 class BaseState;
 
-
-
-
-
 //////////////////////////          Stop State            //////////////////////////////////////////////////////
 class StopState:public BaseState
 {
@@ -54,7 +50,6 @@ class StopState:public BaseState
         return 0;
     }
 };
-
 
 //////////////////////////       Empty Gen for Set State        /////////////////////////////////////////////////
 class EmptyGenForSetState:public BaseState
@@ -268,7 +263,6 @@ private:
 };
 
 /////////////////////////          Sys Ini State           ///////////////////////////////////////////////////
-
 class sysInitState:public BaseState
 {
 public:

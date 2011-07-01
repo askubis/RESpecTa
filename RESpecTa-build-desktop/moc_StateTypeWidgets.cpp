@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Mon Jun 27 12:02:16 2011
+** Created: Mon Jun 27 20:53:54 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -582,7 +582,7 @@ static const uint qt_meta_data_PoseDialog[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -596,9 +596,8 @@ static const uint qt_meta_data_PoseDialog[] = {
  // slots: signature, parameters, type, tag, flags
       80,   11,   11,   11, 0x08,
       90,   11,   11,   11, 0x08,
-     103,   11,   11,   11, 0x08,
+      99,   11,   11,   11, 0x08,
      112,   11,   11,   11, 0x08,
-     125,   11,   11,   11, 0x08,
 
        0        // eod
 };
@@ -606,8 +605,7 @@ static const uint qt_meta_data_PoseDialog[] = {
 static const char qt_meta_stringdata_PoseDialog[] = {
     "PoseDialog\0\0newCoords\0InsertCoords(Coordinates*)\0"
     "msgString\0reportError(QString)\0AddPose()\0"
-    "RemovePose()\0PoseOK()\0PoseCancel()\0"
-    "PosesReset()\0"
+    "PoseOK()\0PoseCancel()\0PosesReset()\0"
 };
 
 const QMetaObject PoseDialog::staticMetaObject = {
@@ -642,13 +640,12 @@ int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: InsertCoords((*reinterpret_cast< Coordinates*(*)>(_a[1]))); break;
         case 1: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 2: AddPose(); break;
-        case 3: RemovePose(); break;
-        case 4: PoseOK(); break;
-        case 5: PoseCancel(); break;
-        case 6: PosesReset(); break;
+        case 3: PoseOK(); break;
+        case 4: PoseCancel(); break;
+        case 5: PosesReset(); break;
         default: ;
         }
-        _id -= 7;
+        _id -= 6;
     }
     return _id;
 }

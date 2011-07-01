@@ -27,7 +27,6 @@ QT_END_NAMESPACE
 #include <fstream>
 
 class TreeItem;
-//#include "TreeItem.h"
 class Transition;
 
 class BaseState : public QGraphicsPolygonItem
@@ -35,8 +34,6 @@ class BaseState : public QGraphicsPolygonItem
 public:
 
     enum { Type = UserType + 15 };
-
-
 
     StateType getType() {return stateType;}
     void setType(StateType newType){stateType=newType;}
@@ -48,7 +45,7 @@ public:
     void setParameters(QString newParams){parameters = newParams;}
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
     void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
-    //void setSubtaskName (QString newSubName){ subtaskName = newSubName;updateSize();}
+
     void updateSize();
 
 
@@ -59,8 +56,6 @@ public:
     virtual QStringList LoadFromXML(QXmlStreamReader *){return QStringList();}
     virtual int itemCount(){return 0;}
     virtual TreeItem * getChild(int i, TreeItem * parent){return 0;}
-
-  //  enum DiagramType { Step, Conditional, StartEnd, Io };
 
     BaseState & operator =(const BaseState &);
 
@@ -73,8 +68,6 @@ public:
 
     void removeTransition(Transition *transition);
     void removeTransitions();
-   /* DiagramType diagramType() const
-        { return myDiagramType; }*/
     QPolygonF polygon() const
         { return myPolygon; }
     void addTransition(Transition *transition);
@@ -110,24 +103,17 @@ protected:
 
 private:
 
-
-   // DiagramType myDiagramType;
     QPolygonF myPolygon;
     QMenu *myContextMenu;
 
 protected:
-    QList<Transition *> Transitions;
-
     QString stateName;
-    //QString subtaskName;
     StateType stateType;
     int argument;
     QString parameters;
 
     QGraphicsTextItem * nameTextItem;
-
-
-
+    QList<Transition *> Transitions;
 };
 
 

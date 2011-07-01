@@ -21,8 +21,6 @@ class QGridLayout;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
-
-
 class TransWidget : public QWidget
 {
     Q_OBJECT
@@ -38,42 +36,27 @@ private:
 
     QVBoxLayout *TransitionLayout;
 
-    //QLabel *transCondLabel;
     QLineEdit *conditionLineEdit;
-
-
-    //QWidget *extension;
 
     QPushButton *OKButton;
     QPushButton *InsertButton;
 
-
     Transition * edited;
 
     QComboBox *stateCombo;
-    //QComboBox *destCombo;
     QComboBox *subtaskCombo;
 
     QLabel * sourceNameLabel;
     QLabel * destNameLabel;
-
-
-
-
 signals:
     void insertTransition(std::pair<QString,QString>);
     void reportError(QString);
 
-   // QStringList getSubtasksList();
-
 private slots:
-
     void subtaskChanged(QString);
     void lengthChanged(QString newString);
     void AcceptTrans();
     void InsertTrans();
-    void SubtaskInserted(QString);
-
 };
 
 #endif // TRANSWIDGET_H

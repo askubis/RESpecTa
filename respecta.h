@@ -4,20 +4,16 @@
 class RESpecTa;
 
 #include <QMainWindow>
-//#include "GlobalVariables.h"
 
 #include "baseState.h"
 #include "Model.h"
 #include "TransDialog.h"
 #include "subtaskDialog.h"
 #include "TreeModel.h"
-//#include "Graph.h"
 #include "TreeItem.h"
 #include "myTreeView.h"
 
 class DiagramScene;
-//class Model;
-
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -34,31 +30,25 @@ class QAbstractButton;
 class QGraphicsView;
 QT_END_NAMESPACE
 
-
 class RESpecTa : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    RESpecTa(){}
-    RESpecTa(Model * newmod );
+   RESpecTa(){}
+   RESpecTa(Model * newmod );
 
-    void WasChanged();
-    void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
-   //MyGraphType * getGraph (){return myGraph;}
-   //std::map<std::string, MyGraphType *> * getSubtasks (){return subtasks;}
+   void WasChanged();
+   void setCurrentSubtask(QString newSubtask){currentSubtask = newSubtask;}
    void getError(QString x){reportError(x);}
    void clearSaveName() {SaveName=QString();}
    void deleteState(BaseState * state);
    void deleteTrans(Transition * trans);
-
    void SaveGraphicsAttributes(QXmlStreamWriter * writer, QString SubName);
 
 signals:
    void itemSelectedSig(QGraphicsItem *item);
    void refreshWidgets();
    void SignalDeleted();
-
 
 private slots:
     void FindOnList();
@@ -69,7 +59,6 @@ private slots:
     void SubtaskChanged(QString, QString);
     void OpenSubtaskEditDialog();
     void ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName);
-    //QStringList getSubtasksList();
     void EditTransitionsOfState();
     void addEndState();
     void reportError(QString msgString);
@@ -80,25 +69,11 @@ private slots:
     bool SaveAs();
     void selectedSubtaskName(QString newString);
     void InsertState(BaseState * newState);
-    void NewSubtaskInserted(QString newName);
-    //void backgroundButtonGroupClicked(QAbstractButton *button);
-    void buttonGroupClicked(int id);
     void deleteItem();
-    void pointerGroupClicked(int id);
     void bringToFront();
     void sendToBack();
     void itemInserted(BaseState *item);
-    //void textInserted(QGraphicsTextItem *item);
-    //void currentFontChanged(const QFont &font);
-    //void fontSizeChanged(const QString &size);
     void sceneScaleChanged(const QString &scale);
-    //void textColorChanged();
-    void itemColorChanged();
-    void lineColorChanged();
-    //void textButtonTriggered();
-    void fillButtonTriggered();
-    void lineButtonTriggered();
-    //void handleFontChange();
     void itemSelected(QGraphicsItem *item);
     void about();
 
@@ -109,8 +84,6 @@ private:
     void createEditMenu();
     void createOptionsMenu();
     void createHelpMenu();
-    void createToolBox();
-    void createActions();
     void createToolbars();
 
     void LoadFile(QString filename);
@@ -130,14 +103,6 @@ private:
     TransDialog * transDial;
 
     SubtaskDialog * subDialog;
-
-
-    QWidget *createBackgroundCellWidget(const QString &text,
-                                        const QString &image);
-    QWidget *createCellWidget(const QString &text);
-    QMenu *createColorMenu(const char *slot, QColor defaultColor);
-    QIcon createColorToolButtonIcon(const QString &image, QColor color);
-    QIcon createColorIcon(QColor color);
 
     std::map<QString,QWidget *> widgets;
     QTabWidget * tabWidget;
@@ -164,30 +129,10 @@ private:
     QMenu *itemMenu;
     QMenu *aboutMenu;
 
-    QToolBar *textToolBar;
-    QToolBar *editToolBar;
-    QToolBar *colorToolBar;
-    QToolBar *pointerToolbar;
+    QToolBar * editToolBar;
+    QToolBar * sceneToolbar;
 
     QComboBox *sceneScaleCombo;
-    QComboBox *itemColorCombo;
-    QComboBox *textColorCombo;
-    QComboBox *fontSizeCombo;
-    QFontComboBox *fontCombo;
-
-    QToolBox *toolBox;
-    QButtonGroup *buttonGroup;
-    QButtonGroup *pointerTypeGroup;
-    QButtonGroup *backgroundButtonGroup;
-    QToolButton *fontColorToolButton;
-    QToolButton *fillColorToolButton;
-    QToolButton *lineColorToolButton;
-    QAction *boldAction;
-    QAction *underlineAction;
-    QAction *italicAction;
-    QAction *textAction;
-    QAction *fillAction;
-    QAction *lineAction;
 };
 
 

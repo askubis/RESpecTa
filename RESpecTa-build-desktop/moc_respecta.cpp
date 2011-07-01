@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Mon Jun 27 12:01:55 2011
+** Created: Mon Jun 27 20:53:31 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_RESpecTa[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      35,   14, // methods
+      28,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -54,20 +54,13 @@ static const uint qt_meta_data_RESpecTa[] = {
      465,    9,  370,    9, 0x08,
      484,  474,    9,    9, 0x08,
      522,  513,    9,    9, 0x08,
-     554,  546,    9,    9, 0x08,
-     585,  582,    9,    9, 0x08,
-     609,    9,    9,    9, 0x08,
-     622,  582,    9,    9, 0x08,
-     647,    9,    9,    9, 0x08,
-     662,    9,    9,    9, 0x08,
-     675,   10,    9,    9, 0x08,
-     706,  700,    9,    9, 0x08,
-     733,    9,    9,    9, 0x08,
-     752,    9,    9,    9, 0x08,
-     771,    9,    9,    9, 0x08,
-     793,    9,    9,    9, 0x08,
-     815,   10,    9,    9, 0x08,
-     844,    9,    9,    9, 0x08,
+     546,    9,    9,    9, 0x08,
+     559,    9,    9,    9, 0x08,
+     574,    9,    9,    9, 0x08,
+     587,   10,    9,    9, 0x08,
+     618,  612,    9,    9, 0x08,
+     645,   10,    9,    9, 0x08,
+     674,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -87,14 +80,10 @@ static const char qt_meta_stringdata_RESpecTa[] = {
     "insertTransition(std::pair<QString,QString>)\0"
     "Load()\0save()\0SaveAs()\0newString\0"
     "selectedSubtaskName(QString)\0newState\0"
-    "InsertState(BaseState*)\0newName\0"
-    "NewSubtaskInserted(QString)\0id\0"
-    "buttonGroupClicked(int)\0deleteItem()\0"
-    "pointerGroupClicked(int)\0bringToFront()\0"
-    "sendToBack()\0itemInserted(BaseState*)\0"
-    "scale\0sceneScaleChanged(QString)\0"
-    "itemColorChanged()\0lineColorChanged()\0"
-    "fillButtonTriggered()\0lineButtonTriggered()\0"
+    "InsertState(BaseState*)\0deleteItem()\0"
+    "bringToFront()\0sendToBack()\0"
+    "itemInserted(BaseState*)\0scale\0"
+    "sceneScaleChanged(QString)\0"
     "itemSelected(QGraphicsItem*)\0about()\0"
 };
 
@@ -150,23 +139,16 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
         case 19: selectedSubtaskName((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 20: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 21: NewSubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 22: buttonGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 23: deleteItem(); break;
-        case 24: pointerGroupClicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 25: bringToFront(); break;
-        case 26: sendToBack(); break;
-        case 27: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
-        case 28: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 29: itemColorChanged(); break;
-        case 30: lineColorChanged(); break;
-        case 31: fillButtonTriggered(); break;
-        case 32: lineButtonTriggered(); break;
-        case 33: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
-        case 34: about(); break;
+        case 21: deleteItem(); break;
+        case 22: bringToFront(); break;
+        case 23: sendToBack(); break;
+        case 24: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 25: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 26: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
+        case 27: about(); break;
         default: ;
         }
-        _id -= 35;
+        _id -= 28;
     }
     return _id;
 }

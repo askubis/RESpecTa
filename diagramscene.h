@@ -26,29 +26,24 @@ class DiagramScene : public QGraphicsScene
 public:
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
 
-
-
     DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod );
-    QFont font() const
+    /*QFont font() const
         { return myFont; }
     QColor textColor() const
         { return myTextColor; }
     QColor itemColor() const
         { return myItemColor; }
     QColor lineColor() const
-        { return myLineColor; }
+        { return myLineColor; }*/
     void setLineColor(const QColor &color);
     void setTextColor(const QColor &color);
     void setItemColor(const QColor &color);
-    void setFont(const QFont &font);
     void setToInsertState (BaseState * newState){toInsert = newState;}
     void setTransitionAttributes(std::pair<QString,QString> thePair){transitionAttributes=thePair;}
     void setItemParams(BaseState * toInsert);
 
 public slots:
     void setMode(Mode mode);
-    //void setItemType(BaseState::DiagramType type);
-    //void editorLostFocus(DiagramTextItem *item);
 
 signals:
     void itemInserted(BaseState *item);
@@ -65,21 +60,12 @@ protected:
 private:
     Model * mod;
 
-    bool isItemChange(int type);
-
     std::pair<QString,QString> transitionAttributes;
     BaseState * toInsert;
-    //BaseState::DiagramType myItemType;
     QMenu *myItemMenu;
     Mode myMode;
-    bool leftButtonDown;
     QPointF startPoint;
     QGraphicsLineItem *line;
-    QFont myFont;
-   // DiagramTextItem *textItem;
-    QColor myTextColor;
-    QColor myItemColor;
-    QColor myLineColor;
 };
 
 #endif

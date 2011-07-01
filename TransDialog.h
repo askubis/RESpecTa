@@ -10,7 +10,6 @@ class TransDialog:public QDialog
     Q_OBJECT
 
 public:
-
     TransDialog(QWidget * parent, Model * mod);
     ~TransDialog(){}
     void openForAState(BaseState * tmp);
@@ -30,11 +29,6 @@ private:
     QListWidget * transCondList;
     QListWidget * transTargList;
     QListWidget * transSubList;
-    //std::vector<int> changes;
-    //QList<Transition *> tranList;
-
-
-
 };
 
 

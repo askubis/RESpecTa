@@ -20,30 +20,7 @@ public:
             this->v.push_back(other.v[i]);
             this->coordinates.push_back(other.coordinates[i]);
         }
-
     }
-
-    /*bool operator == (Pose other)
-    {
-        if (this->a.size()!=other.a.size()) return false;
-        for(int i=0;i<a.size();i++)
-        {
-            if(this->a[i]!=other.a[i]) return false;
-        }
-        if (this->v.size()!=other.v.size()) return false;
-        for(int i=0;i<v.size();i++)
-        {
-            if(this->v[i]!=other.v[i]) return false;
-        }
-        if (this->coordinates.size()!=other.coordinates.size()) return false;
-        for(int i=0;i<coordinates.size();i++)
-        {
-            if(this->coordinates[i]!=other.coordinates[i]) return false;
-        }
-
-
-        return true;
-    }*/
 
     std::vector<double> getA(){return a;}
     void setA(std::vector<double> newA){a=newA;}
@@ -227,7 +204,6 @@ public:
         }
         return errors;
     }
-
 private:
     std::vector<double> a;
     std::vector<double> v;

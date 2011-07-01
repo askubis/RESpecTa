@@ -56,29 +56,21 @@ private:
 
     QComboBox *stateTypeCombo;
 
-
     MyTypeWidget* StateWidgets[STATE_TYPES_NUMBER];
 
     int tmpWidget;
-
 signals:
     void InsertState(BaseState * newState);
     void reportError(QString msgString);
     void ReplaceState(BaseState * oldState, BaseState * newState, QString oldName);
 
-
-
 private slots:
-
-
     void forwardError(QString msgString){emit reportError(msgString);}
     void setStateSubclass(int chosen);
     void lengthChanged(QString text);
 
     void AcceptState();
     void InsertState();
-
-
 };
 
 #endif // STATEWIDGET_H

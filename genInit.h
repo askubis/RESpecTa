@@ -13,13 +13,7 @@ public:
     {
         this->robot=other.robot;
         this->init_values=other.init_values;
-        /*for(int i=0;i!=other.init_values.size();i++)
-        {
-            this->init_values.push_back(other.init_values[i]);
-        }*/
-
     }
-
 
     std::string Print()
     {
@@ -38,7 +32,6 @@ public:
         }
         return x;
     }
-
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("ecp");
@@ -51,8 +44,6 @@ public:
         }
         writer->writeEndElement();
     }
-
-
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -116,7 +107,6 @@ public:
         }
         return errors;
     }
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

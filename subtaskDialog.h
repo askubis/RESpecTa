@@ -33,7 +33,6 @@ private slots:
     void DeleteClicked();
     void LengthChanged(QString);
     void OKPressed();
-
 };
 
 #endif // SUBTASKDIALOG_H

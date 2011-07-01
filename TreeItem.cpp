@@ -8,7 +8,6 @@ TreeItem::TreeItem( int row, TreeModel *mod, TreeItem *parent)
 {
     Type = 255;
     Model = mod;
-    // Record the item's location within its parent.
 
     rowNumber = row;
     parentItem = parent;
@@ -21,19 +20,15 @@ TreeItem::~TreeItem()
         delete it.value();
 }
 
-
 TreeItem *TreeItem::parent()
 {
     return parentItem;
 }
 
-
-
 int TreeItem::row()
 {
     return rowNumber;
 }
-
 
 TreeItem * TreeStateItem::child(int i)
 {
@@ -127,7 +122,6 @@ TreeItem * TreeRobotSetItem::child(int i)
             index--;
         }
     }
-
     return 0;
 }
 
@@ -192,7 +186,6 @@ TreeItem *TreePoseItem::child(int i)
     tmp->setNameAttr(tmpName, value);
     childItems[i]=tmp;
     return tmp;
-
 }
 
 TreeItem * TreeGraphItem::child(int i)

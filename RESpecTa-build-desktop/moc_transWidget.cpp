@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'transWidget.h'
 **
-** Created: Mon Jun 27 12:02:11 2011
+** Created: Mon Jun 27 20:53:49 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_TransWidget[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -39,7 +39,6 @@ static const uint qt_meta_data_TransWidget[] = {
      113,  103,   12,   12, 0x08,
      136,   12,   12,   12, 0x08,
      150,   12,   12,   12, 0x08,
-     164,   12,   12,   12, 0x08,
 
        0        // eod
 };
@@ -49,7 +48,6 @@ static const char qt_meta_stringdata_TransWidget[] = {
     "reportError(QString)\0subtaskChanged(QString)\0"
     "newString\0lengthChanged(QString)\0"
     "AcceptTrans()\0InsertTrans()\0"
-    "SubtaskInserted(QString)\0"
 };
 
 const QMetaObject TransWidget::staticMetaObject = {
@@ -87,10 +85,9 @@ int TransWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 3: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 4: AcceptTrans(); break;
         case 5: InsertTrans(); break;
-        case 6: SubtaskInserted((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 7;
+        _id -= 6;
     }
     return _id;
 }

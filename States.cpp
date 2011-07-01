@@ -1,7 +1,7 @@
 #include "States.h"
 #include "TreeItem.h"
 
-
+//////////////////////////          Stop State            //////////////////////////////////////////////////////
 void StopState::Print(QXmlStreamWriter*){}
 std::string StopState::Print()
 {
@@ -44,19 +44,16 @@ QStringList StopState::LoadFromXML(QXmlStreamReader * reader)
               sprintf(linenum,"; line: %lld", reader->lineNumber());
               errors.push_back((QString("unexpected name while reading stop generator <State>: ")+=reader->name())+=linenum);
           }
-
     }
     return errors;
 }
 
-
+//////////////////////////       Empty Gen for Set State        /////////////////////////////////////////////////
 void EmptyGenForSetState::Print(QXmlStreamWriter * writer)
 {
-
     if(parameters.size()>0)
     {
         writer->writeTextElement("Parameters", parameters);
-        //x+=this->parameters.toStdString();
     }
     set.Print(writer);
 }
@@ -144,7 +141,6 @@ QStringList EmptyGenForSetState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
 TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
 {
     int index = i;
@@ -206,16 +202,15 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+//////////////////////////          Empty Gen State           ///////////////////////////////////////////////////
 void EmptyGenState::Print(QXmlStreamWriter * writer)
 {
-
     if(parameters.size()>0)
     {
         writer->writeTextElement("Parameters", parameters);
     }
     writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[robot]));
     writer->writeTextElement("AddArg", argument);
-
 }
 std::string EmptyGenState::Print()
 {
@@ -340,7 +335,6 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-
             TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
             tmp->setNameAttr("Robot", QString().fromStdString(ROBOT_TABLE[robot]));
             return tmp;
@@ -394,6 +388,7 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+//////////////////////////          Get Sensor State           ///////////////////////////////////////////////////
 void GetSensorState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -544,6 +539,7 @@ TreeItem * GetSensorState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+//////////////////////////          Init Sensor State           ///////////////////////////////////////////////////
 void InitiateSensorState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -649,7 +645,6 @@ QStringList InitiateSensorState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
 TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
 {
     int index = i;
@@ -695,6 +690,7 @@ TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+//////////////////////////          Run Gen State           ///////////////////////////////////////////////////
 void RunGenState::Print(QXmlStreamWriter * writer)
 {
     writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[robot]));
@@ -711,7 +707,6 @@ void RunGenState::Print(QXmlStreamWriter * writer)
     if(this->coords->getPoses().size()==0)return;
     coords->Print(writer);
 }
-
 std::string RunGenState::Print()
 {
     std::string x;
@@ -925,7 +920,6 @@ QStringList RunGenState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
 TreeItem * RunGenState::getChild(int i, TreeItem * parent)
 {
     int index = i;
@@ -1033,9 +1027,9 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+//////////////////////////          Stop Gen State           ///////////////////////////////////////////////////
 void StopGenState::Print(QXmlStreamWriter * writer)
 {
-
     if(parameters.size()>0)
     {
         writer->writeTextElement("Parameters", parameters);
@@ -1140,7 +1134,6 @@ QStringList StopGenState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
 TreeItem * StopGenState::getChild(int i, TreeItem * parent)
 {
     int index = i;
@@ -1202,6 +1195,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+/////////////////////////          Sys Ini State           ///////////////////////////////////////////////////
 void sysInitState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -1230,10 +1224,7 @@ void sysInitState::Print(QXmlStreamWriter * writer)
             (*it).Print(writer);
         }
     }
-
-
     writer->writeEndElement();
-
 }
 std::string sysInitState::Print()
 {
@@ -1268,7 +1259,6 @@ std::string sysInitState::Print()
             x+=(*it).Print();
         }
     }
-
     return x;
 }
 QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
@@ -1403,8 +1393,6 @@ QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
-
 TreeItem * sysInitState::getChild(int i, TreeItem * parent)
 {
     int index = i;
@@ -1479,6 +1467,7 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
     return NULL;
 }
 
+/////////////////////////          Wait State           ///////////////////////////////////////////////////
 void WaitState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -1489,7 +1478,6 @@ void WaitState::Print(QXmlStreamWriter * writer)
     sprintf (tim, "%lld", Timespan);
     writer->writeTextElement("TimeSpan", QString().fromStdString(tim));
 }
-
 std::string WaitState::Print()
 {
     std::string x;
@@ -1569,7 +1557,6 @@ QStringList WaitState::LoadFromXML(QXmlStreamReader * reader)
               sprintf(linenum,"; line: %lld", reader->lineNumber());
               errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
           }
-
     }
     if(!wasTimespan)
     {
@@ -1580,7 +1567,6 @@ QStringList WaitState::LoadFromXML(QXmlStreamReader * reader)
     }
     return errors;
 }
-
 TreeItem * WaitState::getChild(int i, TreeItem * parent)
 {
     int index = i;

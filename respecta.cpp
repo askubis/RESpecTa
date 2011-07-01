@@ -806,22 +806,6 @@ void RESpecTa::createHelpMenu()
 
 }
 
-
-void RESpecTa::buttonGroupClicked(int id)
-{
-    /*QList<QAbstractButton *> buttons = buttonGroup->buttons();
-    foreach (QAbstractButton *button, buttons) {
-    if (buttonGroup->button(id) != button)
-        button->setChecked(false);
-    }
-    if (id == InsertTextButton) {
-        scenes[0]->setMode(DiagramScene::InsertText);
-    } else {
-        //scene->setItemType(BaseState::DiagramType(id));
-        scenes[0]->setMode(DiagramScene::InsertItem);
-    }*/
-}
-
 void RESpecTa::deleteItem()
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
@@ -875,11 +859,6 @@ void RESpecTa::deleteTrans(Transition * trans)
     delete trans;
 }
 
-void RESpecTa::pointerGroupClicked(int)
-{
-    //scenes[0]->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-}
-
 void RESpecTa::bringToFront()
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
@@ -930,8 +909,6 @@ void RESpecTa::sendToBack()
 void RESpecTa::itemInserted(BaseState *item)
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
-    pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-    scenes[index]->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 
     if(currentSubtask==mod->getMainName() && item->getName().toLower()==QString("_end_"))
     {
@@ -989,36 +966,6 @@ void RESpecTa::sceneScaleChanged(const QString &scale)
     }
 }
 
-
-void RESpecTa::itemColorChanged()
-{
-    fillAction = qobject_cast<QAction *>(sender());
-    fillColorToolButton->setIcon(createColorToolButtonIcon(
-                 ":/images/floodfill.png",
-                 qVariantValue<QColor>(fillAction->data())));
-    fillButtonTriggered();
-}
-
-void RESpecTa::lineColorChanged()
-{
-    lineAction = qobject_cast<QAction *>(sender());
-    lineColorToolButton->setIcon(createColorToolButtonIcon(
-                 ":/images/linecolor.png",
-                 qVariantValue<QColor>(lineAction->data())));
-    lineButtonTriggered();
-}
-
-void RESpecTa::fillButtonTriggered()
-{
-    //scenes[0]->setItemColor(qVariantValue<QColor>(fillAction->data()));
-}
-
-void RESpecTa::lineButtonTriggered()
-{
-    //scenes[0]->setLineColor(qVariantValue<QColor>(lineAction->data()));
-}
-
-
 void RESpecTa::itemSelected(QGraphicsItem *item)
 {
     if(item->type()==BaseState::Type)
@@ -1040,102 +987,11 @@ void RESpecTa::itemSelected(QGraphicsItem *item)
 }
 
 void RESpecTa::about()
-{
+{//TODO
     QMessageBox::about(this, tr("About Diagram Scene"),
                        tr("The <b>Diagram Scene</b> example shows "
                           "use of the graphics framework."));
 }
-
-void RESpecTa::createToolBox()
-{
-    //buttonGroup = new QButtonGroup(this);
-    //buttonGroup->setExclusive(false);
-    //connect(buttonGroup, SIGNAL(buttonClicked(int)),
-    //        this, SLOT(buttonGroupClicked(int)));
-    //QGridLayout *layout = new QGridLayout;
-    //layout->addWidget(createCellWidget(tr("Conditional"),
-    //                           BaseState::Conditional), 0, 0);
-    //layout->addWidget(createCellWidget(tr("State")),0, 1);
-    //layout->addWidget(createCellWidget(tr("Input/Output"),
-    //                  BaseState::Io), 1, 0);
-
-
-   /* QToolButton *textButton = new QToolButton;
-    textButton->setCheckable(true);
-    buttonGroup->addButton(textButton, InsertTextButton);
-    textButton->setIcon(QIcon(QPixmap(":/images/textpointer.png")
-                        .scaled(30, 30)));
-    textButton->setIconSize(QSize(50, 50));*/
-    /*QGridLayout *textLayout = new QGridLayout;
-    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
-    textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);*/
-    /*QWidget *textWidget = new QWidget;
-    textWidget->setLayout(textLayout);
-    layout->addWidget(textWidget, 1, 1);*/
-
-    //layout->setRowStretch(3, 10);
-    //layout->setColumnStretch(2, 10);
-
-    //QWidget *itemWidget = new QWidget;
-    //itemWidget->setLayout(layout);
-
-   /* backgroundButtonGroup = new QButtonGroup(this);
-    connect(backgroundButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-            this, SLOT(backgroundButtonGroupClicked(QAbstractButton*)));
-
-    QGridLayout *backgroundLayout = new QGridLayout;
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Blue Grid"),
-                ":/images/background1.png"), 0, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("White Grid"),
-                ":/images/background2.png"), 0, 1);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Gray Grid"),
-                    ":/images/background3.png"), 1, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("No Grid"),
-                ":/images/background4.png"), 1, 1);
-
-    backgroundLayout->setRowStretch(2, 10);
-    backgroundLayout->setColumnStretch(2, 10);
-
-    QWidget *backgroundWidget = new QWidget;
-    backgroundWidget->setLayout(backgroundLayout);*/
-
-
-
-    //toolBox = new QToolBox;
-    //toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-    //toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-    //toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
-    //toolBox->addItem(backgroundWidget, tr("Backgrounds"));
-}
-
-void RESpecTa::createActions()
-{
-
-    /*boldAction = new QAction(QIcon(":images/bold.png"),
-                             tr("Bold"), this);
-    boldAction->setCheckable(true);
-    boldAction->setShortcut(tr("Ctrl+G"));
-    connect(boldAction, SIGNAL(triggered()),
-            this, SLOT(handleFontChange()));
-
-    italicAction = new QAction(QIcon(":/images/italic.png"),
-                               tr("Italic"), this);
-    italicAction->setCheckable(true);
-    italicAction->setShortcut(tr("Ctrl+I"));
-    connect(italicAction, SIGNAL(triggered()),
-            this, SLOT(handleFontChange()));
-
-    underlineAction = new QAction(QIcon(":/images/underline.png"),
-                                  tr("Underline"), this);
-    underlineAction->setCheckable(true);
-    underlineAction->setShortcut(tr("Ctrl+U"));
-    connect(underlineAction, SIGNAL(triggered()),
-            this, SLOT(handleFontChange()));*/
-
-
-}
-
-
 
 void RESpecTa::createToolbars()
 {
@@ -1145,77 +1001,13 @@ void RESpecTa::createToolbars()
     editToolBar->addAction(sendBackAction);
 
     editToolBar->addAction(insertEndStateAction);
-    /*fontCombo = new QFontComboBox();
-    connect(fontCombo, SIGNAL(currentFontChanged(QFont)),
-            this, SLOT(currentFontChanged(QFont)));
-
-    fontSizeCombo = new QComboBox;
-    fontSizeCombo->setEditable(true);
-    for (int i = 8; i < 30; i = i + 2)
-        fontSizeCombo->addItem(QString().setNum(i));
-    QIntValidator *validator = new QIntValidator(2, 64, this);
-    fontSizeCombo->setValidator(validator);
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(QString)),
-            this, SLOT(fontSizeChanged(QString)));
-
-    fontColorToolButton = new QToolButton;
-    fontColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    fontColorToolButton->setMenu(createColorMenu(SLOT(textColorChanged()),
-                                                 Qt::black));
-    textAction = fontColorToolButton->menu()->defaultAction();
-    fontColorToolButton->setIcon(createColorToolButtonIcon(
-    ":/images/textpointer.png", Qt::black));
-    fontColorToolButton->setAutoFillBackground(true);
-    connect(fontColorToolButton, SIGNAL(clicked()),
-            this, SLOT(textButtonTriggered()));
-*/
-    /*fillColorToolButton = new QToolButton;
-    fillColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    fillColorToolButton->setMenu(createColorMenu(SLOT(itemColorChanged()),
-                         Qt::white));
-    fillAction = fillColorToolButton->menu()->defaultAction();
-    fillColorToolButton->setIcon(createColorToolButtonIcon(
-    ":/images/floodfill.png", Qt::white));
-    connect(fillColorToolButton, SIGNAL(clicked()),
-            this, SLOT(fillButtonTriggered()));*/
 
 
-    /*lineColorToolButton = new QToolButton;
-    lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    lineColorToolButton->setMenu(createColorMenu(SLOT(lineColorChanged()),
-                                 Qt::black));
-    lineAction = lineColorToolButton->menu()->defaultAction();
-    lineColorToolButton->setIcon(createColorToolButtonIcon(
-        ":/images/linecolor.png", Qt::black));
-    connect(lineColorToolButton, SIGNAL(clicked()),
-            this, SLOT(lineButtonTriggered()));*/
-
-    //textToolBar = addToolBar(tr("Font"));
-    //textToolBar->addWidget(fontCombo);
-    //textToolBar->addWidget(fontSizeCombo);
-    //textToolBar->addAction(boldAction);
-    //textToolBar->addAction(italicAction);
-    //textToolBar->addAction(underlineAction);
-
-    /*colorToolBar = addToolBar(tr("Color"));
-    //colorToolBar->addWidget(fontColorToolButton);
-    colorToolBar->addWidget(fillColorToolButton);
-    colorToolBar->addWidget(lineColorToolButton);*/
 
     QToolButton *pointerButton = new QToolButton;
     pointerButton->setCheckable(true);
     pointerButton->setChecked(true);
     pointerButton->setIcon(QIcon(":/images/pointer.png"));
-    //QToolButton *linePointerButton = new QToolButton;
-    //linePointerButton->setCheckable(true);
-    //linePointerButton->setIcon(QIcon(":/images/linepointer.png"));
-
-    pointerTypeGroup = new QButtonGroup(this);
-    pointerTypeGroup->addButton(pointerButton, int(DiagramScene::MoveItem));
-    //pointerTypeGroup->addButton(linePointerButton,
-    //                            int(DiagramScene::InsertLine));
-    connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
-            this, SLOT(pointerGroupClicked(int)));
 
     sceneScaleCombo = new QComboBox;
     scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
@@ -1224,100 +1016,8 @@ void RESpecTa::createToolbars()
     connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(sceneScaleChanged(QString)));
 
-    pointerToolbar = addToolBar(tr("Pointer type"));
-    pointerToolbar->addWidget(pointerButton);
-    //pointerToolbar->addWidget(linePointerButton);
-    pointerToolbar->addWidget(sceneScaleCombo);
-}
-
-QWidget *RESpecTa::createBackgroundCellWidget(const QString &text,
-                        const QString &image)
-{
-    QToolButton *button = new QToolButton;
-    button->setText(text);
-    button->setIcon(QIcon(image));
-    button->setIconSize(QSize(50, 50));
-    button->setCheckable(true);
-    backgroundButtonGroup->addButton(button);
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
-
-    return widget;
-}
-
-QWidget *RESpecTa::createCellWidget(const QString &text)
-{
-
-    BaseState item;
-    QIcon icon(item.image());
-
-    QToolButton *button = new QToolButton;
-    button->setIcon(icon);
-    button->setIconSize(QSize(50, 50));
-    button->setCheckable(true);
-    buttonGroup->addButton(button);
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
-
-    return widget;
-}
-
-QMenu *RESpecTa::createColorMenu(const char *slot, QColor defaultColor)
-{
-    QList<QColor> colors;
-    colors << Qt::black << Qt::white << Qt::red << Qt::blue << Qt::yellow;
-    QStringList names;
-    names << tr("black") << tr("white") << tr("red") << tr("blue")
-          << tr("yellow");
-
-    QMenu *colorMenu = new QMenu(this);
-    for (int i = 0; i < colors.count(); ++i) {
-        QAction *action = new QAction(names.at(i), this);
-        action->setData(colors.at(i));
-        action->setIcon(createColorIcon(colors.at(i)));
-        connect(action, SIGNAL(triggered()),
-                this, slot);
-        colorMenu->addAction(action);
-        if (colors.at(i) == defaultColor) {
-            colorMenu->setDefaultAction(action);
-        }
-    }
-    return colorMenu;
-}
-
-QIcon RESpecTa::createColorToolButtonIcon(const QString &imageFile,
-                        QColor color)
-{
-    QPixmap pixmap(50, 80);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    QPixmap image(imageFile);
-    QRect target(0, 0, 50, 60);
-    QRect source(0, 0, 42, 42);
-    painter.fillRect(QRect(0, 60, 50, 80), color);
-    painter.drawPixmap(target, image, source);
-
-    return QIcon(pixmap);
-}
-
-QIcon RESpecTa::createColorIcon(QColor color)
-{
-    QPixmap pixmap(20, 20);
-    QPainter painter(&pixmap);
-    painter.setPen(Qt::NoPen);
-    painter.fillRect(QRect(0, 0, 20, 20), color);
-
-    return QIcon(pixmap);
+    sceneToolbar = addToolBar(tr("Pointer type"));
+    sceneToolbar->addWidget(sceneScaleCombo);
 }
 
 void RESpecTa::InsertState(BaseState * newState)
@@ -1346,12 +1046,6 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
         (*it).second->setMode(DiagramScene::InsertLine);
         (*it).second->setTransitionAttributes(thePair);
     }
-}
-
-
-void RESpecTa::NewSubtaskInserted(QString newName)
-{
-    mod->addSubtask(newName);
 }
 
 void RESpecTa::selectedSubtaskName(QString newString)
@@ -1588,11 +1282,8 @@ void RESpecTa::GoToState()
         QModelIndex ind = TreeView->getSelectedIndexes().first();
         QGraphicsItem * it = treeModel->getItemOrParent(ind);
         views[currentSubtask]->centerOn(it);
-        foreach(QGraphicsItem * grIt, scenes[currentSubtask]->selectedItems())
-        {
-            grIt->setSelected(false);
-        }
-        scenes[currentSubtask]->selectedItems().clear();
+        scenes[currentSubtask]->clearSelection();
+
         scenes[currentSubtask]->selectedItems().push_back(it);
         it->setSelected(true);
         this->itemSelected(it);

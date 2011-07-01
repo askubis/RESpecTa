@@ -34,9 +34,6 @@ TransDialog::TransDialog(QWidget * parent, Model * newmod):QDialog(parent)
     mainLayout->addWidget(DownButton,1,4);
     mainLayout->addWidget(OKButton,2,4);
 
-
-
-
     this->setGeometry(0,0,500,400);
     this->setLayout(mainLayout);
 }
@@ -56,7 +53,6 @@ void TransDialog::openForAState(BaseState * tmp)
         transSubList->addItem(tr->getSubtask());
     }
     RowChanged(0);
-
 }
 
 void TransDialog::RowChanged(int index)

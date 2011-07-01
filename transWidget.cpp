@@ -1,10 +1,5 @@
 #include "transWidget.h"
 #include <QtGui>
-//#include "GraphFunctions.h"
-//#include "GraphFunctions.cpp"
-
-
-
 
 using namespace boost;
 
@@ -20,7 +15,6 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    QHBoxLayout *bottomLayout = new QHBoxLayout;
    TransitionLayout->addWidget(transCondLabel);
    TransitionLayout->addWidget(conditionLineEdit);
-
 
    QLabel * taskLabel = new QLabel(tr("Subtask:"));
    subtaskCombo = new QComboBox(this);
@@ -47,8 +41,6 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    InsertButton->setDisabled(true);
    bottomLayout->addWidget(InsertButton);
 
-
-
    QLabel * sourceLabel =new QLabel(tr("Source state:"));
    sourceNameLabel = new QLabel();
 
@@ -59,9 +51,6 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    TransitionLayout->addWidget(sourceNameLabel);
    TransitionLayout->addWidget(destLabel);
    TransitionLayout->addWidget(destNameLabel);
-
-
-
 
    TransitionLayout->addStretch();
    TransitionLayout->addLayout(bottomLayout);
@@ -102,23 +91,19 @@ void TransWidget::AcceptTrans()
     {
 
     }
-
 }
 
 void TransWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        //OKButton->setDisabled(false);
         InsertButton->setDisabled(false);
     }
     else
     {
-
         InsertButton->setDisabled(true);
     }
 }
-
 
 void TransWidget::InsertTrans()
 {
@@ -128,12 +113,6 @@ void TransWidget::InsertTrans()
     destNameLabel->setText(QString());
     std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), stateCombo->currentText());
     emit insertTransition(thePair);
-
-}
-
-void TransWidget::SubtaskInserted(QString newName)
-{
-    this->subtaskCombo->addItem(newName);
 }
 
 void TransWidget::subtaskChanged(QString name)
@@ -147,7 +126,6 @@ void TransWidget::subtaskChanged(QString name)
         }
     }
 }
-
 
 void TransWidget::refreshData()
 {

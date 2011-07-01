@@ -123,7 +123,7 @@ bool Model::addState(BaseState * item, QString subtaskName)
     {
         res->getError(QString("A problem has been detected, code:\ntrying to insert NULL value").append(item->getName()));
     }
-    if(!checkStateNameAvailable((*subtasks)[subtaskName],item->getName()))
+    if(!checkNameAvailable(item->getName(),(*subtasks)[subtaskName]))
     {
         res->getError(QString( "This state already exists in the given subtask").append(item->getName()));
         return false;
@@ -219,7 +219,7 @@ bool Model::checkNameAvailable(QString name)
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
-        if (!checkStateNameAvailable(tmp, name))
+        if (!checkNameAvailable(name,tmp))
         {
            return false;
         }
@@ -412,7 +412,7 @@ QStringList Model::checkIfOK()
             if(!exists)
             {
                 StateMap stateMap = get(state_t(), (*((*it).second)));
-                boost::graph_traits<MyGraphType>::vertex_descriptor u,v;
+                VertexType u,v;
                 u = source((*startIt), (*((*it).second)));
                 v = target((*startIt), (*((*it).second)));
                 BaseState * srcState;
@@ -473,13 +473,25 @@ QStringList Model::checkIfOK()
 }
 
 
-bool Model::checkNameAvailable(QString name, MyGraphType * G)
+bool Model::checkNameAvailable(QString given, MyGraphType * G)
 {
-    if (!checkStateNameAvailable( G, name))
-    {
-       return false;
-    }
-    return true;
+    boost::graph_traits<MyGraphType>::vertex_iterator first,last;
+    tie(first, last) = vertices(*G);
+
+    typedef  property_map<MyGraphType, state_t>::type StateMap;
+    StateMap stateMap = get(state_t(), *G);
+
+    BaseState * x;
+
+       while (first != last)
+       {
+           QString GivenLow = given.toLower();
+         x = boost::get(stateMap, *first);
+         QString tmp = x->getName().toLower();
+         if (tmp==GivenLow) return false;
+         ++first;
+       }
+       return true;
 }
 
 
@@ -488,7 +500,7 @@ QString Model::getSubtaskName(QString StateName)
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
-        if (!checkStateNameAvailable( tmp, StateName))
+        if (!checkNameAvailable(StateName,tmp))
         {
            return (*it).first;
         }
@@ -769,28 +781,6 @@ QStringList Model::getStateNames(MyGraphType G)
        return items;
 }
 
-
-bool Model::checkStateNameAvailable(MyGraphType *G, QString given)
-{
-    boost::graph_traits<MyGraphType>::vertex_iterator first,last;
-    tie(first, last) = vertices(*G);
-
-    typedef  property_map<MyGraphType, state_t>::type StateMap;
-    StateMap stateMap = get(state_t(), *G);
-
-    BaseState * x;
-
-       while (first != last)
-       {
-           QString GivenLow = given.toLower();
-         x = boost::get(stateMap, *first);
-         QString tmp = x->getName().toLower();
-         if (tmp==GivenLow) return false;
-         ++first;
-       }
-       return true;
-}
-
 void Model::setMainName(QString myFile)
 {
     if(myFile==mainName && (*subtasks)[mainName]==NULL)
@@ -933,47 +923,6 @@ void Model::changeSubtaskName(QString oldName, QString NewName)
 
 }
 
-void Model::DeleteSubtask(QString Name)
-{
-
-    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
-    {
-        if((*it).first != Name) continue;
-        MyGraphType * tmp = (*it).second;
-
-        property_map<MyGraphType, transition_t>::type TransitionMap  = get(transition_t(), (*tmp));
-        boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
-        tie(startIt, endIt)=edges(*tmp);
-        for(;startIt!=endIt;)
-        {
-            Transition * transition = boost::get(TransitionMap, *startIt);
-            res->deleteTrans(transition);
-            tie(startIt, endIt)=edges(*tmp);
-           // boost::remove_edge(startIt, *tmp);
-            //delete transition;
-        }
-
-        property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
-        boost::graph_traits<MyGraphType>::vertex_iterator first,last;
-        tie(first, last) = vertices(*tmp);
-        for (;first!=last;)
-        {
-            BaseState * state = boost::get(StateMap, (*first));
-            res->deleteState(state);
-            tie(first, last) = vertices(*tmp);
-           // boost::remove_vertex(first, *tmp);
-            //delete state;
-        }
-
-        if(Name!=mainName)
-        {
-            delete tmp;
-            subtasks->erase(it);
-        }
-        break;
-    }
-    setChanged(true);
-}
 
 int Model::vertNum(QString Name)
 {

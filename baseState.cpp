@@ -11,11 +11,12 @@ void BaseState::setName(QString newName)
     stateName=newName;
     updateSize();
  }
+
 void BaseState::updateSize()
 {
     QString x;
     QString y;
-    int fontSize = 17;
+    int fontSize = 15;
     do
     {
         y = (QString(this->stateName).append(QString("\n")).append(QString().fromStdString(STATE_TYPE_TABLE[this->stateType])));
@@ -83,26 +84,24 @@ BaseState::BaseState(BaseState& old)
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-    //nameTextItem->setPlainText(QString().fromStdString(this->stateName));
 }
 
 void BaseState::setMenu( QMenu *contextMenu)
 {
     myContextMenu = contextMenu;
-
 }
 
 void BaseState::removeTransition(Transition *Transition)
 {
     int index = Transitions.indexOf(Transition);
-
     if (index != -1)
         Transitions.removeAt(index);
 }
 
 void BaseState::removeTransitions()
 {
-    foreach (Transition *Transition, Transitions) {
+    foreach (Transition *Transition, Transitions)
+    {
         Transition->startItem()->removeTransition(Transition);
         Transition->endItem()->removeTransition(Transition);
         scene()->removeItem(Transition);
@@ -123,7 +122,6 @@ QPixmap BaseState::image() const
     painter.setPen(QPen(Qt::black, 8));
     painter.translate(125, 125);
     painter.drawPolyline(myPolygon);
-
     return pixmap;
 }
 
@@ -142,7 +140,6 @@ QVariant BaseState::itemChange(GraphicsItemChange change,
             Transition->updatePosition();
         }
     }
-
     return value;
 }
 

@@ -11,7 +11,6 @@ SubtaskDialog::SubtaskDialog(QWidget * parent,Model * mod): QDialog(parent)
     subtaskList = new QListWidget();
     mainLayout->addWidget(subtaskList,0,0,6,2);
 
-
    QLabel * Name = new QLabel ("Name");
    mainLayout->addWidget(Name, 6,0, 1, 2);
 
@@ -37,8 +36,6 @@ SubtaskDialog::SubtaskDialog(QWidget * parent,Model * mod): QDialog(parent)
 
    changeNameButton->setDisabled(true);
    AddButton->setDisabled(true);
-
-
 
     setLayout(mainLayout);
 }
@@ -84,10 +81,9 @@ void SubtaskDialog::AddClicked()
 void SubtaskDialog::DeleteClicked()
 {
     QStringList list = model->getTasksNameLists();
-    model->DeleteSubtask(list[subtaskList->currentIndex().row()]);
+    model->DeleteTask(list[subtaskList->currentIndex().row()]);
     emit removed(list[subtaskList->currentIndex().row()]);
     reloadName();
-
 }
 
 void SubtaskDialog::LengthChanged(QString newString)

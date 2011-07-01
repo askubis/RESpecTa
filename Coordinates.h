@@ -41,8 +41,6 @@ public:
         }
     }
 
-
-
     CoordType getCoordType() {return coordType;}
     void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
 
@@ -160,14 +158,10 @@ public:
             return errors;
     }
 
-
-
 private:
     CoordType coordType;
     MotionType motionType;
     std::vector<Pose *> poses;
-
-
 };
 
 #endif // COORDINATES_H

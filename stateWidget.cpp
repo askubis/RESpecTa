@@ -12,9 +12,6 @@ this->setMaximumWidth(230);
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
-    //mainLayout->addLayout(topLayout,1,0);
-
-
 
     OKButton = new QPushButton(tr("&OK"));
     OKButton->setChecked(false);
@@ -32,9 +29,6 @@ this->setMaximumWidth(230);
     //creating Default EditState options
     StateLayout = new QVBoxLayout;
 
-
-
-
     nameLabel = new QLabel(tr("State Name:"));
     stateNameEdit = new QLineEdit;
     connect(stateNameEdit, SIGNAL(textChanged(QString)), this, SLOT(lengthChanged(QString)));
@@ -42,27 +36,17 @@ this->setMaximumWidth(230);
    nameLabel->setBuddy(stateNameEdit);
    StateLayout->addWidget(stateNameEdit);
 
-
     stateTypeCombo = new QComboBox(this);
     stateTypeCombo->addItems(getStateTypeTable());
     connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
    StateLayout->addWidget(stateTypeCombo);
    paramLabel = new QLabel("Parameters:");
    paramEdit = new QLineEdit;
-   //paramEdit->setValidator(new QDoubleValidator(-99999.0, 99999.0, 5, paramEdit));//doesn't allow multiple doubles
    StateLayout->addWidget(paramLabel);
    StateLayout->addWidget(paramEdit);
 
-
-
-
-
-
    mainLayout->addLayout(StateLayout);
    mainLayout->addStretch();
-
-
-
 
    sysIniWidget* sysIni = new sysIniWidget(this, mod  );
    mainLayout->addWidget(sysIni);
@@ -121,19 +105,13 @@ void StateWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        //OKButton->setDisabled(false);
         InsertButton->setDisabled(false);
     }
     else
     {
-        //OKButton->setDisabled(true);
         InsertButton->setDisabled(true);
     }
 }
-
-
-
-
 
 void StateWidget::AcceptState()
 {
@@ -152,12 +130,10 @@ void StateWidget::AcceptState()
     toInsertState->setName(this->stateNameEdit->text());
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
     toInsertState->setParameters(paramEdit->text());
-    //create some signal to send it, needs to be stated which state is changed
     OKButton->setDisabled(true);
     BaseState * tmp = edited;
     edited = NULL;
     emit ReplaceState(tmp, toInsertState, oldStateName);
-
 }
 
 void StateWidget::setStateSubclass(int chosen)
@@ -174,7 +150,6 @@ void StateWidget::setStateSubclass(int chosen)
     StateWidgets[tmpWidget]->setVisible(false);
     tmpWidget = chosen;
     StateWidgets[tmpWidget]->setVisible(true);
-
 }
 
 void StateWidget::InsertState()
@@ -194,15 +169,12 @@ void StateWidget::InsertState()
     emit InsertState(toInsertState);
 }
 
-
-
 void StateWidget::refreshData()
 {
 }
 
 void StateWidget::StateSelected(BaseState * state)
 {
-
     if(state->getName().toLower()==QString("_end_")||state->getName().toLower()==QString("_stop_"))return;
     oldStateName = state->getName();
     edited = state;
@@ -217,7 +189,6 @@ void StateWidget::StateSelected(BaseState * state)
         StateWidgets[tmpWidget]->setVisible(true);
         StateWidgets[tmpWidget]->setState(state);
     }
-
 }
 
 bool StateWidget::StateNameOK()

@@ -3,7 +3,6 @@
 class TreeModel;
 
 #include <QAbstractItemModel>
-#include <QDomDocument>
 #include <QModelIndex>
 #include <QVariant>
 #include "Graph.h"
@@ -19,7 +18,6 @@ class TreeModel : public QAbstractItemModel
 public:
     TreeModel( QObject *parent, Model * mod, QString Name);
     ~TreeModel();
-
 
     QVariant data(const QModelIndex &index, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;

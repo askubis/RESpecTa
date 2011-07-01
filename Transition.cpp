@@ -7,7 +7,6 @@
 
 const qreal Pi = 3.14;
 
-
 Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)

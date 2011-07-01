@@ -1,9 +1,6 @@
 #include "StateTypeWidgets.h"
 #include <QtGui>
 
-//dal kazdego umiescic w nim jego Typ Stanu i zrobic funkcje Get oraz Set
-
-
 //***************   SYS_INITIALIZATION   ***************//
 
 sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
@@ -32,16 +29,13 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
 
     State = new sysInitState();
     State->setTransmitter(Transmitter(TRANSMITTERS_NUMBER));
-        State->setType(StateType(SYSTEM_INITIALIZATION));
+    State->setType(StateType(SYSTEM_INITIALIZATION));
 
     connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
     connect (ecpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
     connect (mpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
-    //connect(ecpDialog, SIGNAL(forwardError(QString)), (StateWidget *)(this->parentWidget()), SLOT(forwardError(QString)));
 
     connect(mpDialog, SIGNAL(InsertMP(std::vector<Sensor>,Transmitter)), this, SLOT(InsertMP(std::vector<Sensor>,Transmitter)));
-
-    //connect(mpDialog, SIGNAL(forwardError(QString)), (StateWidget *)this->parentWidget(), SLOT(forwardError(QString)));
 }
 
 void sysIniWidget::InsertMP (std::vector<Sensor> sensors, Transmitter trans)
@@ -89,23 +83,14 @@ void sysIniWidget::removeECPSection()
         delete toDeleteItems[i];
     }
     this->State->setInits(genIniVector);
-
 }
 void sysIniWidget::createECPSection()
 {
-    //ecpDialog->exec();
-    //ecpDialog->setModal(true);
     ecpDialog->exec();
-
 }
 void sysIniWidget::changeMPSection()
 {
-    //mpDialog->exec();
-    //mpDialog->setModal(true);
     mpDialog->exec();
-    //show edit dialog with things included in the MP section
-
-
 }
 
 BaseState * sysIniWidget::getStateObject()
@@ -125,8 +110,6 @@ void sysIniWidget::setState(BaseState * st)
     }
 }
 
-
-
 //***************   RUN_GENERATOR   ***************//
 
 runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
@@ -140,18 +123,14 @@ runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
     genTypeCombo->setFixedWidth(200);
     genTypeCombo->addItems(getGeneratorTypeTable());
     runGenLayout->addWidget(genTypeCombo);
-    //connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
     argsLabel = new QLabel("Arguments:");
     argsLineEdit = new QLineEdit;
-    //argsLineEdit->setValidator(new QDoubleValidator(-99999.0, 99999.0, 5, argsLineEdit));//doesn't allow multiple doubles
     runGenLayout->addWidget(argsLabel);
     runGenLayout->addWidget(argsLineEdit);
     speechLabel = new QLabel("Speech:");
     speechLineEdit = new QLineEdit;
     runGenLayout->addWidget(speechLabel);
     runGenLayout->addWidget(speechLineEdit);
-
-
 
     QHBoxLayout *filePathLayout = new QHBoxLayout();
     QLabel * filePathLabel = new QLabel ("Path to .trj file:");
@@ -178,7 +157,6 @@ runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
 
     connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
     connect(poseDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
-
 }
 
 void runGenWidget::CoordsInsert(Coordinates * newCoords)
@@ -191,8 +169,6 @@ void runGenWidget::CoordsInsert(Coordinates * newCoords)
 void runGenWidget::selectTrjFilePath()
 {
     QFileDialog::Options options;
-    //if (!native->isChecked())
-      //  options |= QFileDialog::DontUseNativeDialog;
     QString selectedFilter;
     QString fileName = QFileDialog::getOpenFileName(this,
                                 tr("QFileDialog::getOpenFileName()"),
@@ -206,10 +182,7 @@ void runGenWidget::selectTrjFilePath()
 
 void runGenWidget::showAddPosesDialog()
 {
-    //poseDialog->setVisible(true);
-    //poseDialog->setModal(true);
     poseDialog->exec();
-
 }
 
 BaseState * runGenWidget::getStateObject()
@@ -235,12 +208,9 @@ void runGenWidget::setState(BaseState * st)
     trjFileName->setText(State->getFilePath());
     poseDialog->setCoords(new Coordinates(*(State->getCoords())));
     poseDialog->coordsUpdated();
-
 }
 
-
 //***************   EMPTY_GEN_FOR_SET   ***************//
-
 
 emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
     :MyTypeWidget(parent, newmod )
@@ -368,7 +338,6 @@ void emptyGenForSetWidget::setState(BaseState * st)
     {
         SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
     }
-
 }
 
 //***************   EMPTY_GEN   ***************//
@@ -411,7 +380,6 @@ void emptyGenWidget::setState(BaseState * st)
     State = new EmptyGenState(*((EmptyGenState*)st));
     argLineEdit->setText(State->getArgument());
     RobotCombo->setCurrentIndex(State->getRobot());
-
 }
 
 //***************   WAIT_GEN   ***************//
@@ -445,7 +413,6 @@ void waitStateWidget::setState(BaseState * st)
     char tab[20];
     sprintf (tab, "%lld", State->getTimespan());
     timeSpan->setText(QString().fromStdString(tab));
-
 }
 
 //***************   STOP_GEN   ***************//
@@ -630,10 +597,6 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
     mainLayout->addWidget(addPoseButt, 7, 0);
     connect(addPoseButt, SIGNAL(clicked()), this, SLOT(AddPose()) );
 
-    /*QPushButton * rmPoseButt = new QPushButton("Remove");
-    mainLayout->addWidget(rmPoseButt,7,1);
-    connect(addPoseButt, SIGNAL(clicked()), this, SLOT(RemovePose()) );*/
-
     QLabel * coordLabel = new QLabel("Coordinates");
     mainLayout->addWidget(coordLabel, 0, 2);
     QLabel * velocityLabel = new QLabel("Velocities");
@@ -739,21 +702,6 @@ void PoseDialog::AddPose()
     }
 }
 
-void PoseDialog::RemovePose()
-{/*
-    QList<QListWidgetItem *> toDeleteItems = poseList->selectedItems();
-    for (int i=0;i<toDeleteItems.size();i++)
-    {
-        poseList->find(toDeleteItems[i]);
-    }
-    for (int i = 0; i<poseList->sel; i++)
-    {
-        ;
-    }
-
-    //*/
-}
-
 void PoseDialog::PoseOK()
 {
     coords->setCoordType(CoordType(coordTypeCombo->currentIndex()));
@@ -761,7 +709,6 @@ void PoseDialog::PoseOK()
     Coordinates * tmp = new Coordinates(*coords);
     emit InsertCoords(tmp);
     this->setVisible(false);
-    //check if all poses have the same amount of coords.
 }
 
 void PoseDialog::PoseCancel()
@@ -810,7 +757,6 @@ void PoseDialog::coordsUpdated()
         num = i;
     }
 }
-
 
 //***************   ECP_DIALOG   ***************//
 ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
@@ -867,16 +813,16 @@ void ECPDialog::OKPressed()
 
 void ECPDialog::add()
 {
-bool mark=false;
-if(argLineEdit->text().size()==0)
-{
-    reportError(QString("Generator needs to have arguments"));
-    return;
-}
-for (int i=0;i<genList->count();i++)
-{
-    if(genList->item(i)->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::CaseInsensitive))mark=true;
-}
+    bool mark=false;
+    if(argLineEdit->text().size()==0)
+    {
+        reportError(QString("Generator needs to have arguments"));
+        return;
+    }
+    for (int i=0;i<genList->count();i++)
+    {
+        if(genList->item(i)->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]), Qt::CaseInsensitive))mark=true;
+    }
     if (mark)
     {   emit reportError(QString("This generator is already initialized: ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()])));    }
     else
@@ -901,9 +847,7 @@ void ECPDialog::remove()
         }
         delete toDeleteItems[i];
     }
-
 }
-
 
 //***************   MP_DIALOG   ***************//
 MPDialog::MPDialog(QWidget * parent): QDialog(parent)
@@ -936,8 +880,6 @@ MPDialog::MPDialog(QWidget * parent): QDialog(parent)
 
     connect (this, SIGNAL(rejected()), this, SLOT(CancelPressed()));
     setLayout(mainLayout);
-
-
 }
 
 void MPDialog::CancelPressed()
