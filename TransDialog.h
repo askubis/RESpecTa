@@ -1,10 +1,15 @@
+class TransDialog;
+
 #ifndef TRANSDIALOG_H
 #define TRANSDIALOG_H
-class TransDialog;
 #include "globals.h"
 #include <QtGui>
 #include "baseState.h"
 #include "Model.h"
+
+//TODO: change listwidgets to listview
+
+
 class TransDialog:public QDialog
 {
     Q_OBJECT

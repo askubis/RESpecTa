@@ -1,15 +1,17 @@
+class TreeModel;
+
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
-class TreeModel;
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 #include "Graph.h"
 #include "Model.h"
+#include "TreeItem.h"
 
-class TreeItem;
-class TreeStateItem;
+//class TreeItem;
+//class TreeStateItem;
 
 class TreeModel : public QAbstractItemModel
 {

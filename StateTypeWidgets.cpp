@@ -31,7 +31,7 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
     State->setTransmitter(Transmitter(TRANSMITTERS_NUMBER));
     State->setType(StateType(SYSTEM_INITIALIZATION));
 
-    connect(ecpDialog, SIGNAL(InsertECP(genInit)), this, SLOT(InsertECP(genInit)));
+    connect(ecpDialog, SIGNAL(InsertECP(robotInit)), this, SLOT(InsertECP(robotInit)));
     connect (ecpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
     connect (mpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
@@ -44,10 +44,10 @@ void sysIniWidget::InsertMP (std::vector<Sensor> sensors, Transmitter trans)
     this->State->setTransmitter(trans);
 }
 
-void sysIniWidget::InsertECP(genInit newInit)
+void sysIniWidget::InsertECP(robotInit newInit)
 {
-    std::vector<genInit> inits = this->State->getInits();
-    for (std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+    std::vector<robotInit> inits = this->State->getInits();
+    for (std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
     {
         if((*it).robot == newInit.robot)
         {
@@ -63,13 +63,13 @@ void sysIniWidget::InsertECP(genInit newInit)
 void sysIniWidget::removeECPSection()
 {
     QList<QListWidgetItem *> toDeleteItems = robotsInitialized->selectedItems();
-    std::vector<genInit> genIniVector;
+    std::vector<robotInit> genIniVector;
     genIniVector = this->State->getInits();
     int size = toDeleteItems.size();
-    std::vector<genInit>::iterator tmp_it;
+    std::vector<robotInit>::iterator tmp_it;
     for (int i=0;i<size;i++)
     {
-        for(std::vector<genInit>::iterator it=genIniVector.begin(); it!=genIniVector.end(); )
+        for(std::vector<robotInit>::iterator it=genIniVector.begin(); it!=genIniVector.end(); )
         {
             tmp_it=it;
             tmp_it++;
@@ -806,8 +806,8 @@ void ECPDialog::CancelPressed()
 
 void ECPDialog::OKPressed()
 {
-    genInitObj.robot=Robot(robotCombo->currentIndex());
-    emit InsertECP(genInitObj);
+    robotInitObj.robot=Robot(robotCombo->currentIndex());
+    emit InsertECP(robotInitObj);
     this->setVisible(false);
 }
 
@@ -828,7 +828,7 @@ void ECPDialog::add()
     else
     {
         genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]).append(" ").append(argLineEdit->text()));
-        genInitObj.init_values.push_back(std::make_pair(GeneratorType(genTypeCombo->currentIndex()), argLineEdit->text().toInt()));
+        robotInitObj.init_values.push_back(std::make_pair(GeneratorType(genTypeCombo->currentIndex()), argLineEdit->text().toInt()));
     }
 }
 
@@ -837,11 +837,11 @@ void ECPDialog::remove()
     QList<QListWidgetItem *> toDeleteItems = genList->selectedItems();
     for (int i=0;i<toDeleteItems.size();i++)
     {
-        for (std::vector < std::pair<GeneratorType, int> >::iterator iter = genInitObj.init_values.begin(); iter!=genInitObj.init_values.end();iter++)
+        for (std::vector < std::pair<GeneratorType, int> >::iterator iter = robotInitObj.init_values.begin(); iter!=robotInitObj.init_values.end();iter++)
         {
             if (toDeleteItems[i]->text().contains(QString().fromStdString(GENERATOR_TYPE_TABLE[(*iter).first]), Qt::CaseInsensitive))
             {
-                genInitObj.init_values.erase(iter);
+                robotInitObj.init_values.erase(iter);
                 break;
             }
         }

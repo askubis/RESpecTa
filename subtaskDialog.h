@@ -1,11 +1,13 @@
+class SubtaskDialog;
+
 #ifndef SUBTASKDIALOG_H
 #define SUBTASKDIALOG_H
-class SubtaskDialog;
+
 #include <QLineEdit>
 #include <QDialog>
 #include "Model.h"
 
-
+//TODO: change to widget
 
 class SubtaskDialog : public QDialog
 {

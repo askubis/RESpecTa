@@ -10,10 +10,10 @@ TreeModel::TreeModel( QObject *parent, Model * _mod, QString Name)
 {
     mod=_mod;
 
-    TreeGraphItem * grItem = new TreeGraphItem(0, this);
+    TreeGraphItem * grItem = new TreeGraphItem(0);
     graphName=Name;
     graph = mod->getGraph(Name);
-    grItem->setGraph(graph);
+    grItem->setGraph(graph, this);
     rootItem=grItem;
 }
 

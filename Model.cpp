@@ -122,10 +122,11 @@ bool Model::addState(BaseState * item, QString subtaskName)
     if(item ==NULL)
     {
         res->getError(QString("A problem has been detected, code:\ntrying to insert NULL value").append(item->getName()));
+        return false;
     }
-    if(!checkNameAvailable(item->getName(),(*subtasks)[subtaskName]))
+    if(!checkNameAvailable(item->getName()))
     {
-        res->getError(QString( "This state already exists in the given subtask").append(item->getName()));
+        res->getError(QString( "This state already exists in the Model").append(item->getName()));
         return false;
     }
 
@@ -297,7 +298,7 @@ QStringList Model::checkIfOK()
         }
     }
     sysInitState * tmpState = (sysInitState *)getState("INIT", mainName);
-    foreach(genInit init, tmpState->getInits())
+    foreach(robotInit init, tmpState->getInits())
     {
         //RobotInitialized[init.robot]=true;
         for(std::vector < std::pair<GeneratorType, int> >::iterator it = init.init_values.begin();it!=init.init_values.end();it++)
@@ -509,7 +510,7 @@ QString Model::getSubtaskName(QString StateName)
 }
 
 bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName)
-{
+{//TODO: check if can be changed not to use oldStateName, only oldState.
     //check if the state wasn't deleted
     QString subtaskName = getSubtaskName(oldStateName);
     if(subtaskName==QString(""))
@@ -527,8 +528,6 @@ bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString ol
         return true;
     }
     return false;
-
-
 }
 
 

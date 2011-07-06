@@ -1,3 +1,8 @@
+class Coordinates;
+
+#ifndef COORDINATES_H
+#define COORDINATES_H
+
 #include "globals.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,17 +11,14 @@
 
 #include "Pose.h"
 
-
-
-#ifndef COORDINATES_H
-#define COORDINATES_H
-
 QT_BEGIN_NAMESPACE
 class QString;
 class QXmlStreamReader;
 QT_END_NAMESPACE
 
-
+/**
+*   Class representing the Coordinates in the RunGenerator state.
+*/
 class Coordinates
 {
 public:
@@ -50,6 +52,10 @@ public:
     std::vector<Pose *> getPoses(){return poses;}
     void setPoses(std::vector<Pose *> newPoses){poses=newPoses;}
 
+    /**
+    *   Creates a string describing the coordinates attributes.
+    *   @returns String with the description of the Coordinates
+    */
     std::string Print()
     {
         std::string x;
@@ -67,6 +73,10 @@ public:
         return x;
     }
 
+    /**
+    *   Writes the data of the state to the XML stream.
+    *   @param writer Stream to which the data is written
+    */
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("Trajectory");
@@ -79,6 +89,11 @@ public:
         writer->writeEndElement();
     }
 
+    /**
+    *   Loads from XML Stream the data and passes it to the Poses(if any).
+    *   @param  reader Stream from which the data is read
+    *   @returns List of errors, which occured while loading
+    */
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -159,8 +174,17 @@ public:
     }
 
 private:
+    /**
+    *   CoordinateType of the coordinates.
+    */
     CoordType coordType;
+    /**
+    *   MotionType of the coordinates.
+    */
     MotionType motionType;
+    /**
+    *   Vector of Poses of the coordinates.
+    */
     std::vector<Pose *> poses;
 };
 

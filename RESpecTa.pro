@@ -44,10 +44,10 @@ HEADERS  += respecta.h \
     Model.h \
     TransDialog.h \
     subtaskDialog.h \
-    genInit.h \
     TreeModel.h \
     TreeItem.h \
-    myTreeView.h
+    myTreeView.h \
+    robotInit.h
 
 
 FORMS    += respecta.ui

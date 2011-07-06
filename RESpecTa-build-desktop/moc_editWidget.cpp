@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'editWidget.h'
 **
-** Created: Mon Jun 27 20:53:37 2011
+** Created: Wed Jul 6 21:35:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -35,17 +35,18 @@ static const uint qt_meta_data_EditWidget[] = {
 
  // slots: signature, parameters, type, tag, flags
       43,   11,   11,   11, 0x08,
-      63,   11,   11,   11, 0x08,
-      92,   11,   11,   11, 0x08,
-     111,   12,   11,   11, 0x08,
-     133,   11,   11,   11, 0x08,
+      68,   63,   11,   11, 0x08,
+     103,   97,   11,   11, 0x08,
+     122,   12,   11,   11, 0x08,
+     144,   11,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_EditWidget[] = {
     "EditWidget\0\0msgString\0reportError(QString)\0"
-    "refreshAllWidgets()\0itemSelected(QGraphicsItem*)\0"
+    "refreshAllWidgets()\0item\0"
+    "itemSelected(QGraphicsItem*)\0index\0"
     "refreshWidget(int)\0forwardError(QString)\0"
     "SignalDeleted()\0"
 };

@@ -148,7 +148,7 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent->getModel(), parent);
+            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
             tmp->setSet(set.first, true);
             return tmp;
         }
@@ -161,7 +161,7 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent->getModel(), parent);
+            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
             tmp->setSet(set.second, false);
             return tmp;
         }
@@ -174,7 +174,7 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -189,7 +189,7 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -335,7 +335,7 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Robot", QString().fromStdString(ROBOT_TABLE[robot]));
             return tmp;
     }
@@ -347,7 +347,7 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Argument", argument);
             return tmp;
         }
@@ -360,7 +360,7 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -375,7 +375,7 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -499,7 +499,7 @@ TreeItem * GetSensorState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Sensor", QString().fromStdString(SENSOR_TABLE[sensor]));
             return tmp;
     }
@@ -511,7 +511,7 @@ TreeItem * GetSensorState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -526,7 +526,7 @@ TreeItem * GetSensorState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -650,7 +650,7 @@ TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Sensor", QString().fromStdString(SENSOR_TABLE[sensor]));
             return tmp;
     }
@@ -662,7 +662,7 @@ TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -677,7 +677,7 @@ TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -925,7 +925,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Robot", QString().fromStdString(ROBOT_TABLE[robot]));
             return tmp;
     }
@@ -935,7 +935,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     }
     if(index==0)
     {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("GenType", QString().fromStdString(GENERATOR_TYPE_TABLE[genType]));
             return tmp;
     }
@@ -947,7 +947,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("GenArgs", genArgs);
             return tmp;
         }
@@ -960,7 +960,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("filePath", filePath);
             return tmp;
         }
@@ -973,7 +973,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Speech", speech);
             return tmp;
         }
@@ -986,7 +986,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeCoordItem * tmp = new TreeCoordItem(i, parent->getModel(), parent);
+            TreeCoordItem * tmp = new TreeCoordItem(i, parent);
             tmp->setCoords(coords);
             return tmp;
         }
@@ -999,7 +999,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -1014,7 +1014,7 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -1141,7 +1141,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent->getModel(), parent);
+            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
             tmp->setSet(set.first, true);
             return tmp;
         }
@@ -1154,7 +1154,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent->getModel(), parent);
+            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
             tmp->setSet(set.second, false);
             return tmp;
         }
@@ -1167,7 +1167,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -1182,7 +1182,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -1219,7 +1219,7 @@ void sysInitState::Print(QXmlStreamWriter * writer)
     }
     if(inits.size()>0)
     {
-        for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+        for(std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
         {
             (*it).Print(writer);
         }
@@ -1254,7 +1254,7 @@ std::string sysInitState::Print()
     }
     if(inits.size()>0)
     {
-        for(std::vector<genInit>::iterator it = inits.begin();it!=inits.end();it++)
+        for(std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
         {
             x+=(*it).Print();
         }
@@ -1364,12 +1364,12 @@ QStringList sysInitState::LoadFromXML(QXmlStreamReader * reader)
           }
           else if (reader->name()=="ecp"&&reader->isStartElement())
           {
-              genInit tmp;
+              robotInit tmp;
               errors+=tmp.LoadFromXML(reader);
               bool mark = true;
               if(inits.size()>0)
               {
-                  foreach(genInit init, inits)
+                  foreach(robotInit init, inits)
                   {
                       if(init.robot==tmp.robot)
                       {
@@ -1400,7 +1400,7 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Transmiter", QString().fromStdString(TRANSMITTER_TABLE[transmitter]));
             return tmp;
         }
@@ -1413,7 +1413,7 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Sensor", QString().fromStdString(SENSOR_TABLE[sen]));
             return tmp;
         }
@@ -1422,11 +1422,11 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
             index--;
         }
     }
-    foreach (genInit ini, inits)
+    foreach (robotInit ini, inits)
     {
         if(index==0)
         {
-            TreeInitItem * tmp = new TreeInitItem(i, parent->getModel(), parent);
+            TreeInitItem * tmp = new TreeInitItem(i, parent);
             tmp->setInit(ini);
             return tmp;
         }
@@ -1439,7 +1439,7 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+            TreeTextItem * tmp = new TreeTextItem(i, parent);
             tmp->setNameAttr("Parameters", parameters);
             return tmp;
         }
@@ -1454,7 +1454,7 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }
@@ -1572,7 +1572,7 @@ TreeItem * WaitState::getChild(int i, TreeItem * parent)
     int index = i;
     if(index==0)
     {
-        TreeTextItem * tmp = new TreeTextItem(i, parent->getModel(), parent);
+        TreeTextItem * tmp = new TreeTextItem(i, parent);
         char table[20];
         sprintf(table,"%lld", Timespan);
         tmp->setNameAttr("TimeSpan", table);
@@ -1588,7 +1588,7 @@ TreeItem * WaitState::getChild(int i, TreeItem * parent)
         {
             if(index==0)
             {
-                TreeTransItem * tmp = new TreeTransItem(i, parent->getModel(), parent);
+                TreeTransItem * tmp = new TreeTransItem(i, parent);
                 tmp->setTrans(tr);
                 return tmp;
             }

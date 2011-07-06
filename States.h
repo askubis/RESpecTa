@@ -1,6 +1,3 @@
-#ifndef STATES_H
-#define STATES_H
-
 class StopState;
 class StopGenState;
 class EmptyGenState;
@@ -10,6 +7,9 @@ class RunGenState;
 class WaitState;
 class GetSensorState;
 class InitiateSensorState;
+
+#ifndef STATES_H
+#define STATES_H
 
 #include "globals.h"
 #include <stdlib.h>
@@ -22,7 +22,7 @@ class InitiateSensorState;
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "genInit.h"
+#include "robotInit.h"
 #include "baseState.h"
 class QXmlStreamWriter;
 class QXmlStreamReader;
@@ -275,8 +275,8 @@ public:
     }
     ~sysInitState(){}
 
-    std::vector<genInit> getInits() {return inits;}
-    void setInits (std::vector<genInit> newInits) {inits=newInits;}
+    std::vector<robotInit> getInits() {return inits;}
+    void setInits (std::vector<robotInit> newInits) {inits=newInits;}
     Transmitter getTransmitter() {return transmitter;}
     void setTransmitter(Transmitter newTrans) {transmitter=newTrans;}
     std::vector<Sensor> getSensors() {return sensors;}
@@ -297,7 +297,7 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
-    std::vector<genInit> inits;//wektor, bo w jednym stanie inicjalizacji moze sie znajdowac wiele robotów
+    std::vector<robotInit> inits;//wektor, bo w jednym stanie inicjalizacji moze sie znajdowac wiele robotów
     Transmitter transmitter;
     std::vector<Sensor> sensors;
 };

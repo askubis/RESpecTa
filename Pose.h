@@ -1,13 +1,17 @@
+class Pose;
+
+#ifndef POSE_H
+#define POSE_H
+
 #include "globals.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 
-
-
-#ifndef POSE_H
-#define POSE_H
+/**
+*   Class holding parameters of one Pose in the movement by robot.
+*/
 class Pose
 {
 public:
@@ -31,6 +35,10 @@ public:
     std::vector<double> getC(){return coordinates;}
     void setC(std::vector<double> newC){coordinates=newC;}
 
+    /**
+    *   Creates a string describing the coordinates attributes.
+    *   @returns String with the description of the Pose
+    */
     std::string Print()
     {
         unsigned int i=0;
@@ -64,6 +72,10 @@ public:
         return x;
     }
 
+    /**
+    *   Writes the data of the state to the XML stream.
+    *   @param writer Stream to which the data is written
+    */
     void Print(QXmlStreamWriter * writer)
     {
         unsigned int i;
@@ -99,6 +111,11 @@ public:
         writer->writeEndElement();
     }
 
+    /**
+    *   Loads from XML Stream the data and passes it to the Poses(if any).
+    *   @param  reader Stream from which the data is read
+    *   @returns List of errors, which occured while loading
+    */
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -205,8 +222,17 @@ public:
         return errors;
     }
 private:
+    /**
+    *   Vector representing Accelerations.
+    */
     std::vector<double> a;
+    /**
+    *   Vector representing Velocities.
+    */
     std::vector<double> v;
+    /**
+    *   Vector representing Coordinates.
+    */
     std::vector<double> coordinates;
 };
 

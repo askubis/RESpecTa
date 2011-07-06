@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Mon Jun 27 20:53:54 2011
+** Created: Wed Jul 6 21:35:52 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -87,8 +87,8 @@ static const uint qt_meta_data_sysIniWidget[] = {
       64,   13,   13,   13, 0x08,
       83,   13,   13,   13, 0x08,
      109,  101,   13,   13, 0x08,
-     142,  128,   13,   13, 0x08,
-     184,   14,   13,   13, 0x08,
+     144,  130,   13,   13, 0x08,
+     186,   14,   13,   13, 0x08,
 
        0        // eod
 };
@@ -96,8 +96,9 @@ static const uint qt_meta_data_sysIniWidget[] = {
 static const char qt_meta_stringdata_sysIniWidget[] = {
     "sysIniWidget\0\0msgString\0reportError(QString)\0"
     "removeECPSection()\0createECPSection()\0"
-    "changeMPSection()\0newInit\0InsertECP(genInit)\0"
-    "sensors,trans\0InsertMP(std::vector<Sensor>,Transmitter)\0"
+    "changeMPSection()\0newInit\0"
+    "InsertECP(robotInit)\0sensors,trans\0"
+    "InsertMP(std::vector<Sensor>,Transmitter)\0"
     "forwardError(QString)\0"
 };
 
@@ -134,7 +135,7 @@ int sysIniWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 1: removeECPSection(); break;
         case 2: createECPSection(); break;
         case 3: changeMPSection(); break;
-        case 4: InsertECP((*reinterpret_cast< genInit(*)>(_a[1]))); break;
+        case 4: InsertECP((*reinterpret_cast< robotInit(*)>(_a[1]))); break;
         case 5: InsertMP((*reinterpret_cast< std::vector<Sensor>(*)>(_a[1])),(*reinterpret_cast< Transmitter(*)>(_a[2]))); break;
         case 6: forwardError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
@@ -678,19 +679,19 @@ static const uint qt_meta_data_ECPDialog[] = {
 
  // signals: signature, parameters, type, tag, flags
       19,   11,   10,   10, 0x05,
-      48,   38,   10,   10, 0x05,
+      50,   40,   10,   10, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      69,   10,   10,   10, 0x08,
-      78,   10,   10,   10, 0x08,
-      84,   10,   10,   10, 0x08,
-      96,   10,   10,   10, 0x08,
+      71,   10,   10,   10, 0x08,
+      80,   10,   10,   10, 0x08,
+      86,   10,   10,   10, 0x08,
+      98,   10,   10,   10, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ECPDialog[] = {
-    "ECPDialog\0\0newInit\0InsertECP(genInit)\0"
+    "ECPDialog\0\0newInit\0InsertECP(robotInit)\0"
     "msgString\0reportError(QString)\0remove()\0"
     "add()\0OKPressed()\0CancelPressed()\0"
 };
@@ -724,7 +725,7 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: InsertECP((*reinterpret_cast< genInit(*)>(_a[1]))); break;
+        case 0: InsertECP((*reinterpret_cast< robotInit(*)>(_a[1]))); break;
         case 1: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 2: remove(); break;
         case 3: add(); break;
@@ -738,7 +739,7 @@ int ECPDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void ECPDialog::InsertECP(genInit _t1)
+void ECPDialog::InsertECP(robotInit _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

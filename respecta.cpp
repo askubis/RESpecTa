@@ -159,20 +159,27 @@ void RESpecTa::createEditMenu()
     connect(showTransitions, SIGNAL(triggered()),
         this, SLOT(EditTransitionsOfState()));
 
-    QAction * GoToState = new QAction(tr("&Go To State"), this);
+    QAction * GoToState = new QAction(tr("&Go to Item from the list"), this);
     GoToState->setShortcut(tr("Ctrl+G"));
     GoToState->setStatusTip(tr("Center on the state selected on the list"));
     connect(GoToState, SIGNAL(triggered()),
         this, SLOT(GoToState()));
 
 
-    itemMenu = menuBar()->addMenu(tr("&Edit"));
+
+    editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu->addAction(deleteAction);
+    editMenu->addSeparator();
+    editMenu->addAction(toFrontAction);
+    editMenu->addAction(sendBackAction);
+    editMenu->addAction(showTransitions);
+    editMenu->addAction(GoToState);
+
+    itemMenu = new QMenu();
     itemMenu->addAction(deleteAction);
-    itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
     itemMenu->addAction(showTransitions);
-    itemMenu->addAction(GoToState);
 
 }
 
@@ -186,8 +193,8 @@ void RESpecTa::createOptionsMenu()
 
 
 
-    itemMenu = menuBar()->addMenu(tr("&Options"));
-    itemMenu->addAction(editSubtasks);
+    optionsMenu = menuBar()->addMenu(tr("&Options"));
+    optionsMenu->addAction(editSubtasks);
 }
 
 void RESpecTa::OpenSubtaskEditDialog()
@@ -810,7 +817,6 @@ void RESpecTa::deleteItem()
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
 
-    //check why there's a bug with deleting transitions attached to a deleted node
     foreach (QGraphicsItem *item, scenes[index]->selectedItems())
     {
         if (item->type() == Transition::Type)
@@ -819,16 +825,12 @@ void RESpecTa::deleteItem()
             deleteTrans(transition);
 
         }
+        else if (item->type() == BaseState::Type)
+        {
+            BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+            deleteState(state);
+        }
     }
-
-    foreach (QGraphicsItem *item, scenes[index]->selectedItems())
-    {
-         if (item->type() == BaseState::Type)
-         {
-             BaseState * state = qgraphicsitem_cast<BaseState *>(item);
-             deleteState(state);
-         }
-     }
     emit SignalDeleted();
 }
 
@@ -1048,11 +1050,6 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
     }
 }
 
-void RESpecTa::selectedSubtaskName(QString newString)
-{
-    currentSubtask=newString;
-}
-
 void RESpecTa::reportError(QString msgString)
 {
     QMessageBox::information(this, QString("Error"), msgString);
@@ -1261,7 +1258,6 @@ void RESpecTa::TabChanged(int newIndex)
     TreeView->setModel(newModel);
     delete treeModel;
     treeModel = newModel;
-
 }
 
 void RESpecTa::WasChanged()

@@ -1,20 +1,36 @@
-#ifndef GENINIT_H
-#define GENINIT_H
+class robotInit;
+
+#ifndef ROBOTINIT_H
+#define ROBOTINIT_H
 #include "globals.h"
-class genInit
+
+/**
+*   Class representing the initiation of one robot.
+*/
+class robotInit
 {
 public:
 
+    /**
+    *   Robot, which is being initialized
+    */
     Robot robot;
+    /**
+    *   Vector of generators, and their init arguments.
+    */
     std::vector < std::pair<GeneratorType, int> > init_values;
 
-    genInit(){}
-    genInit(const genInit& other)
+    robotInit(){}
+    robotInit(const robotInit& other)
     {
         this->robot=other.robot;
         this->init_values=other.init_values;
     }
 
+    /**
+    *   Creates a string describing the coordinates attributes.
+    *   @returns String with the description of the Robot initialization
+    */
     std::string Print()
     {
         std::string x;
@@ -32,6 +48,10 @@ public:
         }
         return x;
     }
+    /**
+    *   Writes the data of the state to the XML stream.
+    *   @param writer Stream to which the data is written
+    */
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("ecp");
@@ -44,6 +64,11 @@ public:
         }
         writer->writeEndElement();
     }
+    /**
+    *   Loads from XML Stream the data.
+    *   @param  reader Stream from which the data is read
+    *   @returns List of errors, which occured while loading
+    */
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -110,4 +135,4 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#endif // GENINIT_H
+#endif // ROBOTINIT_H

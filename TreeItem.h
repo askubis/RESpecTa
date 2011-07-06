@@ -1,6 +1,3 @@
-#ifndef TREEITEM_H
-#define TREEITEM_H
-
 class TreeItem;
 class TreeStateItem;
 class TreeTransItem;
@@ -11,24 +8,26 @@ class TreeRobotSetItem;
 class TreeTextItem;
 class TreeGraphItem;
 
+#ifndef TREEITEM_H
+#define TREEITEM_H
+
 #include "TreeModel.h"
 
 #include <QHash>
-class BaseState;
+//class BaseState;
 #include "Transition.h"
 #include "Coordinates.h"
 #include "Pose.h"
-#include "genInit.h"
+#include "robotInit.h"
 #include "RobotSet.h"
 
 class TreeItem
 {
 public:
-    TreeItem( int row, TreeModel *mod, TreeItem *parent = 0);
+    TreeItem( int row, TreeItem *parent = 0);
     ~TreeItem();
     TreeItem *parent();
     int row();
-    TreeModel * getModel(){return Model;}
     int getType(){return Type;}
     virtual int childNodesCount(){return 0;}
     virtual QString Name(){return QString();}
@@ -40,13 +39,12 @@ protected:
     QHash<int,TreeItem*> childItems;
     TreeItem *parentItem;
     int rowNumber;
-    TreeModel * Model;
 };
 
 class TreeStateItem : public TreeItem
 {
 public:
-    TreeStateItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeStateItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeStateItem(){}
 
     void setState(BaseState * st){Type = 0; state = st;}
@@ -63,7 +61,7 @@ private:
 class TreeTransItem : public TreeItem
 {
 public:
-    TreeTransItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeTransItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeTransItem(){}
 
     void setTrans(Transition * _tr){Type = 1; tr = _tr;}
@@ -80,7 +78,7 @@ private:
 class TreeCoordItem : public TreeItem
 {
 public:
-    TreeCoordItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeCoordItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeCoordItem(){}
 
     void setCoords(Coordinates * _coords){Type = 2; coords = _coords;}
@@ -106,7 +104,7 @@ private:
 class TreeRobotSetItem : public TreeItem
 {
 public:
-    TreeRobotSetItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeRobotSetItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeRobotSetItem(){}
 
     void setSet(std::vector<Robot> _set,bool _first){Type = 3; set = _set;first=_first;}
@@ -124,23 +122,23 @@ private:
 class TreeInitItem : public TreeItem
 {
 public:
-    TreeInitItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeInitItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeInitItem(){}
 
-    void setInit(genInit _init){Type = 4; init = _init;}
+    void setInit(robotInit _init){Type = 4; init = _init;}
     int childNodesCount(){return init.init_values.size();}
     TreeItem *child(int i);
 
     QString Name(){return QString("Init");}
     QString Attr(){return QString().fromStdString(ROBOT_TABLE[init.robot]);}
 private:
-    genInit init;//4
+    robotInit init;//4
 };
 
 class TreePoseItem : public TreeItem
 {
 public:
-    TreePoseItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreePoseItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreePoseItem(){}
 
     void setPos(Pose * _pos){Type = 5; pos = _pos;}
@@ -158,7 +156,7 @@ private:
 class TreeTextItem : public TreeItem
 {
 public:
-    TreeTextItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeTextItem( int row, TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeTextItem(){}
 
     void setNameAttr(QString _name, QString _attr){Type = 100; name=_name; attr=_attr;}
@@ -176,10 +174,10 @@ private:
 class TreeGraphItem : public TreeItem
 {
 public:
-    TreeGraphItem( int row, TreeModel * mod,  TreeItem *parent = 0):TreeItem(row, mod, parent){}
+    TreeGraphItem( int row,  TreeItem *parent = 0):TreeItem(row, parent){}
     ~TreeGraphItem(){}
 
-    void setGraph(MyGraphType * _gr){Type=101;gr=_gr;}
+    void setGraph(MyGraphType * _gr, TreeModel * mod){Type=101;gr=_gr;Model=mod;}
     int childNodesCount(){return boost::num_vertices(*gr);}
     TreeItem *child(int i);
 
@@ -188,6 +186,7 @@ public:
 
 private:
     MyGraphType * gr;//101
+    TreeModel * Model;
 };
 
 #endif // TREEITEM_H

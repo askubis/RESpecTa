@@ -1,3 +1,4 @@
+class StateWidget;
 
 #ifndef STATEWIDGET_H
 #define STATEWIDGET_H

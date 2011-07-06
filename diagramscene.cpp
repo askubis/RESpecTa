@@ -21,7 +21,7 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod )
     //toInsert = new BaseState();
 }
 
-void DiagramScene::setLineColor(const QColor &color)
+/*void DiagramScene::setLineColor(const QColor &color)
 {
    /* myLineColor = color;
     if (isItemChange(Transition::Type)) {
@@ -29,7 +29,7 @@ void DiagramScene::setLineColor(const QColor &color)
             qgraphicsitem_cast<Transition *>(selectedItems().first());
         item->setColor(myLineColor);
         update();
-    }*/
+    }
 }
 
 void DiagramScene::setItemColor(const QColor &color)
@@ -39,8 +39,8 @@ void DiagramScene::setItemColor(const QColor &color)
         BaseState *item =
             qgraphicsitem_cast<BaseState *>(selectedItems().first());
         item->setBrush(myItemColor);
-    }*/
-}
+    }
+}*/
 
 void DiagramScene::setMode(Mode mode)
 {

@@ -1,3 +1,16 @@
+class MyTypeWidget;
+class sysIniWidget;
+class runGenWidget;
+class stopGenWidget;
+class iniSensorWidget;
+class getSensorWidget;
+class emptyGenForSetWidget;
+class emptyGenWidget;
+class waitStateWidget;
+class PoseDialog;
+class MPDialog;
+class ECPDialog;
+
 #ifndef STATETYPEWIDGETS_H
 #define STATETYPEWIDGETS_H
 
@@ -5,6 +18,7 @@
 #include "States.h"
 #include "globals.h"
 #include "Pose.h"
+#include "stateWidget.h"
 
 #include <QDialog>
 
@@ -21,10 +35,10 @@ class QVBoxLayout;
 class QListWidget;
 class QListItemWidget;
 QT_END_NAMESPACE
-class PoseDialog;
-class ECPDialog;
-class MPDialog;
-class StateWidget;
+//class PoseDialog;
+//class ECPDialog;
+//class MPDialog;
+//class StateWidget;
 
 class MyTypeWidget : public QWidget
 {
@@ -57,7 +71,7 @@ private slots:
     void removeECPSection();
     void createECPSection();
     void changeMPSection();
-    void InsertECP(genInit newInit);
+    void InsertECP(robotInit newInit);
     void InsertMP (std::vector<Sensor> sensors, Transmitter trans);
     void forwardError(QString msgString){emit reportError(msgString);}
 };
@@ -239,12 +253,12 @@ private:
     QComboBox * genTypeCombo;
     QLineEdit * argLineEdit;
     QComboBox * robotCombo;
-    genInit genInitObj;
+    robotInit robotInitObj;
     sysIniWidget * parentx;
     sysInitState * tmpState;
 
 signals:
-    void InsertECP(genInit newInit);
+    void InsertECP(robotInit newInit);
     void reportError(QString msgString);
 
 private slots:

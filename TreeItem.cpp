@@ -4,10 +4,9 @@
 #include "TreeItem.h"
 
 
-TreeItem::TreeItem( int row, TreeModel *mod, TreeItem *parent)
+TreeItem::TreeItem( int row, TreeItem *parent)
 {
     Type = 255;
-    Model = mod;
 
     rowNumber = row;
     parentItem = parent;
@@ -45,7 +44,7 @@ TreeItem * TreeTransItem::child(int i)
         return childItems[i];
     if(tr->getSubtask().size()>0)
     {
-        TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+        TreeTextItem * tmp = new TreeTextItem(i, this);
         tmp->setNameAttr("Subtask", tr->getSubtask());
         childItems[i]=tmp;
         return tmp;
@@ -62,7 +61,7 @@ TreeItem * TreeCoordItem::child(int i)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+            TreeTextItem * tmp = new TreeTextItem(i, this);
             tmp->setNameAttr("MotionType", QString().fromStdString(MOTION_TYPE_TABLE[coords->getMotionType()]));
             childItems[i]=tmp;
             return tmp;
@@ -76,7 +75,7 @@ TreeItem * TreeCoordItem::child(int i)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+            TreeTextItem * tmp = new TreeTextItem(i, this);
             tmp->setNameAttr("CoordType", QString().fromStdString(COORD_TYPE_TABLE[coords->getCoordType()]));
             childItems[i]=tmp;
             return tmp;
@@ -90,7 +89,7 @@ TreeItem * TreeCoordItem::child(int i)
     {
         if(index==0)
         {
-            TreePoseItem * tmp = new TreePoseItem(i, Model, this);
+            TreePoseItem * tmp = new TreePoseItem(i, this);
             tmp->setPos(pos);
             childItems[i]=tmp;
             return tmp;
@@ -112,7 +111,7 @@ TreeItem * TreeRobotSetItem::child(int i)
     {
         if(index==0)
         {
-            TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+            TreeTextItem * tmp = new TreeTextItem(i, this);
             tmp->setNameAttr("Robot", QString().fromStdString(ROBOT_TABLE[rob]));
             childItems[i]=tmp;
             return tmp;
@@ -135,7 +134,7 @@ TreeItem * TreeInitItem::child(int i)
         if(index==0)
         {
             std::pair<GeneratorType, int> myPair=init.init_values[j];
-            TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+            TreeTextItem * tmp = new TreeTextItem(i, this);
             char table[10];
             sprintf(table,"%d", myPair.second);
             tmp->setNameAttr(QString().fromStdString(GENERATOR_TYPE_TABLE[myPair.first]), table);
@@ -176,7 +175,7 @@ TreeItem *TreePoseItem::child(int i)
         return 0;
     }
     QString value;
-    TreeTextItem * tmp = new TreeTextItem(i, Model, this);
+    TreeTextItem * tmp = new TreeTextItem(i, this);
     for(int j = 0;j<a.size();j++)
     {
         char table[10];
@@ -193,7 +192,7 @@ TreeItem * TreeGraphItem::child(int i)
     if (childItems.contains(i))
         return childItems[i];
 
-    TreeStateItem * tmp = new TreeStateItem(i, Model, this);
+    TreeStateItem * tmp = new TreeStateItem(i, this);
     childItems[i]=tmp;
     tmp->setState(Model->mod->getState(gr, i));
     return tmp;

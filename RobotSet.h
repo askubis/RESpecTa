@@ -1,3 +1,8 @@
+class RobotSet;
+
+#ifndef ROBOTSET_H
+#define ROBOTSET_H
+
 #include "globals.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,9 +10,6 @@
 #include <vector>
 #include <QXmlStreamReader>
 
-
-#ifndef ROBOTSET_H
-#define ROBOTSET_H
 class RobotSet
 {
 public:

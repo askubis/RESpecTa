@@ -1,3 +1,4 @@
+class TransWidget;
 
 #ifndef TRANSWIDGET_H
 #define TRANSWIDGET_H
