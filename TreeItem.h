@@ -34,7 +34,7 @@ public:
     virtual QString Attr(){return QString();}
     virtual TreeItem *child(int i){return NULL;}
 
-    int Type;//TODO change
+    int Type;
 protected:
     QHash<int,TreeItem*> childItems;
     TreeItem *parentItem;

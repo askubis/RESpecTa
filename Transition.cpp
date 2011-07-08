@@ -14,8 +14,7 @@ Transition::Transition(BaseState *startItem, BaseState *endItem,
     myStartItem = startItem;
     myEndItem = endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-    myColor = Qt::black;
-    setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 
 QRectF Transition::boundingRect() const
@@ -48,10 +47,12 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         return;
 
     QPen myPen = pen();
-    myPen.setColor(myColor);
+    myPen.setColor(Qt::black);
+    if(isSelected())myPen.setColor(Qt::red);
     qreal TransitionSize = 20;
     painter->setPen(myPen);
-    painter->setBrush(myColor);
+    painter->setBrush(Qt::black);
+    if(isSelected())painter->setBrush(Qt::red);
 
     QLineF centerLine(myStartItem->pos(), myEndItem->pos());
     QPolygonF endPolygon = myEndItem->polygon();
@@ -85,12 +86,4 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
         painter->drawLine(line());
         painter->drawPolygon(TransitionHead);
-        if (isSelected()) {
-            painter->setPen(QPen(myColor, 1, Qt::DashLine));
-        QLineF myLine = line();
-        myLine.translate(0, 4.0);
-        painter->drawLine(myLine);
-        myLine.translate(0,-8.0);
-        painter->drawLine(myLine);
-    }
 }

@@ -25,21 +25,11 @@ RESpecTa::RESpecTa(Model * newmod)
 
     createFileMenu();
     createEditMenu();
-    createOptionsMenu();
     createHelpMenu();
-    //createActions();
-    //createToolBox();
     createToolbars();
 
     transDial = new TransDialog(this, mod);
     connect(transDial, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
-
-
-    subDialog = new SubtaskDialog(this, mod);
-    connect(subDialog, SIGNAL(changed(QString, QString)), this, SLOT(SubtaskChanged(QString, QString)));
-    connect(subDialog, SIGNAL(added(QString)), this, SLOT(SubtaskAdded(QString)));
-    connect(subDialog, SIGNAL(removed(QString)), this, SLOT(SubtaskRemoved(QString)));
-    connect(subDialog, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
     editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
@@ -56,6 +46,8 @@ RESpecTa::RESpecTa(Model * newmod)
     connect(scenes[currentSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[currentSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[currentSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+
+    connect(scenes[currentSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
 
     QWidget * mainWidget = new QWidget();
@@ -183,25 +175,35 @@ void RESpecTa::createEditMenu()
 
 }
 
-void RESpecTa::createOptionsMenu()
+void RESpecTa::selectionchanged()
 {
-    editSubtasks = new QAction(tr("E&dit subtasks"), this);
-    editSubtasks->setShortcut(tr("Ctrl+D"));
-    editSubtasks->setStatusTip(tr("Edit names of the subtasks"));
-    connect(editSubtasks, SIGNAL(triggered()),
-            this, SLOT(OpenSubtaskEditDialog()));
+    QList<QGraphicsItem *> newItems = scenes[currentSubtask]->selectedItems();
+    foreach(QGraphicsItem * it, newItems)
+    {
+        if(it->type()==BaseState::Type)
+        {
+            BaseState * tmp = (BaseState*)it;
+            tmp->setBrush(Qt::red);
+            tmp->update();
+        }
+    }
+    foreach(QGraphicsItem * it, oldSelectedItems)
+    {
+        if(it->type()==BaseState::Type)
+        {
+            if(!newItems.contains(it))
+            {
+                BaseState * tmp = (BaseState*)it;
+                tmp->setBrush(Qt::white);
+                tmp->update();
+            }
+        }
+    }
 
 
-
-    optionsMenu = menuBar()->addMenu(tr("&Options"));
-    optionsMenu->addAction(editSubtasks);
+    oldSelectedItems=newItems;
 }
 
-void RESpecTa::OpenSubtaskEditDialog()
-{
-    subDialog->reloadName();
-    subDialog->exec();
-}
 
 void RESpecTa::SubtaskAdded(QString newSubtask)
 {
@@ -213,6 +215,8 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     connect(scenes[newSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+
+    connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
     layouts[newSubtask] = new QHBoxLayout;
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
@@ -730,8 +734,6 @@ if(mod->checkTransCondAvailabe(trans, condition))
 }
 
 
-
-
 void RESpecTa::save()
 {
     //get path
@@ -1078,12 +1080,12 @@ void RESpecTa::EditTransitionsOfState()
     return;
 }
 
-void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName)
+void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
 {
-    QString index = mod->getSubtaskName(oldStateName);
-    bool check = mod->ReplaceState(oldState,newState, oldStateName);//need to use oldStateName given, cannot check it if the state was deleted
+    bool check = mod->ReplaceState(oldState,newState);
     if(check)
     {
+        QString index = mod->getSubtaskName(oldState);
         QList<Transition *> TranList = oldState->getTransitions();
         foreach(Transition * T, TranList)
         {
@@ -1258,6 +1260,7 @@ void RESpecTa::TabChanged(int newIndex)
     TreeView->setModel(newModel);
     delete treeModel;
     treeModel = newModel;
+    oldSelectedItems=QList<QGraphicsItem *>();
 }
 
 void RESpecTa::WasChanged()

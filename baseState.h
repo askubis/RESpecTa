@@ -36,14 +36,20 @@ class BaseState : public QGraphicsPolygonItem
 {
 public:
 
+    void setSelected(bool selected)
+    {
+        QGraphicsPolygonItem::setSelected(selected);
+        this->update();
+    }
+
     enum { Type = UserType + 15 };
 
     StateType getType() {return stateType;}
     void setType(StateType newType){stateType=newType;}
     QString getName() {return stateName;}
     void setName(QString newName);
-    int getArgument() {return argument;}
-    void setArgument(int newArg){argument = newArg;}
+    QString getArgument() {return argument;}
+    void setArgument(QString newArg){argument = newArg;}
     QString getParameters() {return parameters;}
     void setParameters(QString newParams){parameters = newParams;}
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
@@ -164,18 +170,6 @@ protected:
     */
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-private:
-
-    /**
-    *   Polygon representing the state.
-    */
-    QPolygonF myPolygon;
-    /**
-    *   ContextMenu which is called when right click action has occured.
-    */
-    QMenu *myContextMenu;
-
-protected:
     /**
     *   Name of the state.
     */
@@ -187,7 +181,7 @@ protected:
     /**
     *   Argument(optional) of the state.
     */
-    int argument;
+    QString argument;
     /**
     *   Parameters(optional) of the state.
     */
@@ -202,6 +196,17 @@ protected:
     *   List of transitions of this state.
     */
     QList<Transition *> Transitions;
+
+private:
+    /**
+    *   Polygon representing the state.
+    */
+    QPolygonF myPolygon;
+    /**
+    *   ContextMenu which is called when right click action has occured.
+    */
+    QMenu *myContextMenu;
+
 };
 
 

@@ -118,8 +118,10 @@ QPixmap BaseState::image() const
 {
     QPixmap pixmap(250, 250);
     pixmap.fill(Qt::transparent);
+    if(isSelected())pixmap.fill(Qt::red);
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 8));
+    if(isSelected())painter.setPen(QPen(Qt::red, 8));
     painter.translate(125, 125);
     painter.drawPolyline(myPolygon);
     return pixmap;

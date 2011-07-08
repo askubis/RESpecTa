@@ -31,6 +31,9 @@ class QXmlStreamReader;
 class BaseState;
 
 //////////////////////////          Stop State            //////////////////////////////////////////////////////
+/**
+*   State representing end of a task/subtask.
+*/
 class StopState:public BaseState
 {
     public:
@@ -52,6 +55,9 @@ class StopState:public BaseState
 };
 
 //////////////////////////       Empty Gen for Set State        /////////////////////////////////////////////////
+/**
+*   State representing sets of robots, of which the first one waits for the second.
+*/
 class EmptyGenForSetState:public BaseState
 {
 public:
@@ -79,10 +85,16 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Set of robots.
+    */
     RobotSet set;
 };
 
 //////////////////////////          Empty Gen State           ///////////////////////////////////////////////////
+/**
+*   State representing empty generator for one robot.
+*/
 class EmptyGenState:public BaseState
 {
 public:
@@ -113,10 +125,13 @@ public:
 
 private:
     Robot robot;
-    QString argument;
+    //QString argument;
 };
 
 //////////////////////////          Get Sensor State           ///////////////////////////////////////////////////
+/**
+*   State representing downloading data from a sensor.
+*/
 class GetSensorState:public BaseState
 {
 public:
@@ -147,6 +162,9 @@ private:
 };
 
 //////////////////////////          Init Sensor State           ///////////////////////////////////////////////////
+/**
+*   State representing initiating sensor.
+*/
 class InitiateSensorState:public BaseState
 {
 public:
@@ -177,6 +195,9 @@ private:
 };
 
 //////////////////////////          Run Gen State           ///////////////////////////////////////////////////
+/**
+*   State representing movement of one robot.
+*/
 class RunGenState:public BaseState
 {
 public:
@@ -232,6 +253,9 @@ private:
 };
 
 //////////////////////////          Stop Gen State           ///////////////////////////////////////////////////
+/**
+*   State representing stopping movement of a set of robots.
+*/
 class StopGenState:public BaseState
 {
 public:
@@ -263,6 +287,9 @@ private:
 };
 
 /////////////////////////          Sys Ini State           ///////////////////////////////////////////////////
+/**
+*   State representing system initialization.
+*/
 class sysInitState:public BaseState
 {
 public:
@@ -303,6 +330,9 @@ private:
 };
 
 /////////////////////////          Wait State           ///////////////////////////////////////////////////
+/**
+*   State representing a time delay in the system.
+*/
 class WaitState:public BaseState
 {
 public:

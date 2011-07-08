@@ -14,28 +14,25 @@ stateWidget = new StateWidget(tabWidget, newmod);
     tabWidget->addTab(stateWidget,tr("State"));
 transWidget = new TransWidget(tabWidget, newmod);
     tabWidget->addTab(transWidget, tr("Transition"));
-    //tabWidget->setTabEnabled(1, false);
+subtaskWidget = new SubtaskWidget(tabWidget, newmod);
+    tabWidget->addTab(subtaskWidget, tr("Subtasks"));
+
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
 
-
+    connect(subtaskWidget, SIGNAL(added(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskAdded(QString)));
+    connect(subtaskWidget, SIGNAL(changed(QString,QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskChanged(QString, QString)));
+    connect(subtaskWidget, SIGNAL(removed(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskRemoved(QString)));
+    connect(subtaskWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
-    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * , QString)), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * ,QString)));
-
-
-
+    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * )));
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<QString,QString>)));
-    //connect (transWidget, SIGNAL(getSubtasksList()), this->parentWidget(), SLOT(getSubtasksList()) );
     connect (transWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect((RESpecTa *)this->parentWidget(), SIGNAL(refreshWidgets()), this, SLOT(refreshAllWidgets()));
     connect((RESpecTa *)this->parentWidget(), SIGNAL(SignalDeleted()), this, SLOT(SignalDeleted()));
-
-
-
-
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
@@ -47,6 +44,7 @@ void EditWidget::refreshAllWidgets()
 {
     stateWidget->refreshData();
     transWidget->refreshData();
+    subtaskWidget->refreshData();
 }
 
 void EditWidget::SignalDeleted()
@@ -65,6 +63,8 @@ void EditWidget::refreshWidget(int index)
     case 1:
         transWidget->refreshData();
         break;
+    case 2:
+        subtaskWidget->refreshData();
     default:
         break;
     }

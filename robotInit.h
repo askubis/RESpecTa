@@ -10,16 +10,6 @@ class robotInit;
 class robotInit
 {
 public:
-
-    /**
-    *   Robot, which is being initialized
-    */
-    Robot robot;
-    /**
-    *   Vector of generators, and their init arguments.
-    */
-    std::vector < std::pair<GeneratorType, int> > init_values;
-
     robotInit(){}
     robotInit(const robotInit& other)
     {
@@ -132,6 +122,15 @@ public:
         }
         return errors;
     }
+
+    /**
+    *   Robot, which is being initialized
+    */
+    Robot robot;
+    /**
+    *   Vector of generators, and their init arguments.
+    */
+    std::vector < std::pair<GeneratorType, int> > init_values;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

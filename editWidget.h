@@ -9,6 +9,7 @@ class EditWidget;
 
 #include "stateWidget.h"
 #include "transWidget.h"
+#include "subtaskWidget.h"
 
 #include <QDialog>
 
@@ -34,25 +35,13 @@ class EditWidget : public QWidget
 public:
     EditWidget(QWidget *parent, Model * mod);
 
-private:
-    /**
-    *   Tabwidget, which contains all the edit widgets.
-    */
-    QTabWidget * tabWidget;
-    /**
-    *   Widget, which allows to edit ad create transitions.
-    */
-    TransWidget * transWidget;
-    /**
-    *   Widget, which allows to edit ad create states.
-    */
-    StateWidget * stateWidget;
 signals:
     /**
     *   Signal to the main window reporting error.
     *   @param msgString Error to display
     */
     void reportError(QString msgString);
+
 private slots:
     /**
     *   Calls refresh function to all widgets.
@@ -77,5 +66,22 @@ private slots:
     */
     void SignalDeleted();
 
+private:
+    /**
+    *   Tabwidget, which contains all the edit widgets.
+    */
+    QTabWidget * tabWidget;
+    /**
+    *   Widget, which allows to edit and create transitions.
+    */
+    TransWidget * transWidget;
+    /**
+    *   Widget, which allows to edit and create states.
+    */
+    StateWidget * stateWidget;
+    /**
+    *   Widget, which allows to edit, delete and create states.
+    */
+    SubtaskWidget * subtaskWidget;
 };
 #endif // EDITWIDGET_H

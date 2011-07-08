@@ -508,11 +508,20 @@ QString Model::getSubtaskName(QString StateName)
     }
     return QString("");
 }
+QString Model::getSubtaskName(BaseState * toFindState)
+{
+    for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
+    {
+        MyGraphType * tmp = (*it).second;
+        if(findVertex(tmp, toFindState)!=vertices(*tmp).second)return (*it).first;
+    }
+    return QString("");
+}
 
-bool Model::ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName)
-{//TODO: check if can be changed not to use oldStateName, only oldState.
+bool Model::ReplaceState(BaseState * oldState, BaseState * newState)
+{
     //check if the state wasn't deleted
-    QString subtaskName = getSubtaskName(oldStateName);
+    QString subtaskName = getSubtaskName(oldState);
     if(subtaskName==QString(""))
     {
         res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));

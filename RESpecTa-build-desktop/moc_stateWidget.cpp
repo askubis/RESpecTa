@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'stateWidget.h'
 **
-** Created: Wed Jul 6 21:35:42 2011
+** Created: Fri Jul 8 17:55:48 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,14 +33,14 @@ static const uint qt_meta_data_StateWidget[] = {
  // signals: signature, parameters, type, tag, flags
       22,   13,   12,   12, 0x05,
       56,   46,   12,   12, 0x05,
-     103,   77,   12,   12, 0x05,
+      95,   77,   12,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     147,   46,   12,   12, 0x08,
-     176,  169,   12,   12, 0x08,
-     203,  198,   12,   12, 0x08,
-     226,   12,   12,   12, 0x08,
-     240,   12,   12,   12, 0x08,
+     131,   46,   12,   12, 0x08,
+     160,  153,   12,   12, 0x08,
+     187,  182,   12,   12, 0x08,
+     210,   12,   12,   12, 0x08,
+     224,   12,   12,   12, 0x08,
 
        0        // eod
 };
@@ -48,8 +48,7 @@ static const uint qt_meta_data_StateWidget[] = {
 static const char qt_meta_stringdata_StateWidget[] = {
     "StateWidget\0\0newState\0InsertState(BaseState*)\0"
     "msgString\0reportError(QString)\0"
-    "oldState,newState,oldName\0"
-    "ReplaceState(BaseState*,BaseState*,QString)\0"
+    "oldState,newState\0ReplaceState(BaseState*,BaseState*)\0"
     "forwardError(QString)\0chosen\0"
     "setStateSubclass(int)\0text\0"
     "lengthChanged(QString)\0AcceptState()\0"
@@ -87,7 +86,7 @@ int StateWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: InsertState((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
         case 1: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 2: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 2: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2]))); break;
         case 3: forwardError((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 4: setStateSubclass((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 5: lengthChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
@@ -115,9 +114,9 @@ void StateWidget::reportError(QString _t1)
 }
 
 // SIGNAL 2
-void StateWidget::ReplaceState(BaseState * _t1, BaseState * _t2, QString _t3)
+void StateWidget::ReplaceState(BaseState * _t1, BaseState * _t2)
 {
-    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_END_MOC_NAMESPACE

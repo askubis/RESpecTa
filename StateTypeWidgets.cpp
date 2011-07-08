@@ -123,11 +123,11 @@ runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
     genTypeCombo->setFixedWidth(200);
     genTypeCombo->addItems(getGeneratorTypeTable());
     runGenLayout->addWidget(genTypeCombo);
-    argsLabel = new QLabel("Arguments:");
+    QLabel * argsLabel = new QLabel("Arguments:");
     argsLineEdit = new QLineEdit;
     runGenLayout->addWidget(argsLabel);
     runGenLayout->addWidget(argsLineEdit);
-    speechLabel = new QLabel("Speech:");
+    QLabel * speechLabel = new QLabel("Speech:");
     speechLineEdit = new QLineEdit;
     runGenLayout->addWidget(speechLabel);
     runGenLayout->addWidget(speechLineEdit);
@@ -147,16 +147,16 @@ runGenWidget::runGenWidget(QWidget * parent, Model * newmod )
     runGenLayout->addWidget(runGenAddPoseButton);
     setLayout(runGenLayout);
 
-    poseDialog = new PoseDialog(this);
-    poseDialog->setVisible(false);
+    coordDialog = new CoordDialog(this);
+    coordDialog->setVisible(false);
 
     State = new RunGenState();
     State->getCoords()->setMotionType(MotionType(0));
     State->getCoords()->setCoordType(CoordType(0));
     State->setType(StateType(RUN_GENERATOR));
 
-    connect(poseDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
-    connect(poseDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
+    connect(coordDialog, SIGNAL(InsertCoords(Coordinates*)), this, SLOT(CoordsInsert(Coordinates*)));
+    connect(coordDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 }
 
 void runGenWidget::CoordsInsert(Coordinates * newCoords)
@@ -182,7 +182,7 @@ void runGenWidget::selectTrjFilePath()
 
 void runGenWidget::showAddPosesDialog()
 {
-    poseDialog->exec();
+    coordDialog->exec();
 }
 
 BaseState * runGenWidget::getStateObject()
@@ -206,8 +206,8 @@ void runGenWidget::setState(BaseState * st)
     speechLineEdit->setText(State->getSpeech());
     genTypeCombo->setCurrentIndex(State->getGenType());
     trjFileName->setText(State->getFilePath());
-    poseDialog->setCoords(new Coordinates(*(State->getCoords())));
-    poseDialog->coordsUpdated();
+    coordDialog->setCoords(new Coordinates(*(State->getCoords())));
+    coordDialog->coordsUpdated();
 }
 
 //***************   EMPTY_GEN_FOR_SET   ***************//
@@ -389,7 +389,7 @@ waitStateWidget::waitStateWidget(QWidget * parent, Model * newmod )
 {
     QVBoxLayout * waitLayout = new QVBoxLayout;
 
-    QLabel *TimeLabel = new QLabel(tr("TimeSpan"));
+    QLabel *TimeLabel = new QLabel(tr("TimeSpan (ms.)"));
     timeSpan = new QLineEdit;
     timeSpan->setValidator(new QIntValidator(0, 999999999, timeSpan));
     waitLayout->addWidget(TimeLabel);
@@ -574,9 +574,9 @@ void getSensorWidget::setState(BaseState * st)
 
 //***************   POSE_DIALOG   ***************//
 
-PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
+CoordDialog::CoordDialog(QWidget * parent): QDialog(parent)
 {
-    setWindowTitle(tr("Pose"));
+    setWindowTitle(tr("Coordinates"));
     QGridLayout * mainLayout = new QGridLayout;
 
     QLabel * CoordTypeLabel = new QLabel("Pose specification:");
@@ -640,7 +640,7 @@ PoseDialog::PoseDialog(QWidget * parent): QDialog(parent)
     this->setLayout(mainLayout);
 }
 
-void PoseDialog::AddPose()
+void CoordDialog::AddPose()
 {
     Pose * tmp = new Pose();
     std::vector<double> a, v, c;
@@ -702,7 +702,7 @@ void PoseDialog::AddPose()
     }
 }
 
-void PoseDialog::PoseOK()
+void CoordDialog::PoseOK()
 {
     coords->setCoordType(CoordType(coordTypeCombo->currentIndex()));
     coords->setMotionType(MotionType(motionTypeCombo->currentIndex()));
@@ -711,12 +711,12 @@ void PoseDialog::PoseOK()
     this->setVisible(false);
 }
 
-void PoseDialog::PoseCancel()
+void CoordDialog::PoseCancel()
 {
     this->setVisible(false);
 }
 
-void PoseDialog::PosesReset()
+void CoordDialog::PosesReset()
 {
     num=0;
     poseList->clear();
@@ -724,7 +724,7 @@ void PoseDialog::PosesReset()
     coords = new Coordinates();
 }
 
-void PoseDialog::coordsUpdated()
+void CoordDialog::coordsUpdated()
 {
     coordTypeCombo->setCurrentIndex((int)this->coords->getCoordType());
     motionTypeCombo->setCurrentIndex((int)this->coords->getMotionType());

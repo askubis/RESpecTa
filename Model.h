@@ -16,7 +16,6 @@ class Model
 public:
     Model();
 
-
         //*************     COUNT   ***********//
     /**
     *   Returns Number of Vertices in the subtask defined by the SubtaskName.
@@ -69,10 +68,9 @@ public:
     void changeSubtaskName(QString oldName, QString NewName);
     /**
     *   Changes the oldState to newState in the model.
-    *   @param oldStateName name of state, which will be inserted, used to check if the state still exists.
     *   @returns True if operation successful.
     */
-    bool ReplaceState(BaseState * oldState, BaseState * newState,  QString oldStateName);
+    bool ReplaceState(BaseState * oldState, BaseState * newState);
     /**
     *   Moves the transition at index _index one position Up in the Transition List in the graph representing task.
     */
@@ -103,6 +101,10 @@ public:
     *   Returns Name of subtask containing a state with given StateName.
     */
     QString getSubtaskName(QString StateName);
+    /**
+    *   Returns Name of subtask containing a state State.
+    */
+    QString getSubtaskName(BaseState * State );
     /**
     *   Returns Name of the main task.
     */

@@ -29,7 +29,7 @@ this->setMaximumWidth(230);
     //creating Default EditState options
     StateLayout = new QVBoxLayout;
 
-    nameLabel = new QLabel(tr("State Name:"));
+    QLabel * nameLabel = new QLabel(tr("State Name:"));
     stateNameEdit = new QLineEdit;
     connect(stateNameEdit, SIGNAL(textChanged(QString)), this, SLOT(lengthChanged(QString)));
    StateLayout->addWidget(nameLabel);
@@ -40,7 +40,7 @@ this->setMaximumWidth(230);
     stateTypeCombo->addItems(getStateTypeTable());
     connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
    StateLayout->addWidget(stateTypeCombo);
-   paramLabel = new QLabel("Parameters:");
+   QLabel * paramLabel = new QLabel("Parameters:");
    paramEdit = new QLineEdit;
    StateLayout->addWidget(paramLabel);
    StateLayout->addWidget(paramEdit);
@@ -133,7 +133,7 @@ void StateWidget::AcceptState()
     OKButton->setDisabled(true);
     BaseState * tmp = edited;
     edited = NULL;
-    emit ReplaceState(tmp, toInsertState, oldStateName);
+    emit ReplaceState(tmp, toInsertState);
 }
 
 void StateWidget::setStateSubclass(int chosen)
@@ -176,7 +176,6 @@ void StateWidget::refreshData()
 void StateWidget::StateSelected(BaseState * state)
 {
     if(state->getName().toLower()==QString("_end_")||state->getName().toLower()==QString("_stop_"))return;
-    oldStateName = state->getName();
     edited = state;
     OKButton->setDisabled(false);
     stateNameEdit->setText(state->getName());

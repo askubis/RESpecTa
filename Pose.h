@@ -221,6 +221,7 @@ public:
         }
         return errors;
     }
+
 private:
     /**
     *   Vector representing Accelerations.

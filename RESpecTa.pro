@@ -21,10 +21,10 @@ SOURCES += main.cpp\
     Transition.cpp \
     TransDialog.cpp \
     Model.cpp \
-    subtaskDialog.cpp \
     TreeModel.cpp \
     TreeItem.cpp \
-    States.cpp
+    States.cpp \
+    subtaskWidget.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \
@@ -43,11 +43,11 @@ HEADERS  += respecta.h \
     baseState.h \
     Model.h \
     TransDialog.h \
-    subtaskDialog.h \
     TreeModel.h \
     TreeItem.h \
     myTreeView.h \
-    robotInit.h
+    robotInit.h \
+    subtaskWidget.h
 
 
 FORMS    += respecta.ui

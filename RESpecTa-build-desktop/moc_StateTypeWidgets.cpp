@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'StateTypeWidgets.h'
 **
-** Created: Wed Jul 6 21:35:52 2011
+** Created: Fri Jul 8 17:55:58 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -577,7 +577,7 @@ int getSensorWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     return _id;
 }
-static const uint qt_meta_data_PoseDialog[] = {
+static const uint qt_meta_data_CoordDialog[] = {
 
  // content:
        5,       // revision
@@ -591,47 +591,48 @@ static const uint qt_meta_data_PoseDialog[] = {
        2,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      22,   12,   11,   11, 0x05,
-      59,   49,   11,   11, 0x05,
+      23,   13,   12,   12, 0x05,
+      60,   50,   12,   12, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      80,   11,   11,   11, 0x08,
-      90,   11,   11,   11, 0x08,
-      99,   11,   11,   11, 0x08,
-     112,   11,   11,   11, 0x08,
+      81,   12,   12,   12, 0x08,
+      91,   12,   12,   12, 0x08,
+     100,   12,   12,   12, 0x08,
+     113,   12,   12,   12, 0x08,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_PoseDialog[] = {
-    "PoseDialog\0\0newCoords\0InsertCoords(Coordinates*)\0"
-    "msgString\0reportError(QString)\0AddPose()\0"
-    "PoseOK()\0PoseCancel()\0PosesReset()\0"
+static const char qt_meta_stringdata_CoordDialog[] = {
+    "CoordDialog\0\0newCoords\0"
+    "InsertCoords(Coordinates*)\0msgString\0"
+    "reportError(QString)\0AddPose()\0PoseOK()\0"
+    "PoseCancel()\0PosesReset()\0"
 };
 
-const QMetaObject PoseDialog::staticMetaObject = {
-    { &QDialog::staticMetaObject, qt_meta_stringdata_PoseDialog,
-      qt_meta_data_PoseDialog, 0 }
+const QMetaObject CoordDialog::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_CoordDialog,
+      qt_meta_data_CoordDialog, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &PoseDialog::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &CoordDialog::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *PoseDialog::metaObject() const
+const QMetaObject *CoordDialog::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *PoseDialog::qt_metacast(const char *_clname)
+void *CoordDialog::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_PoseDialog))
-        return static_cast<void*>(const_cast< PoseDialog*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_CoordDialog))
+        return static_cast<void*>(const_cast< CoordDialog*>(this));
     return QDialog::qt_metacast(_clname);
 }
 
-int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int CoordDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -652,14 +653,14 @@ int PoseDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void PoseDialog::InsertCoords(Coordinates * _t1)
+void CoordDialog::InsertCoords(Coordinates * _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
-void PoseDialog::reportError(QString _t1)
+void CoordDialog::reportError(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);

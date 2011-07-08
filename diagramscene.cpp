@@ -52,23 +52,17 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
     QGraphicsTextItem * textItem;
-    //BaseState *item;
     switch (myMode) {
         case InsertItem:
-            //
             toInsert->setMenu(myItemMenu);
             toInsert->setBrush(Qt::white);
             addItem(toInsert);
             toInsert->setPos(mouseEvent->scenePos());
 
-
-            //connect(toInsert, SIGNAL(clicked()), this, SIGNAL(itemInserted(BaseState*)));
-
             textItem = toInsert->getNameTextItem();
             addItem(textItem);
             toInsert->updateTextPositions();
             emit itemInserted(toInsert);
-            //textItem->setPos(mouseEvent->scenePos().x()-50, mouseEvent->scenePos().y()-50);
             break;
 
         case InsertLine:
@@ -107,7 +101,8 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if(this->selectedItems().size()==1 && myMode!=InsertLine)
         {emit itemSelected(selectedItems().first());}
 
-    if (line != 0 && myMode == InsertLine) {
+    if (line != 0 && myMode == InsertLine)
+    {
         QList<QGraphicsItem *> startItems = items(line->line().p1());
         if (startItems.count() && startItems.first() == line)
             startItems.removeFirst();
@@ -156,7 +151,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(test)
             {
                 transition->setSubtask(transitionAttributes.second);
-                transition->setColor(Qt::black);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);
                 transition->setZValue(-1000.0);

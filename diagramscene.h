@@ -55,9 +55,6 @@ public:
     */
     void setItemParams(BaseState * toInsert);
 
-public slots:
-    void setMode(Mode mode);
-
 signals:
     /**
     *   Signals, that a state has been inserted into the scene.
@@ -75,6 +72,9 @@ signals:
     *   Reports an error to the main window
     */
     void reportError(QString);
+
+public slots:
+    void setMode(Mode mode);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -108,7 +108,7 @@ private:
     */
     QPointF startPoint;
     /**
-    *   Line, which represents the Transition while being inserted.
+    *   Line, which represents the Transition while it's being inserted.
     */
     QGraphicsLineItem *line;
 };

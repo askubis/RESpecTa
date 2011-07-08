@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Wed Jul 6 21:35:32 2011
+** Created: Fri Jul 8 17:55:33 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -37,29 +37,29 @@ static const uint qt_meta_data_RESpecTa[] = {
 
  // slots: signature, parameters, type, tag, flags
       80,    9,    9,    9, 0x08,
-      93,    9,    9,    9, 0x08,
-     105,    9,    9,    9, 0x08,
-     133,  121,    9,    9, 0x08,
-     155,  121,    9,    9, 0x08,
-     195,  179,    9,    9, 0x08,
-     227,    9,    9,    9, 0x08,
-     282,  251,    9,    9, 0x08,
-     326,    9,    9,    9, 0x08,
-     351,    9,    9,    9, 0x08,
-     375,  365,    9,    9, 0x08,
-     406,  401,  396,    9, 0x08,
-     432,    9,    9,    9, 0x08,
-     477,    9,    9,    9, 0x08,
-     484,    9,    9,    9, 0x08,
-     491,    9,  396,    9, 0x08,
-     509,  500,    9,    9, 0x08,
-     533,    9,    9,    9, 0x08,
-     546,    9,    9,    9, 0x08,
-     561,    9,    9,    9, 0x08,
-     574,   10,    9,    9, 0x08,
-     605,  599,    9,    9, 0x08,
-     632,   10,    9,    9, 0x08,
-     661,    9,    9,    9, 0x08,
+      99,    9,    9,    9, 0x08,
+     112,    9,    9,    9, 0x08,
+     124,    9,    9,    9, 0x08,
+     152,  140,    9,    9, 0x08,
+     174,  140,    9,    9, 0x08,
+     214,  198,    9,    9, 0x08,
+     264,  246,    9,    9, 0x08,
+     300,    9,    9,    9, 0x08,
+     325,    9,    9,    9, 0x08,
+     349,  339,    9,    9, 0x08,
+     380,  375,  370,    9, 0x08,
+     406,    9,    9,    9, 0x08,
+     451,    9,    9,    9, 0x08,
+     458,    9,    9,    9, 0x08,
+     465,    9,  370,    9, 0x08,
+     483,  474,    9,    9, 0x08,
+     507,    9,    9,    9, 0x08,
+     520,    9,    9,    9, 0x08,
+     535,    9,    9,    9, 0x08,
+     548,   10,    9,    9, 0x08,
+     579,  573,    9,    9, 0x08,
+     606,   10,    9,    9, 0x08,
+     635,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -67,13 +67,11 @@ static const uint qt_meta_data_RESpecTa[] = {
 static const char qt_meta_stringdata_RESpecTa[] = {
     "RESpecTa\0\0item\0itemSelectedSig(QGraphicsItem*)\0"
     "refreshWidgets()\0SignalDeleted()\0"
-    "FindOnList()\0GoToState()\0TabChanged(int)\0"
-    "subtaskName\0SubtaskAdded(QString)\0"
-    "SubtaskRemoved(QString)\0oldName,newName\0"
-    "SubtaskChanged(QString,QString)\0"
-    "OpenSubtaskEditDialog()\0"
-    "oldState,newState,oldStateName\0"
-    "ReplaceState(BaseState*,BaseState*,QString)\0"
+    "selectionchanged()\0FindOnList()\0"
+    "GoToState()\0TabChanged(int)\0subtaskName\0"
+    "SubtaskAdded(QString)\0SubtaskRemoved(QString)\0"
+    "oldName,newName\0SubtaskChanged(QString,QString)\0"
+    "oldState,newState\0ReplaceState(BaseState*,BaseState*)\0"
     "EditTransitionsOfState()\0addEndState()\0"
     "msgString\0reportError(QString)\0bool\0"
     "line\0lineInserted(Transition*)\0"
@@ -118,14 +116,14 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: itemSelectedSig((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
         case 1: refreshWidgets(); break;
         case 2: SignalDeleted(); break;
-        case 3: FindOnList(); break;
-        case 4: GoToState(); break;
-        case 5: TabChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 6: SubtaskAdded((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 7: SubtaskRemoved((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 8: SubtaskChanged((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 9: OpenSubtaskEditDialog(); break;
-        case 10: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 3: selectionchanged(); break;
+        case 4: FindOnList(); break;
+        case 5: GoToState(); break;
+        case 6: TabChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 7: SubtaskAdded((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 8: SubtaskRemoved((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 9: SubtaskChanged((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 10: ReplaceState((*reinterpret_cast< BaseState*(*)>(_a[1])),(*reinterpret_cast< BaseState*(*)>(_a[2]))); break;
         case 11: EditTransitionsOfState(); break;
         case 12: addEndState(); break;
         case 13: reportError((*reinterpret_cast< QString(*)>(_a[1]))); break;

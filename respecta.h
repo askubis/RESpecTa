@@ -8,7 +8,6 @@ class RESpecTa;
 #include "baseState.h"
 #include "Model.h"
 #include "TransDialog.h"
-#include "subtaskDialog.h"
 #include "TreeModel.h"
 #include "TreeItem.h"
 #include "myTreeView.h"
@@ -89,6 +88,10 @@ signals:
 
 private slots:
     /**
+    *   Selection on the stage changed, therefore color needs to be changed.
+    */
+    void selectionchanged();
+    /**
     *   Finds text in the TreeView widget.
     */
     void FindOnList();
@@ -115,13 +118,9 @@ private slots:
     */
     void SubtaskChanged(QString oldName, QString newName);
     /**
-    *   Opens SubtaskDialog.
+    *   Checks if state oldState exists, if yes - replaces oldState with newState.
     */
-    void OpenSubtaskEditDialog();
-    /**
-    *   Checks if state with name oldStateName exists, if yes - replaces oldState with newState.
-    */
-    void ReplaceState(BaseState * oldState, BaseState * newState, QString oldStateName);
+    void ReplaceState(BaseState * oldState, BaseState * newState);
     /**
     *   Opens TransDialog for the selected state.
     */
@@ -237,53 +236,140 @@ private:
     */
     QStringList LoadTransitions(QString filename);
 
+    /**
+    *   List of available scale modifiers.
+    */
     QStringList scales;
 
+    /**
+    *   Pointer to the model, representing the data in the program.
+    */
     Model * mod;
 
+    /**
+    *   Pointer to the class representing treeview of the task.
+    */
     myTreeView *TreeView;
+    /**
+    *   Model of the tree representation.
+    */
     TreeModel *treeModel;
+    /**
+    *   Line edit allowing to search the treeview.
+    */
     QLineEdit * findLineEdit;
 
+    /**
+    *   Widget containing scenes.
+    */
     QTabWidget * tabWidget;
+    /**
+    *   Widget containing transwidget and statewidget.
+    */
     QWidget *editWidget;
 
+    /**
+    *   Dialog box showing transitions of the state.
+    */
     TransDialog * transDial;
-    SubtaskDialog * subDialog;
 
+    /**
+    *   Name of the currently displayed(active) task.
+    */
     QString currentSubtask;
+    /**
+    *   Name to which the task is saved when Save option is used.
+    */
     QString SaveName;
+    /**
+    *   Folder to which the task is saved when Save option is used.
+    */
     QString SaveFolder;
 
+    /**
+    *   Map of widgets containing views of the tasks.
+    */
     std::map<QString,QWidget *> widgets;
+    /**
+    *   Map of scenes, on which the tasks are represented.
+    */
     std::map<QString,DiagramScene *> scenes;
+    /**
+    *   Map of sceneViews graphicaly representing tasks.
+    */
     std::map<QString,QGraphicsView *> views;
+    /**
+    *   Map of layouts for widgets containing views of tasks.
+    */
     std::map<QString, QHBoxLayout *> layouts;
 
-    QAction *editSubtasks;
+    /**
+    *   Action responsible for exiting from the program.
+    */
     QAction *exitAction;
+    /**
+    *   Action responsible for saving.
+    */
     QAction *saveAction;
+    /**
+    *   Action responsible for opening file choose dialog to choose the file, to which the project should be saved.
+    */
     QAction *saveAsAction;
+    /**
+    *   Action responsible for opening file choose dialog, in which user hcooses file, from which to load; this action starts also all Load functions.
+    */
     QAction *loadAction;
-    QAction *addAction;
+    /**
+    *   Action responsible for deleting selected widgets(states and transitions).
+    */
     QAction *deleteAction;
+    /**
+    *   Action responsible for inserting a new Stop state.
+    */
     QAction *insertEndStateAction;
+    /**
+    *   Action responsible for opening a dialogbox showing transitions of a state.
+    */
     QAction *showTransitions;
-
+    /**
+    *   Action responsible for moving selected items to foreground.
+    */
     QAction *toFrontAction;
+    /**
+    *   Action responsible for moving selected items to background.
+    */
     QAction *sendBackAction;
+    /**
+    *   Action responsible for showing the about dialog.
+    */
     QAction *aboutAction;
 
     QMenu *fileMenu;
+    /**
+    *   Context menu for states.
+    */
     QMenu *itemMenu;
-    QMenu *optionsMenu;
     QMenu *editMenu;
     QMenu *aboutMenu;
 
+    /**
+    *   Toolbar holding edit options for states.
+    */
     QToolBar * editToolBar;
+    /**
+    *   Toolbar holding view edit options.
+    */
     QToolBar * sceneToolbar;
 
+    /**
+    *   Combobox containing availablescales for scenes.
+    */
     QComboBox *sceneScaleCombo;
+
+    /**
+    *   List of items, which were selected before.
+    */
+    QList<QGraphicsItem *> oldSelectedItems;
 };
 
 

@@ -28,8 +28,6 @@ public:
         { return Type; }
     QRectF boundingRect() const;
     QPainterPath shape() const;
-    void setColor(const QColor &color)
-        { myColor = color; }
     void setStartItem( BaseState *newStartItem) { myStartItem=newStartItem; }
     void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
 
@@ -43,6 +41,10 @@ public:
     QString getSubtask() {return subtask;}
     void setSubtask(QString newSubtask) {subtask=newSubtask;}
 
+    /**
+    *   Creates a string describing the coordinates attributes.
+    *   @returns String with the description of the Coordinates
+    */
     std::string Print()
     {
         std::string toRet;
@@ -55,6 +57,11 @@ public:
         }
         return toRet;
     }
+
+    /**
+    *   Writes the data of the state to the XML stream.
+    *   @param writer Stream to which the data is written
+    */
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("transition");
@@ -75,17 +82,16 @@ public:
         writer->writeEndElement();
     }
 
-public slots:
-    void updatePosition();
-
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
 
+public slots:
+    void updatePosition();
+
 private:
     BaseState *myStartItem;
     BaseState *myEndItem;
-    QColor myColor;
     QPolygonF TransitionHead;
 
     QString condition;

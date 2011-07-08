@@ -13,9 +13,11 @@ class RobotSet;
 class RobotSet
 {
 public:
-    std::vector<Robot> first;
-    std::vector<Robot> second;
 
+    /**
+    *   Creates a string describing the coordinates attributes.
+    *   @returns String with the description of the RobotSet
+    */
     std::string Print()
     {
         std::string x;
@@ -34,6 +36,10 @@ public:
         return x;
     }
 
+    /**
+    *   Writes the data of the state to the XML stream.
+    *   @param writer Stream to which the data is written
+    */
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("SetOfRobots");
@@ -56,6 +62,11 @@ public:
         writer->writeEndElement();
     }
 
+    /**
+    *   Loads from XML Stream the data and passes it to the Poses(if any).
+    *   @param  reader Stream from which the data is read
+    *   @returns List of errors, which occured while loading
+    */
     QStringList LoadFromXML(QXmlStreamReader * reader)
     {
         QStringList errors;
@@ -157,6 +168,15 @@ public:
         }
         return errors;
     }
+
+    /**
+    *   First set of Robots.
+    */
+    std::vector<Robot> first;
+    /**
+    *   Second Set of robots.
+    */
+    std::vector<Robot> second;
 };
 
 #endif // ROBOTSET_H
