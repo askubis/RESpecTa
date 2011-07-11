@@ -1,5 +1,3 @@
-
-
 #include <QtGui>
 
 #include "diagramscene.h"
@@ -12,35 +10,8 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod )
     mod=newmod;
     myItemMenu = itemMenu;
     myMode = MoveItem;
-    //myItemType = BaseState::Step;
     line = 0;
-    //textItem = 0;
-    //myItemColor = Qt::white;
-    //myTextColor = Qt::black;
-    //myLineColor = Qt::black;
-    //toInsert = new BaseState();
 }
-
-/*void DiagramScene::setLineColor(const QColor &color)
-{
-   /* myLineColor = color;
-    if (isItemChange(Transition::Type)) {
-        Transition *item =
-            qgraphicsitem_cast<Transition *>(selectedItems().first());
-        item->setColor(myLineColor);
-        update();
-    }
-}
-
-void DiagramScene::setItemColor(const QColor &color)
-{
-    /*myItemColor = color;
-    if (isItemChange(BaseState::Type)) {
-        BaseState *item =
-            qgraphicsitem_cast<BaseState *>(selectedItems().first());
-        item->setBrush(myItemColor);
-    }
-}*/
 
 void DiagramScene::setMode(Mode mode)
 {
@@ -71,9 +42,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             line->setPen(QPen(Qt::black, 2));
             addItem(line);
             break;
-
     default:
-        ;
+        break;
     }
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
@@ -113,7 +83,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         removeItem(line);
         delete line;
 
-
         while(startItems.count()>1 && startItems.first()->type() != BaseState::Type)
         {
             startItems.removeFirst();
@@ -122,7 +91,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         {
             endItems.removeFirst();
         }
-
 
         if (startItems.count() > 0 && endItems.count() > 0 &&
             startItems.first()->type() == BaseState::Type &&

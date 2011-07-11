@@ -16,6 +16,9 @@ class QGraphicsSceneMouseEvent;
 class QPainterPath;
 QT_END_NAMESPACE
 
+/**
+*   Class representing a transition between the tasks, and it's graphic representation.
+*/
 class Transition : public QGraphicsLineItem
 {
 public:
@@ -28,7 +31,13 @@ public:
         { return Type; }
     QRectF boundingRect() const;
     QPainterPath shape() const;
+    /**
+    *   Sets state, which is a start state for this transition.
+    */
     void setStartItem( BaseState *newStartItem) { myStartItem=newStartItem; }
+    /**
+    *   Sets state, which is an end state for this transition
+    */
     void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
 
     BaseState *startItem() const
@@ -83,18 +92,39 @@ public:
     }
 
 protected:
+    /**
+    *   Paints line, and head of the transition with colour dependent on isSelected().
+    */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
 
 public slots:
+    /**
+    *   Creates new, actual line of the transition.
+    */
     void updatePosition();
 
 private:
+    /**
+    *   Start item of the transition.
+    */
     BaseState *myStartItem;
+    /**
+    *   End item of the transition.
+    */
     BaseState *myEndItem;
+    /**
+    *   Polygon representing the arrowhead of the transition.
+    */
     QPolygonF TransitionHead;
 
+    /**
+    *   String representing the condition of this transition.
+    */
     QString condition;
+    /**
+    *   (Optional) String representing subtask of the transition.
+    */
     QString subtask;
 };
 

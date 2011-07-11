@@ -12,7 +12,7 @@ TreeModel::TreeModel( QObject *parent, Model * _mod, QString Name)
 
     TreeGraphItem * grItem = new TreeGraphItem(0);
     graphName=Name;
-    graph = mod->getGraph(Name);
+    MyGraphType *graph = mod->getGraph(Name);
     grItem->setGraph(graph, this);
     rootItem=grItem;
 }
@@ -29,12 +29,7 @@ int TreeModel::columnCount(const QModelIndex &/*parent*/) const
 
 QGraphicsItem * TreeModel::getItemOrParent(QModelIndex index)
 {
-    for(TreeItem * it = (TreeItem*)index.internalPointer();;it=it->parent())
-    {
-        if(it->getType()==0)return ((TreeStateItem *)it)->getState();//if State then return
-        if(it->getType()==1)return ((TreeTransItem *)it)->getTrans();//if Trans then return
-        if(it->getType()==101)return NULL;
-    }
+    return ((TreeItem*)index.internalPointer())->getGraphicsItem();//if State then return
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const

@@ -28,7 +28,7 @@ QT_END_NAMESPACE
 /**
 *   Class containing edit widgets.
 */
-class EditWidget : public QWidget
+class EditWidget : public QTabWidget
 {
     Q_OBJECT
 
@@ -67,10 +67,6 @@ private slots:
     void SignalDeleted();
 
 private:
-    /**
-    *   Tabwidget, which contains all the edit widgets.
-    */
-    QTabWidget * tabWidget;
     /**
     *   Widget, which allows to edit and create transitions.
     */

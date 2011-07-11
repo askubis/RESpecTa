@@ -382,7 +382,7 @@ void RESpecTa::Load()
 void RESpecTa::LoadFile(QString fileName)
 {
     mod->setBlock(true);
-    //mod->deleteAll(); zbędne skoro wykonujemy subtaskRemoved
+    mod->deleteAll(); //zbędne skoro wykonujemy subtaskRemoved
 
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
@@ -445,6 +445,7 @@ void RESpecTa::LoadFile(QString fileName)
     emit refreshWidgets();
     mod->setChanged(false);
     mod->setBlock(false);
+    this->TabChanged(tabWidget->currentIndex());
 }
 
 QStringList RESpecTa::LoadStates(QString FileName)

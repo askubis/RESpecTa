@@ -4,20 +4,18 @@
 #include <QtGui>
 
 EditWidget::EditWidget(QWidget *parent, Model * newmod )
-    : QWidget(parent)
+    : QTabWidget(parent)
 {
+    this->setMaximumWidth(230);
+    this->setMinimumWidth(230);
+stateWidget = new StateWidget(this, newmod);
+    this->addTab(stateWidget,tr("State"));
+transWidget = new TransWidget(this, newmod);
+    this->addTab(transWidget, tr("Transition"));
+subtaskWidget = new SubtaskWidget(this, newmod);
+    this->addTab(subtaskWidget, tr("Subtasks"));
 
-    tabWidget = new QTabWidget(this);
-    tabWidget->setMaximumWidth(230);
-    tabWidget->setMinimumWidth(230);
-stateWidget = new StateWidget(tabWidget, newmod);
-    tabWidget->addTab(stateWidget,tr("State"));
-transWidget = new TransWidget(tabWidget, newmod);
-    tabWidget->addTab(transWidget, tr("Transition"));
-subtaskWidget = new SubtaskWidget(tabWidget, newmod);
-    tabWidget->addTab(subtaskWidget, tr("Subtasks"));
-
-    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
 
     connect(subtaskWidget, SIGNAL(added(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskAdded(QString)));
     connect(subtaskWidget, SIGNAL(changed(QString,QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskChanged(QString, QString)));
@@ -33,11 +31,6 @@ subtaskWidget = new SubtaskWidget(tabWidget, newmod);
 
     connect((RESpecTa *)this->parentWidget(), SIGNAL(refreshWidgets()), this, SLOT(refreshAllWidgets()));
     connect((RESpecTa *)this->parentWidget(), SIGNAL(SignalDeleted()), this, SLOT(SignalDeleted()));
-
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(tabWidget);
-    setLayout(mainLayout);
-
 }
 
 void EditWidget::refreshAllWidgets()
@@ -75,12 +68,12 @@ void EditWidget::itemSelected(QGraphicsItem *item)
 {
     if (item->type()==BaseState::Type)
     {
-        this->tabWidget->setCurrentWidget(stateWidget);
+        this->setCurrentWidget(stateWidget);
         stateWidget->StateSelected(qgraphicsitem_cast<BaseState *>(item));
     }
     else if (item->type()==Transition::Type)
     {
-        this->tabWidget->setCurrentWidget(transWidget);
+        this->setCurrentWidget(transWidget);
         transWidget->TransSelected(qgraphicsitem_cast<Transition *>(item));
     }
 

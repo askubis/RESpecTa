@@ -1,4 +1,3 @@
-
 #include <QtGui>
 
 #include "baseState.h"
@@ -7,10 +6,10 @@
 
 
 void BaseState::setName(QString newName)
- {
-    stateName=newName;
-    updateSize();
- }
+{
+   stateName=newName;
+   updateSize();
+}
 
 void BaseState::updateSize()
 {

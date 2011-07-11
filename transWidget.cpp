@@ -7,7 +7,7 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
 : QWidget(parent)
 {
     mod = newmod;
-   TransitionLayout = new QVBoxLayout;
+   QVBoxLayout *TransitionLayout = new QVBoxLayout;
 
    QLabel *transCondLabel = new QLabel(tr("Transition condition:"));
    conditionLineEdit = new QLineEdit;
