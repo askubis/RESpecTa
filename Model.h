@@ -82,6 +82,10 @@ public:
 
         //*************     GET     ***********//
     /**
+    *   Returns the State with given name. Not for use for _END_ or _STOP_ states.
+    */
+    BaseState * getState(QString name);
+    /**
     *   Returns the State with given name from the subtask with given subtaskName.
     */
     BaseState * getState(QString name, QString subtaskName);

@@ -34,6 +34,8 @@ public:
     Transition(BaseState *startItem, BaseState *endItem,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
+    ~Transition();
+
     int type() const
         { return Type; }
     QRectF boundingRect() const;
@@ -47,6 +49,8 @@ public:
     */
     void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
 
+    void removeSubtask(){subtask=NULL;}
+
     BaseState *startItem() const
         { return myStartItem; }
     BaseState *endItem() const
@@ -54,8 +58,17 @@ public:
 
     QString getCondition() {return condition;}
     void setCondition(QString newCondition) {condition=newCondition;}
-    QString getSubtask() {return subtask;}
-    void setSubtask(QString newSubtask) {subtask=newSubtask;}
+    BaseState * getSubtask() {return subtask;}
+
+    /**
+    *   Sets new subtask value (state pointer) and removes this transition from the list of pointers of the old state, and adds it to the new state.
+    */
+    void setSubtask(BaseState * newSubtask)
+    {
+        if(subtask)subtask->removeSubtaskTrans(this);
+        subtask=newSubtask;
+        if(subtask)subtask->addSubtaskTrans(this);
+    }
 
     /**
     *   Creates a string describing the coordinates attributes.
@@ -66,10 +79,10 @@ public:
         std::string toRet;
         toRet+="Condition: ";
         toRet+=condition.toStdString();
-        if(subtask!="")
+        if(subtask!=NULL)
         {
             toRet+="\nSubtask: ";
-            toRet+=subtask.toStdString();
+            toRet+=subtask->getName().toStdString();
         }
         return toRet;
     }
@@ -85,9 +98,9 @@ public:
         BaseState *tmpState;
         tmpState = endItem();
         QString tmpString;
-        if(subtask != "")
+        if(subtask!=NULL)
         {
-              tmpString = subtask;
+              tmpString = subtask->getName();
               tmpString.append(QString(">>")).append(QString(tmpState->getName()));
         }
         else
@@ -130,9 +143,9 @@ private:
     */
     QString condition;
     /**
-    *   (Optional) String representing subtask of the transition.
+    *   Pointer to the subtask starting point of the transition.
     */
-    QString subtask;
+    BaseState * subtask;
 };
 
 #endif

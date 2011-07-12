@@ -115,10 +115,10 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             }
             Transition *transition = new Transition(startItem, endItem);
             transition->setCondition(transitionAttributes.first);
+            transition->setSubtask(mod->getState(transitionAttributes.second));
             bool test = emit lineInserted(transition);
             if(test)
             {
-                transition->setSubtask(transitionAttributes.second);
                 startItem->addTransition(transition);
                 endItem->addTransition(transition);
                 transition->setZValue(-1000.0);

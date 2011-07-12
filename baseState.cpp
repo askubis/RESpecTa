@@ -85,6 +85,25 @@ BaseState::BaseState(BaseState& old)
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
+BaseState::~BaseState()
+{
+    delete nameTextItem;
+    foreach(Transition * tr, subtaskTransitions)
+    {
+        tr->removeSubtask();
+    }
+}
+
+void BaseState::addSubtaskTrans(Transition * tr)
+{
+    subtaskTransitions.push_back(tr);
+}
+
+void BaseState::removeSubtaskTrans(Transition * tr)
+{
+    subtaskTransitions.removeOne(tr);
+}
+
 void BaseState::setMenu( QMenu *contextMenu)
 {
     myContextMenu = contextMenu;

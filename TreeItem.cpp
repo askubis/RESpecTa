@@ -42,10 +42,10 @@ TreeItem * TreeTransItem::child(int i)
 {
     if (childItems.contains(i))
         return childItems[i];
-    if(tr->getSubtask().size()>0)
+    if(tr->getSubtask()->getName().size()>0)
     {
         TreeTextItem * tmp = new TreeTextItem(i, this);
-        tmp->setNameAttr("Subtask", tr->getSubtask());
+        tmp->setNameAttr("Subtask", tr->getSubtask()->getName());
         childItems[i]=tmp;
         return tmp;
     }

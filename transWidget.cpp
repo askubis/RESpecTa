@@ -81,7 +81,7 @@ void TransWidget::AcceptTrans()
     if (mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
     {
         edited->setCondition(conditionLineEdit->text());
-        edited->setSubtask(stateCombo->currentText());
+        edited->setSubtask(mod->getState(stateCombo->currentText()));
         OKButton->setDisabled(false);
         sourceNameLabel->setText(edited->startItem()->getName());
         destNameLabel->setText(edited->endItem()->getName());
@@ -145,11 +145,11 @@ void TransWidget::TransSelected(Transition * trans)
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(trans->getSubtask())==QString(""))
     {
-        trans->setSubtask("");
+        trans->setSubtask(NULL);
     }
     else
     {
         subtaskCombo->setCurrentIndex(subtaskCombo->findText(mod->getSubtaskName(trans->getSubtask())));
-        stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()));
+        stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()->getName()));
     }
 }

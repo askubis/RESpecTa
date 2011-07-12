@@ -90,7 +90,10 @@ public:
     BaseState();
     BaseState(BaseState& old);
 
-    virtual ~BaseState(){delete nameTextItem;}
+    virtual ~BaseState();
+
+    virtual void removeSubtaskTrans(Transition * tr);
+    virtual void addSubtaskTrans(Transition * tr);
 
     /**
     *   Sets context menu for the state.
@@ -196,6 +199,11 @@ protected:
     *   List of transitions of this state.
     */
     QList<Transition *> Transitions;
+
+    /**
+    *   List of transitions, which point to this item as to a subtask.
+    */
+    QList<Transition *> subtaskTransitions;
 
 private:
     /**

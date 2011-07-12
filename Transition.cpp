@@ -9,10 +9,16 @@ Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
+    subtask=NULL;
     myStartItem = startItem;
     myEndItem = endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+}
+
+Transition::~Transition()
+{
+    if(subtask) subtask->removeSubtaskTrans(this);
 }
 
 QRectF Transition::boundingRect() const

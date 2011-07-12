@@ -119,7 +119,7 @@ public:
     */
     void setTrans(Transition * _tr){Type = 1; tr = _tr;}
     QGraphicsItem * getGraphicsItem(){return tr;}
-    int childNodesCount(){if(tr->getSubtask().size()>0)return 1; else return 0;}
+    int childNodesCount(){if(tr->getSubtask()!=NULL)return 1; else return 0;}
     TreeItem *child(int i);
 
     QString Name(){return QString("->")+=tr->getCondition();}

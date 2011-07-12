@@ -626,7 +626,7 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
               {
                   if(reader->attributes().hasAttribute("condition")&&reader->attributes().hasAttribute("target"))
                   {
-                      QString subtask;
+                      QString subtask="";
                       QString condition = reader->attributes().value("condition").toString();
                       QString target = reader->attributes().value("target").toString();
                       QStringList strList = target.split(">>");
@@ -645,7 +645,10 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
                       {
                           Transition * trans = new Transition(sourceState, targetState);
                           trans->setCondition(condition);
-                          trans->setSubtask(subtask);
+                          if(subtask.size()!=0)
+                          {
+                            trans->setSubtask(mod->getState(subtask));
+                          }
 if(mod->checkTransCondAvailabe(trans, condition))
 {
     delete trans;
@@ -1208,6 +1211,18 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader, QString subName)
 
 void RESpecTa::TabChanged(int newIndex)
 {
+    foreach(QGraphicsItem * it, oldSelectedItems)
+    {
+        if(it->type()==BaseState::Type)
+        {
+            BaseState * tmp = (BaseState*)it;
+            tmp->setSelected(false);
+            tmp->setBrush(Qt::white);
+            tmp->update();
+        }
+    }
+    scenes[currentSubtask]->selectedItems().clear();
+
     setCurrentSubtask(tabWidget->tabText(newIndex));
 
     TreeModel * newModel = new TreeModel(this, mod, currentSubtask);

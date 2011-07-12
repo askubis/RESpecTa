@@ -247,6 +247,15 @@ QStringList Model::getTasksNameListsWithoutMain()
     return subtaskList;
 }
 
+BaseState * Model::getState(QString name)
+{
+    for(std::map<QString,MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    {
+        if(getState(name, (*it).first))return getState(name, (*it).first);
+    }
+    return NULL;
+}
+
 QStringList Model::getAllStateNames(QString sub)
 {
     MyGraphType * tmp = (*subtasks)[sub];
@@ -379,12 +388,12 @@ QStringList Model::checkIfOK()
         for(;startIt!=endIt;startIt++)
         {
             Transition * transition = boost::get(transitionMap, *startIt);
-            if(transition->getSubtask() == "")continue;//no use to check
+            if(transition->getSubtask() == NULL)continue;//no use to check
             bool exists= false;
             for(std::map<QString, MyGraphType *>::iterator it2 = subtasks->begin(); it2!=subtasks->end();it2++)
             {
                 if((*it2).first==mainName) continue;
-                if (!checkNameAvailable(transition->getSubtask(), (*it2).second))
+                if (!checkNameAvailable(transition->getSubtask()->getName(), (*it2).second))
                 {
                      exists = true;
                      break;
@@ -401,7 +410,7 @@ QStringList Model::checkIfOK()
                 srcState = boost::get(stateMap, u);
                 destState = boost::get(stateMap, v);
 
-                sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask().toStdString().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
+                sprintf(tab, "No state %s in any subtasks, and stated in a transition between %s, %s ", transition->getSubtask()->getName().toStdString().c_str(), srcState->getName().toStdString().c_str(), destState->getName().toStdString().c_str());
                 errors.push_back(QString(tab));
             }
         }
@@ -738,7 +747,7 @@ QStringList Model::getStateNames(MyGraphType G)
        {
          x = boost::get(stateMap, *first);
          QString tmp = x->getName();
-         items<< (tmp);
+         if(tmp.toLower()!="_stop_" && tmp.toLower()!="_end_")items<< (tmp);
          ++first;
        }
        return items;
