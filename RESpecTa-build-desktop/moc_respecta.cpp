@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'respecta.h'
 **
-** Created: Sun Jul 10 21:44:06 2011
+** Created: Tue Jul 12 19:21:57 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -57,9 +57,9 @@ static const uint qt_meta_data_RESpecTa[] = {
      520,    9,    9,    9, 0x08,
      535,    9,    9,    9, 0x08,
      548,   10,    9,    9, 0x08,
-     579,  573,    9,    9, 0x08,
-     606,   10,    9,    9, 0x08,
-     635,    9,    9,    9, 0x08,
+     580,  574,    9,    9, 0x08,
+     607,   10,    9,    9, 0x08,
+     636,    9,    9,    9, 0x08,
 
        0        // eod
 };
@@ -79,7 +79,7 @@ static const char qt_meta_stringdata_RESpecTa[] = {
     "Load()\0save()\0SaveAs()\0newState\0"
     "InsertState(BaseState*)\0deleteItem()\0"
     "bringToFront()\0sendToBack()\0"
-    "itemInserted(BaseState*)\0scale\0"
+    "stateInserted(BaseState*)\0scale\0"
     "sceneScaleChanged(QString)\0"
     "itemSelected(QGraphicsItem*)\0about()\0"
 };
@@ -138,7 +138,7 @@ int RESpecTa::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 20: deleteItem(); break;
         case 21: bringToFront(); break;
         case 22: sendToBack(); break;
-        case 23: itemInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
+        case 23: stateInserted((*reinterpret_cast< BaseState*(*)>(_a[1]))); break;
         case 24: sceneScaleChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 25: itemSelected((*reinterpret_cast< QGraphicsItem*(*)>(_a[1]))); break;
         case 26: about(); break;

@@ -174,9 +174,9 @@ private slots:
     */
     void sendToBack();
     /**
-    *   Adds item to the Model.
+    *   Adds a state to the Model.
     */
-    void itemInserted(BaseState *item);
+    void stateInserted(BaseState *item);
     /**
     *   Changes the view Scale of the scenes.
     */

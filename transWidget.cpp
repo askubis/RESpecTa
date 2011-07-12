@@ -89,7 +89,7 @@ void TransWidget::AcceptTrans()
     }
     else //that condition is already used for the source state
     {
-
+        emit reportError(QString("The condition you specified is already in use for the source state."));
     }
 }
 

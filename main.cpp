@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
     res->setGeometry(100, 100, 1200, 900);
     res->show();
     mod->setView(res);
-
-
     return a.exec();
 }
 

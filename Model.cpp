@@ -1,7 +1,4 @@
 #include "Model.h"
-//#include "GraphFunctions.cpp"
-
-
 
 Model::Model()
 {
@@ -33,14 +30,12 @@ myFile.remove(0,ind+1);
         }
     }
 
-
    if(myFile!=mainName)
    {
      subtasks->insert(std::make_pair(myFile, (*subtasks)[mainName]));
      subtasks->erase(mainName);
      mainName = myFile;
    }
-
 
     QStringList errors = checkIfOK();
     if(errors.size()==0)
@@ -133,7 +128,6 @@ bool Model::addState(BaseState * item, QString subtaskName)
     boost::add_vertex(item, (*(*subtasks)[subtaskName]));
     setChanged(true);
     return true;
-
 }
 
 bool Model::checkTransCondAvailabe(Transition * line,QString cond)
@@ -157,7 +151,6 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
                 }
             }
 
-            //boost::add_edge( (*(findVertex(tmp, line->startItem()))), (*(findVertex(tmp, line->endItem()))), line, (*tmp) );
             return true;
         }
     }
@@ -263,21 +256,13 @@ QStringList Model::getAllStateNames(QString sub)
 
 QStringList Model::checkIfOK()
 {
+    //TODO: optional //czy z kazdego stanu da sie dojsc do end/stop(?)
     QStringList errors;
     char tab[200];
-    //sprawdzic czy jest _init_ i _stop_ w głównym
-    //sprawdzić czy jest _end_ w subtaskach
-    //sprawdzić dla tranzycji czy subtask gdzieś istnieje
-    //kazy stan poza end i stop musi miec przynajmniej jeden stan wyjsciowy
-    //dla kazdego stanu tranzycje sa rozne, ostatnia ma warunek true
 
-    //sprawdzic czy nie są używane stany/roboty niezainicjalizowane
-    //sprawdzanie czy nie są używane niezainicjalizowane sensory
-    //sprawdzić czy wszystko zainicjalizowane jest używane
-
-    //TODO:
-
-    //czy z kazdego stanu da sie dojsc do end/stop(?)
+//sprawdzic czy nie są używane stany/roboty niezainicjalizowane
+//sprawdzanie czy nie są używane niezainicjalizowane sensory
+//sprawdzić czy wszystko zainicjalizowane jest używane
     bool SensorUsed[SENSORS_NUMBER], SensorInitialized[SENSORS_NUMBER];
     for(int i=0;i<SENSORS_NUMBER;i++)
     {
@@ -285,7 +270,6 @@ QStringList Model::checkIfOK()
         SensorUsed[sen]=false;
         SensorInitialized[sen]=false;
     }
-    //bool RobotUsed[ROBOTS_NUMBER], RobotInitialized[ROBOTS_NUMBER];
     bool genUsed[ROBOTS_NUMBER][GENERATORS_NUMBER], genInitialized[ROBOTS_NUMBER][GENERATORS_NUMBER];//wystarcza za roboty
     for(int i=0;i<ROBOTS_NUMBER;i++)
     {
@@ -360,12 +344,9 @@ QStringList Model::checkIfOK()
 
     }
 
-
-
-
-
     MyGraphType * tmp = (*subtasks)[mainName];
 
+//sprawdzic czy jest _init_ i _stop_ w głównym
     if( checkNameAvailable(QString("init"), tmp))
     {
         errors.push_back(QString( "No INIT state in main task!"));
@@ -374,6 +355,7 @@ QStringList Model::checkIfOK()
     {
         errors.push_back(QString( "No STOP state in main task!"));
     }
+//sprawdzić czy jest _end_ w subtaskach
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         if((*it).first==mainName) continue;
@@ -386,14 +368,12 @@ QStringList Model::checkIfOK()
         }
     }
 
+//sprawdzić dla tranzycji czy wyspecyfikowany subtask gdzieś istnieje
     typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
     boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
     typedef  property_map<MyGraphType, state_t>::type StateMap;
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
-        //std::cout<<(*it).first<<" "<<boost::num_vertices(*((*it).second))<<std::endl;
-        //std::cout<<(*it).first<<" "<<boost::num_edges(*((*it).second))<<std::endl;
-
         TransitionMap transitionMap = get(transition_t(), (*((*it).second)));
         tie(startIt, endIt)=edges(*((*it).second));
         for(;startIt!=endIt;startIt++)
@@ -418,8 +398,6 @@ QStringList Model::checkIfOK()
                 v = target((*startIt), (*((*it).second)));
                 BaseState * srcState;
                 BaseState * destState;
-                //srcState = (BaseState *)u;
-                //destState = (BaseState *)v;
                 srcState = boost::get(stateMap, u);
                 destState = boost::get(stateMap, v);
 
@@ -429,22 +407,20 @@ QStringList Model::checkIfOK()
         }
         tmp = (*it).second;
 
+//kazdy stan poza end i stop musi miec przynajmniej jeden stan wyjsciowy
         StateMap stateMap = get(state_t(), (*((*it).second)));
         boost::graph_traits<MyGraphType>::vertex_iterator first, last;
         tie(first, last) = vertices(*tmp);
         for(;first!=last;first++)
         {
             BaseState * state = boost::get(stateMap, *first);
-            //std::cout<<state<<std::endl;
-            //std::cout<<state->getName().toStdString()<<std::endl;
             if(state ==NULL)continue;
             boost::graph_traits<MyGraphType>::out_edge_iterator OEIt, OEIt2;
             tie(OEIt, OEIt2)=out_edges((*first), *tmp);
+
+//dla kazdego stanu tranzycje sa rozne, ostatnia ma warunek true
             if(OEIt==OEIt2)//no outgoing edges
             {
-                //QString tmpQString = state->getName();
-                //tmpQString.toLower();
-                //std::string namestring = state->getName().toStdString();
                 if(state->getName().toLower()!=QString( "_end_") && state->getName().toLower()!=QString( "_stop_"))
                 {
                     QString tmpQstring = state->getName().append(QString(  " state has no outgoing edges and should have at least 1"));
@@ -473,7 +449,6 @@ QStringList Model::checkIfOK()
     return errors;
 }
 
-
 bool Model::checkNameAvailable(QString given, MyGraphType * G)
 {
     boost::graph_traits<MyGraphType>::vertex_iterator first,last;
@@ -483,10 +458,9 @@ bool Model::checkNameAvailable(QString given, MyGraphType * G)
     StateMap stateMap = get(state_t(), *G);
 
     BaseState * x;
-
        while (first != last)
        {
-           QString GivenLow = given.toLower();
+         QString GivenLow = given.toLower();
          x = boost::get(stateMap, *first);
          QString tmp = x->getName().toLower();
          if (tmp==GivenLow) return false;
@@ -494,7 +468,6 @@ bool Model::checkNameAvailable(QString given, MyGraphType * G)
        }
        return true;
 }
-
 
 QString Model::getSubtaskName(QString StateName)
 {
@@ -508,6 +481,7 @@ QString Model::getSubtaskName(QString StateName)
     }
     return QString("");
 }
+
 QString Model::getSubtaskName(BaseState * toFindState)
 {
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
@@ -577,7 +551,6 @@ void Model::MoveTransitionUp(BaseState * st, int index)
     for(int i=2;i<transVect.size();i++)
         tryInsertTransition(transVect[i]);
     setChanged(true);
-
 }
 
 void Model::MoveTransitionDown(BaseState * st, int index)
@@ -680,9 +653,6 @@ boost::graph_traits<MyGraphType>::vertex_iterator Model::findVertex ( MyGraphTyp
     return last;
 }
 
-
-
-
 void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 {
     QString SubName = QString().fromStdString(FileName);
@@ -708,10 +678,6 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     BaseState *State;
     Transition * transition;
 
-
-
-
-
     writer->writeStartElement("TaskDescription");
     res->SaveGraphicsAttributes(writer, SubName);
 
@@ -727,9 +693,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
       sprintf(tab, "%lf", State->pos().y());
       writer->writeTextElement("PosY", QString(tab));
 
-
       State->Print(writer);
-
 
       boost::graph_traits<MyGraphType>::out_edge_iterator startIt, endIt;
       tie(startIt, endIt)=out_edges((*first), *G);
@@ -740,9 +704,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
       }
 
       writer->writeEndElement();
-
     }
-
 
     if(ifMain)
     {
@@ -760,10 +722,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     writer->writeEndElement();
     writer->writeEndDocument();
     file->close();
-
 }
-
-
 
 QStringList Model::getStateNames(MyGraphType G)
 {
@@ -773,15 +732,11 @@ QStringList Model::getStateNames(MyGraphType G)
 
     typedef  property_map<MyGraphType, state_t>::type StateMap;
     StateMap stateMap = get(state_t(), G);
-
-       //typedef  property_traits<StateMap>::value_type StateType;
-       //StateType st;
        BaseState * x;
 
        while (first != last)
        {
          x = boost::get(stateMap, *first);
-         //x = (BaseState *)st;
          QString tmp = x->getName();
          items<< (tmp);
          ++first;
@@ -809,7 +764,6 @@ void Model::setMainName(QString myFile)
     subtasks->erase(mainName);
     mainName = myFile;
     setChanged(true);
-
 }
 
 BaseState * Model::getState(QString name, QString subtaskName)
@@ -849,8 +803,6 @@ void Model::DeleteTask(QString Name)
             Transition * transition = boost::get(TransitionMap, *startIt);
             res->deleteTrans(transition);
             tie(startIt, endIt)=edges(*tmp);
-           // boost::remove_edge(startIt, *tmp);
-            //delete transition;
         }
 
         property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
@@ -861,8 +813,6 @@ void Model::DeleteTask(QString Name)
             BaseState * state = boost::get(StateMap, (*first));
             res->deleteState(state);
             tie(first, last) = vertices(*tmp);
-           // boost::remove_vertex(first, *tmp);
-            //delete state;
         }
 
         if(Name!=mainName)
@@ -888,8 +838,6 @@ void Model::deleteAll()
             Transition * transition = boost::get(TransitionMap, *startIt);
             res->deleteTrans(transition);
             tie(startIt, endIt)=edges(*tmp);
-           // boost::remove_edge(startIt, *tmp);
-            //delete transition;
         }
 
         property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
@@ -900,8 +848,6 @@ void Model::deleteAll()
             BaseState * state = boost::get(StateMap, (*first));
             res->deleteState(state);
             tie(first, last) = vertices(*tmp);
-           // boost::remove_vertex(first, *tmp);
-            //delete state;
         }
 
         delete tmp;
@@ -910,8 +856,6 @@ void Model::deleteAll()
     addSubtask(mainName);
     setChanged(true);
 }
-
-
 
 void Model::changeSubtaskName(QString oldName, QString NewName)
 {
@@ -928,9 +872,7 @@ void Model::changeSubtaskName(QString oldName, QString NewName)
     }
     (*subtasks)[NewName]= tmp;
     setChanged(true);
-
 }
-
 
 int Model::vertNum(QString Name)
 {

@@ -1,4 +1,3 @@
-
 #include <QtGui>
 #include <QLabel>
 
@@ -12,12 +11,10 @@
 #include <boost/graph/graphviz.hpp>
 
 #include "editWidget.h"
-const int InsertTextButton = 10;
 
 
 //TODO:
 //zmiana stanu kursora przy przesuwaniu/wstawianiu
-
 
 RESpecTa::RESpecTa(Model * newmod)
 {
@@ -34,7 +31,6 @@ RESpecTa::RESpecTa(Model * newmod)
     editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     connect(this, SIGNAL(itemSelectedSig(QGraphicsItem *)), editWidget, SLOT(itemSelected(QGraphicsItem *)));
-   // editWidget->setGeometry(QRectF(0, 0, 5000, 5000));
     editWidget->resize(10,800);
 
     currentSubtask="MAIN";
@@ -42,16 +38,14 @@ RESpecTa::RESpecTa(Model * newmod)
     scenes[currentSubtask] = new DiagramScene(itemMenu, this, mod);
     scenes[currentSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
 
-    connect(scenes[currentSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
+    connect(scenes[currentSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(stateInserted(BaseState*)));
     connect(scenes[currentSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[currentSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[currentSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
 
     connect(scenes[currentSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
-
     QWidget * mainWidget = new QWidget();
-
 
     tabWidget = new QTabWidget;
 
@@ -59,7 +53,6 @@ RESpecTa::RESpecTa(Model * newmod)
     QHBoxLayout *layout = new QHBoxLayout;
     layouts[currentSubtask]=new QHBoxLayout;
 
-    //layout->addWidget(toolBox);
     views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
     layouts[currentSubtask]->addWidget(views[currentSubtask]);
 
@@ -79,8 +72,6 @@ RESpecTa::RESpecTa(Model * newmod)
     listLayout->addWidget(findWidget);
     listWidget->setLayout(listLayout);
 
-
-
     TreeView = new myTreeView(listWidget);
     TreeView->setModel(treeModel);
     listLayout->addWidget(TreeView);
@@ -95,23 +86,16 @@ RESpecTa::RESpecTa(Model * newmod)
 
     widgets[currentSubtask] = new QWidget;
     widgets[currentSubtask]->setLayout(layouts[currentSubtask]);
-    //layouts[currentSubtask]
 
     tabWidget->addTab(widgets[currentSubtask], "MAIN");
     tabWidget->setMovable(true);
-
 
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabChanged(int)));
     setCentralWidget(mainWidget);
     setWindowTitle(tr("RESpecTa"));
     setUnifiedTitleAndToolBarOnMac(true);
 
-    currentSubtask="MAIN";
-
-
-
-
-
+    currentSubtask=mod->getMainName();
 }
 
 
@@ -157,8 +141,6 @@ void RESpecTa::createEditMenu()
     connect(GoToState, SIGNAL(triggered()),
         this, SLOT(GoToState()));
 
-
-
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(deleteAction);
     editMenu->addSeparator();
@@ -199,19 +181,16 @@ void RESpecTa::selectionchanged()
             }
         }
     }
-
-
     oldSelectedItems=newItems;
 }
 
 
 void RESpecTa::SubtaskAdded(QString newSubtask)
 {
-
     scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
     scenes[newSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
 
-    connect(scenes[newSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(itemInserted(BaseState*)));
+    connect(scenes[newSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(stateInserted(BaseState*)));
     connect(scenes[newSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
@@ -222,14 +201,12 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
     layouts[newSubtask]->addWidget(views[newSubtask]);
 
-
     widgets[newSubtask] = new QWidget;
     widgets[newSubtask]->setLayout(layouts[newSubtask]);
 
     tabWidget->addTab(widgets[newSubtask], newSubtask);
 
     mod->addSubtask(newSubtask);
-
     emit refreshWidgets();
 }
 
@@ -254,7 +231,6 @@ void RESpecTa::SubtaskRemoved(QString oldSubtask)
         delete (*sceneIt).second;
         scenes.erase(sceneIt);
 
-
         int i;
         for(i = 0;i<tabWidget->count();i++)
         {
@@ -263,15 +239,15 @@ void RESpecTa::SubtaskRemoved(QString oldSubtask)
                 break;
             }
         }
-
         tabWidget->removeTab(i);
     }
-
     emit refreshWidgets();
 }
 
 void RESpecTa::SubtaskChanged(QString oldName, QString newName)
 {
+    if(oldName==newName) return;
+    mod->changeSubtaskName(oldName, newName);
     if(oldName==currentSubtask)currentSubtask=newName;
     std::map<QString,DiagramScene *>::iterator sceneIt = scenes.find(oldName);
     scenes[newName]=(*sceneIt).second;
@@ -301,10 +277,9 @@ void RESpecTa::SubtaskChanged(QString oldName, QString newName)
     tabWidget->removeTab(i);
 
     tabWidget->addTab(widgets[newName], newName);
-
-
     emit refreshWidgets();
 }
+
 void RESpecTa::createFileMenu()
 {
     exitAction = new QAction(tr("&Quit"), this);
@@ -326,7 +301,6 @@ void RESpecTa::createFileMenu()
     loadAction->setShortcuts(QKeySequence::Open);
     loadAction->setStatusTip(tr("Load a file"));
     connect(loadAction, SIGNAL(triggered()), this, SLOT(Load()));
-
 
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAction);
@@ -382,13 +356,14 @@ void RESpecTa::Load()
 void RESpecTa::LoadFile(QString fileName)
 {
     mod->setBlock(true);
-    mod->deleteAll(); //zbędne skoro wykonujemy subtaskRemoved
 
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
         SubtaskRemoved((*it).first);
-        it = scenes.begin();
+        it = scenes.begin();//usuwa wszystkie sceny z widoku
     }
+
+    mod->deleteAll();//usuwa wszystko z modelu
 
     QString subName = fileName;
     subName.chop(4);//delete .xml
@@ -452,7 +427,6 @@ QStringList RESpecTa::LoadStates(QString FileName)
 {
 QStringList errors;
     QString filename = QString(SaveFolder)+FileName;
-    //QString subName = filename;
     QString GraphName = FileName;
     GraphName.chop(4);
     if(scenes.find(GraphName)==scenes.end())
@@ -465,9 +439,6 @@ QStringList errors;
     while (!reader->atEnd())
     {
           reader->readNextStartElement();
-std::string startEnd = "START";
-if(reader->isEndElement())startEnd="END";
-
 
           if(reader->name().toString()=="Graphics"&&reader->isStartElement())
           {
@@ -583,19 +554,18 @@ else
 {
     state->setType(type);
 }
-
                     state->setName(stateName);
                     errors+= state->LoadFromXML(reader);
                     scenes[GraphName]->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
                     mod->addState(state, GraphName);
                   }
-                  else
+                  else//state==NULL
                   {
 
                   }
               }
-              else
+              else//no id or type
               {
 
                   char linenum[30];
@@ -608,19 +578,14 @@ else
           else if (reader->name()=="include"&&reader->isStartElement())
           {
                    QString subtaskName = reader->attributes().value("href").toString();
-        if(subtaskName.contains("/"))//TODO: a co jeśli jest subtask w innym folderze?
+        if(subtaskName.contains("/"))
         {
             int ind = subtaskName.lastIndexOf('/');
             subtaskName.remove(0,ind+1);//delete beginning till the last /
         }
-                   //subtaskName.chop(4);
-                   //mod->addSubtask(subtaskName);
-                   //subtaskName.append(".xml");
                    errors+=LoadStates(subtaskName);
           }
     }
-    //errors+=reader->errorString();
-    //std::cout<<"error "<<reader->lineNumber()<<std::endl;
     file->close();
     return errors;
 }
@@ -734,10 +699,8 @@ if(mod->checkTransCondAvailabe(trans, condition))
     return errors;
 }
 
-
 void RESpecTa::save()
 {
-    //get path
     if(SaveName.isEmpty())
     {
         SaveAs();
@@ -806,8 +769,8 @@ bool RESpecTa::SaveAs()
 void RESpecTa::createHelpMenu()
 {
 
-    aboutAction = new QAction(tr("A&bout"), this);
-    aboutAction->setShortcut(tr("Ctrl+B"));
+    aboutAction = new QAction(tr("&About"), this);
+    aboutAction->setShortcut(tr("Ctrl+A"));
     connect(aboutAction, SIGNAL(triggered()),
             this, SLOT(about()));
 
@@ -911,7 +874,7 @@ void RESpecTa::sendToBack()
     }
 }
 
-void RESpecTa::itemInserted(BaseState *item)
+void RESpecTa::stateInserted(BaseState *item)
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
 
@@ -946,15 +909,14 @@ void RESpecTa::itemInserted(BaseState *item)
 
 bool RESpecTa::lineInserted(Transition *line)
 {
-
     bool test = mod->tryInsertTransition(line);
-    if(test)
+    if(test)//success
     {
         emit itemSelectedSig(line);
-    }
-    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
-    {
-        (*it).second->setMode(DiagramScene::MoveItem);
+        for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode(DiagramScene::MoveItem);
+        }
     }
     return test;
 }
@@ -978,7 +940,7 @@ void RESpecTa::itemSelected(QGraphicsItem *item)
         BaseState * state = qgraphicsitem_cast<BaseState *>(item);
         if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
         {
-            emit SignalDeleted();
+            emit SignalDeleted();//no item was selected to change; stop state cannot be edited.
         }
         else
         {
@@ -1007,8 +969,6 @@ void RESpecTa::createToolbars()
 
     editToolBar->addAction(insertEndStateAction);
 
-
-
     QToolButton *pointerButton = new QToolButton;
     pointerButton->setCheckable(true);
     pointerButton->setChecked(true);
@@ -1027,20 +987,19 @@ void RESpecTa::createToolbars()
 
 void RESpecTa::InsertState(BaseState * newState)
 {
-
     bool not_abort = mod->checkNameAvailable(newState->getName());
 
-    if(!not_abort)
-    {
-        reportError(QString("State with that name already exists"));
-    }
-    else
+    if(not_abort)
     {
         for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
         {
             (*it).second->setMode(DiagramScene::InsertItem);
             (*it).second->setToInsertState(newState);
         }
+    }
+    else
+    {
+        reportError(QString("State with that name already exists"));
     }
 }
 
@@ -1067,6 +1026,7 @@ void RESpecTa::addEndState()
     scenes[index]->setMode(DiagramScene::InsertItem);
     scenes[index]->setToInsertState(tmp);
 }
+
 void RESpecTa::EditTransitionsOfState()
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
@@ -1075,7 +1035,6 @@ void RESpecTa::EditTransitionsOfState()
     {
         BaseState * state = qgraphicsitem_cast<BaseState *>(scenes[index]->selectedItems().first());
         transDial->openForAState(state);
-        //transDial->setModal(true);
         transDial->exec();
     }
     return;
@@ -1106,7 +1065,6 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
     }
 }
 
-
 void RESpecTa::closeEvent(QCloseEvent *event)
 {
     if(mod->wasChanged())
@@ -1134,12 +1092,8 @@ void RESpecTa::closeEvent(QCloseEvent *event)
     }
 }
 
-
-
-
 void RESpecTa::SaveGraphicsAttributes(QXmlStreamWriter * writer, QString SubName)
 {
-
     writer->writeStartElement("Graphics");
     char tab[20];
     QString scale = sceneScaleCombo->currentText();
@@ -1251,7 +1205,6 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader, QString subName)
     }
     return errors;
 }
-
 
 void RESpecTa::TabChanged(int newIndex)
 {

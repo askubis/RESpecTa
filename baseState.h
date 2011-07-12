@@ -120,7 +120,7 @@ public:
     /**
     *   Returns the image representing the state.
     */
-    QPixmap image() const;//TODO here change colour when selected
+    QPixmap image() const;
     int type() const
         { return Type;}
 

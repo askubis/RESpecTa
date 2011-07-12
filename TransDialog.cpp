@@ -22,8 +22,6 @@ TransDialog::TransDialog(QWidget * parent, Model * newmod):QDialog(parent)
     mainLayout->addWidget(transSubList, 1,2,7,1);
     connect(transSubList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
 
-
-
     QPushButton * UpButton = new QPushButton("Up");
     connect(UpButton, SIGNAL(clicked()), this, SLOT(UpPressed()));
     QPushButton * DownButton = new QPushButton("Down");

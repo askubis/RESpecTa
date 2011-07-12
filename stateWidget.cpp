@@ -25,8 +25,6 @@ this->setMaximumWidth(230);
     InsertButton->setDisabled(true);
     bottomLayout->addWidget(InsertButton);
 
-
-    //creating Default EditState options
     StateLayout = new QVBoxLayout;
 
     QLabel * nameLabel = new QLabel(tr("State Name:"));

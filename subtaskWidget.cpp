@@ -52,7 +52,6 @@ void SubtaskWidget::ChangeClicked()
     QStringList list = model->getTasksNameLists();
     if(list[subtaskList->currentIndex().row()]!= nameEdit->text())
     {
-        model->changeSubtaskName(list[subtaskList->currentIndex().row()], nameEdit->text());
         emit changed(list[subtaskList->currentIndex().row()], nameEdit->text());
         refreshData();
     }
@@ -67,7 +66,6 @@ void SubtaskWidget::AddClicked()
     }
     else
     {
-        model->addSubtask(nameEdit->text());
         emit added(nameEdit->text());
         refreshData();
     }
@@ -76,7 +74,6 @@ void SubtaskWidget::AddClicked()
 void SubtaskWidget::DeleteClicked()
 {
     QStringList list = model->getTasksNameLists();
-    model->DeleteTask(list[subtaskList->currentIndex().row()]);
     emit removed(list[subtaskList->currentIndex().row()]);
     refreshData();
 }
