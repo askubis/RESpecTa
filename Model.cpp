@@ -291,17 +291,20 @@ QStringList Model::checkIfOK()
         }
     }
     sysInitState * tmpState = (sysInitState *)getState("INIT", mainName);
-    foreach(robotInit init, tmpState->getInits())
+    if(tmpState!=NULL)
     {
-        //RobotInitialized[init.robot]=true;
-        for(std::vector < std::pair<GeneratorType, int> >::iterator it = init.init_values.begin();it!=init.init_values.end();it++)
+        foreach(robotInit init, tmpState->getInits())
         {
-            genInitialized[init.robot][(*it).first]=true;
+            //RobotInitialized[init.robot]=true;
+            for(std::vector < std::pair<GeneratorType, int> >::iterator it = init.init_values.begin();it!=init.init_values.end();it++)
+            {
+                genInitialized[init.robot][(*it).first]=true;
+            }
         }
-    }
-    foreach(Sensor sen, tmpState->getSensors())
-    {
-        SensorInitialized[sen]=true;
+        foreach(Sensor sen, tmpState->getSensors())
+        {
+            SensorInitialized[sen]=true;
+        }
     }
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {

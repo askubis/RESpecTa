@@ -1221,7 +1221,7 @@ void RESpecTa::TabChanged(int newIndex)
             tmp->update();
         }
     }
-    scenes[currentSubtask]->selectedItems().clear();
+    //scenes[currentSubtask]->selectedItems().clear();//TODO
 
     setCurrentSubtask(tabWidget->tabText(newIndex));
 

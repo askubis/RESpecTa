@@ -245,9 +245,7 @@ public:
     QString Name(){return QString("Pose");}
     QString Attr()
     {
-        char tab[5];
-        sprintf(tab, "%d", rowNumber);
-        return QString(tab);
+        return QString();
     }
 private:
     /**

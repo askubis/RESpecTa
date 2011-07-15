@@ -129,7 +129,7 @@ TreeItem * TreeInitItem::child(int i)
     if (childItems.contains(i))
         return childItems[i];
     int index = i;
-    for(int j=0;j<init.init_values.size();j++)
+    for(unsigned int j=0;j<init.init_values.size();j++)
     {
         if(index==0)
         {
@@ -158,17 +158,17 @@ TreeItem *TreePoseItem::child(int i)
     if(i==0)
     {
         a = pos->getA();
-        tmpName = "Accelerations";
+        tmpName = QString("Accelerations");
     }
     else if(i==1)
     {
         a = pos->getV();
-        tmpName = "Velocities";
+        tmpName = QString("Velocities");
     }
     else if(i==2)
     {
         a = pos->getC();
-        tmpName = "Coordinates";
+        tmpName = QString("Coordinates");
     }
     else
     {
@@ -176,10 +176,10 @@ TreeItem *TreePoseItem::child(int i)
     }
     QString value;
     TreeTextItem * tmp = new TreeTextItem(i, this);
-    for(int j = 0;j<a.size();j++)
+    for(unsigned int j = 0;j<a.size();j++)
     {
         char table[10];
-        sprintf(table,"%d ", a[j]);
+        sprintf(table,"%lf ", a[j]);
         value.append(table);
     }
     tmp->setNameAttr(tmpName, value);
