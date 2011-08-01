@@ -156,6 +156,7 @@ void StateWidget::InsertState()
     OKButton->setDisabled(true);
     if ( !StateNameOK())
     {
+        emit reportError(QString("this statename is already in use"));
         return;
     }
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
@@ -197,7 +198,7 @@ bool StateWidget::StateNameOK()
     }
     if(stateNameEdit->text().toLower()=="_end_"||stateNameEdit->text().toLower()=="_stop_")
     {
-        emit reportError(QString("_STOP_ and _END_ names are restricted(can be only used\nas ending states from the upper panel"));
+        emit reportError(QString("_STOP_ and _END_ names are restricted(can be only used as ending states from the upper panel"));
         return false;
     }
     if(stateNameEdit->text().toLower().contains("<<"))

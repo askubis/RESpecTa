@@ -266,7 +266,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
 void emptyGenForSetWidget::addFirst()
 {
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the first set: ").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
     else
     {        FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]));    }
 }
@@ -276,13 +276,13 @@ void emptyGenForSetWidget::removeFirst()
     if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is not in the first set: ").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
 }
 
 void emptyGenForSetWidget::addSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString("this robot is already in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the first set: ").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
     else
     {        SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]));    }
 }
@@ -292,7 +292,7 @@ void emptyGenForSetWidget::removeSecond()
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString("this robot is not in the first set:\n").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is not in the first set: ").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
 }
 
 BaseState * emptyGenForSetWidget::getStateObject()
@@ -315,7 +315,7 @@ BaseState * emptyGenForSetWidget::getStateObject()
     this->State->setSet(tmp);
     if(tmp.first.size()==0||tmp.second.size()==0)
     {
-        reportError(QString("None of the sets can be empty\nin EmptyGenForSet state"));
+        reportError(QString("None of the sets can be empty in EmptyGenForSet state"));
         return NULL;
     }
     return new EmptyGenForSetState(*State);
@@ -451,7 +451,7 @@ stopGenWidget::stopGenWidget(QWidget * parent, Model * newmod )
 void stopGenWidget::add()
 {
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        emit reportError(QString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the set: ").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
     else
     {        RobotList->addItem(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]));    }
 }
@@ -461,7 +461,7 @@ void stopGenWidget::remove()
     if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {        emit reportError(QString("this robot is already in the set:\n").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
+    {        emit reportError(QString("this robot is already in the set: ").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
 }
 
 BaseState * stopGenWidget::getStateObject()
@@ -479,7 +479,7 @@ BaseState * stopGenWidget::getStateObject()
     this->State->setSet(tmp);
     if(tmp.first.size()==0)
     {
-        reportError(QString("The set cannot be empty\nin StopGen state"));
+        reportError(QString("The set cannot be empty in StopGen state"));
         return NULL;
     }
     return new StopGenState(*State);
@@ -924,6 +924,6 @@ void MPDialog::remove()
     if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
     else
-    {   emit reportError(QString("This sensor is not initialized\nyou cannot remove it: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]))); }
+    {   emit reportError(QString("This sensor is not initialized you cannot remove it: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]))); }
 }
 

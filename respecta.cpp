@@ -50,7 +50,7 @@ RESpecTa::RESpecTa(Model * newmod)
     tabWidget = new QTabWidget;
 
 
-    QHBoxLayout *layout = new QHBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layouts[currentSubtask]=new QHBoxLayout;
 
     views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
@@ -77,11 +77,15 @@ RESpecTa::RESpecTa(Model * newmod)
     listLayout->addWidget(TreeView);
 
     listWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
-    layout->addWidget(listWidget);
+    layout->addWidget(listWidget, 0, 0);
     tabWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    layout->addWidget(tabWidget);
+    layout->addWidget(tabWidget, 0, 1);
     editWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
-    layout->addWidget(editWidget);
+    layout->addWidget(editWidget, 0, 2);
+    terminal = new QListWidget(this);
+    terminal->setMaximumHeight(200);
+    layout->addWidget(terminal, 1, 0, 1, 3);
+
     mainWidget->setLayout(layout);
 
     widgets[currentSubtask] = new QWidget;
@@ -96,8 +100,19 @@ RESpecTa::RESpecTa(Model * newmod)
     setUnifiedTitleAndToolBarOnMac(true);
 
     currentSubtask=mod->getMainName();
-}
 
+    QDateTime dateTime= QDateTime::currentDateTime();
+
+    QString logPath = "../logs/";
+    logPath.append(currentSubtask);
+    logPath.append("_");
+    logPath.append(dateTime.toString());
+    logPath.append(".log");
+    logFile.setFileName(logPath);
+    if(!logFile.open(QIODevice::WriteOnly))
+        qDebug()<<"Error opening the logfile";
+    logStreamToWrite.setDevice(&logFile);
+}
 
 void RESpecTa::createEditMenu()
 {
@@ -383,33 +398,9 @@ void RESpecTa::LoadFile(QString fileName)
 
     errors+=mod->checkIfOK();
 
-    if(errors.size()==0)
+    foreach(QString x, errors)
     {
-
-    }
-    else if (errors.size()<=5)
-    {
-        foreach(QString x, errors)
-        {
-           reportError(x);
-        }
-    }
-    else
-    {
-        char tab[200];
-        sprintf(tab, "There were %d errors while loading,\nto see them please see the log:\n%s", errors.size(), logPath.toStdString().c_str());
-        reportError(QString(tab));
-        QFile file(logPath.toStdString().c_str());
-        if(!file.open(QIODevice::WriteOnly))
-            qDebug()<<"Error opening the file";
-        QTextStream streamToWrite(&file);
-        foreach(QString x, errors)
-        {
-            const char* test = x.toStdString().c_str();
-            streamToWrite<<test;
-            streamToWrite<<"\n";
-        }        
-        file.close();
+       reportError(x);
     }
 
     if(mod->vertNum(oldMain)==0)
@@ -745,7 +736,7 @@ bool RESpecTa::SaveAs()
             {
                 QMessageBox::StandardButton reply;
                 reply = QMessageBox::question(this, tr("Warning"),
-                                                QString("The file exists,\nare you sure want\nto overwrite it"),
+                                                QString("The file exists, are you sure want to overwrite it"),
                                                 QMessageBox::Yes | QMessageBox::Abort);
                 if(reply==QMessageBox::Abort)
                 {
@@ -1017,7 +1008,16 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 
 void RESpecTa::reportError(QString msgString)
 {
-    QMessageBox::information(this, QString("Error"), msgString);
+    logStreamToWrite<<msgString;
+    logStreamToWrite<<"\n";
+    logStreamToWrite.flush();
+
+    //QMessageBox::information(this, QString("Error"), msgString);
+    QListWidgetItem *newItem = new QListWidgetItem();
+    newItem->setTextColor(Qt::red);
+    newItem->setText(QString("Error: ").append(msgString));
+    terminal->addItem(newItem);
+    terminal->scrollToBottom();
 }
 
 void RESpecTa::addEndState()
@@ -1045,18 +1045,18 @@ void RESpecTa::EditTransitionsOfState()
 
 void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
 {
+    QString index = mod->getSubtaskName(oldState);
     bool check = mod->ReplaceState(oldState,newState);
     if(check)
     {
-        QString index = mod->getSubtaskName(oldState);
         QList<Transition *> TranList = oldState->getTransitions();
+        newState->setPos(oldState->pos().x(), oldState->pos().y());
         foreach(Transition * T, TranList)
         {
             if(T->startItem() == oldState)T->setStartItem(newState);
             if(T->endItem() == oldState)T->setEndItem(newState);
             newState->addTransition(T);
         }
-        newState->setPos(oldState->pos().x(), oldState->pos().y());
         scenes[index]->removeItem(oldState);
         scenes[index]->setItemParams(newState);
         newState->setToolTip(QString().fromStdString(newState->Print()));

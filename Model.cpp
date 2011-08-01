@@ -24,7 +24,7 @@ myFile.remove(0,ind+1);
 
         if(myFile==(*it).first)
         {
-            res->getError(QString("a subtask exists with a name you wanted to\nsave your graph with, choose other filename"));
+            res->getError(QString("a subtask exists with a name you wanted to save your graph with, choose other filename"));
             res->clearSaveName();
             return;
         }
@@ -38,35 +38,12 @@ myFile.remove(0,ind+1);
    }
 
     QStringList errors = checkIfOK();
-    if(errors.size()==0)
-    {
 
-    }
-    else if (errors.size()<=5)
+    foreach(QString x, errors)
     {
-        foreach(QString x, errors)
-        {
-            res->getError(x);
-        }
+        res->getError(x);
     }
-    else
-    {
-        char tab[200];
-        sprintf(tab, "There were %d errors while saving,\nto see them please see the log:\n%s", errors.size(), logPath.toStdString().c_str());
-        res->getError(QString(tab));
-        QFile file(logPath.toStdString().c_str());
-        if(!file.open(QIODevice::WriteOnly))
-            qDebug()<<"Error opening the file";
-        QTextStream streamToWrite(&file);
-        foreach(QString x, errors)
-        {
-            const char* test = x.toStdString().c_str();
-            streamToWrite<<test;
-            streamToWrite<<"\n";
-        }
-        file.close();
 
-    }
 
     for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
     {
@@ -116,7 +93,7 @@ bool Model::addState(BaseState * item, QString subtaskName)
 {
     if(item ==NULL)
     {
-        res->getError(QString("A problem has been detected, code:\ntrying to insert NULL value").append(item->getName()));
+        res->getError(QString("A problem has been detected, code: trying to insert NULL value").append(item->getName()));
         return false;
     }
     if(!checkNameAvailable(item->getName()))
@@ -146,7 +123,7 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
                 Transition * transition = boost::get(transitionMap, *OEIt);
                 if(transition!=line && transition->getCondition()==cond)
                 {
-                    res->getError(QString("There already exists a transition\nwith this condition from this state"));
+                    res->getError(QString("There already exists a transition with this condition from this state"));
                     return false;
                 }
             }
@@ -170,7 +147,7 @@ bool Model::checkTransCondAvailabe(BaseState * source,QString cond)
                 Transition * transition = boost::get(transitionMap, *OEIt);
                 if(transition->getCondition()==cond)
                 {
-                    res->getError(QString("There already exists a transition\nwith this condition from this state"));
+                    res->getError(QString("There already exists a transition with this condition from this state"));
                     return false;
                 }
             }
@@ -194,7 +171,7 @@ bool Model::tryInsertTransition(Transition * line)
                 if(transition->getCondition()==line->getCondition())
                 {
 
-                    res->getError(QString("There already exists a transition\nwith this condition from this state"));
+                    res->getError(QString("There already exists a transition with this condition from this state"));
                     return false;
                 }
             }
@@ -204,7 +181,7 @@ bool Model::tryInsertTransition(Transition * line)
             return true;
         }
     }
-    res->getError(QString("Cannot create a transition between\nstates in different tasks"));
+    res->getError(QString("Cannot create a transition between states in different tasks"));
     return false;
 }
 
@@ -452,7 +429,7 @@ QStringList Model::checkIfOK()
                 }
                 if(!mark)
                 {
-                    QString tmpQstring = state->getName().append(QString( " state should have last\nTransition with condition true"));
+                    QString tmpQstring = state->getName().append(QString( " state should have last Transition with condition true"));
                     errors.push_back(tmpQstring);
                 }
             }
@@ -510,7 +487,7 @@ bool Model::ReplaceState(BaseState * oldState, BaseState * newState)
     QString subtaskName = getSubtaskName(oldState);
     if(subtaskName==QString(""))
     {
-        res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        res->getError(QString("The state you were editing has been deleted, please choose the insert option to insert the state"));
         return false;
     }
     MyGraphType * tmpGraph = (*subtasks)[subtaskName];
@@ -531,7 +508,7 @@ void Model::MoveTransitionUp(BaseState * st, int index)
     QString subtaskName = getSubtaskName(st->getName());
     if(subtaskName==QString(""))
     {
-        res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        res->getError(QString("The state you were editing has been deleted, please choose the insert option to insert the state"));
         return;
     }
 
@@ -570,7 +547,7 @@ void Model::MoveTransitionDown(BaseState * st, int index)
     QString subtaskName = getSubtaskName(st->getName());
     if(subtaskName==QString(""))
     {
-        res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        res->getError(QString("The state you were editing has been deleted, please choose the insert option to insert the state"));
         return;
     }
     MyGraphType * tmpGraph = (*subtasks)[subtaskName];
@@ -608,7 +585,7 @@ std::vector<Transition *> Model::getTransitions(BaseState * st)
     QString subtaskName = getSubtaskName(st->getName());
     if(subtaskName==QString(""))
     {
-        res->getError(QString("The state you were editing has been deleted,\nplease choose the insert option to insert the state"));
+        res->getError(QString("The state you were editing has been deleted, please choose the insert option to insert the state"));
         return tranVect;
     }
     MyGraphType * tmpGraph = (*subtasks)[subtaskName];

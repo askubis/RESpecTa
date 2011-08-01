@@ -37,6 +37,11 @@ class RESpecTa : public QMainWindow
 public:
    RESpecTa(){}
    RESpecTa(Model * newmod );
+   ~RESpecTa()
+   {
+       logStreamToWrite.flush();
+       logFile.close();
+   }
 
    /**
    *   Function refreshing the TreeView, called when change in the model has occured.
@@ -370,6 +375,21 @@ private:
     *   List of items, which were selected before.
     */
     QList<QGraphicsItem *> oldSelectedItems;
+
+    /**
+    *   A Widget which contains messages to a user.
+    */
+    QListWidget * terminal;
+
+    /**
+    *   Stream to the file to which logs are saved.
+    */
+    QTextStream logStreamToWrite;
+
+    /**
+    *   File, to which errors are saved.
+    */
+    QFile logFile;
 };
 
 
