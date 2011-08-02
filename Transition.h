@@ -16,13 +16,6 @@ class QGraphicsSceneMouseEvent;
 class QPainterPath;
 QT_END_NAMESPACE
 
-//TODO:
-//change subtask from QString to BaseState *
-
-//TODO:
-//change checkifOK in Model class to check subtask differently.
-
-
 /**
 *   Class representing a transition between the tasks, and it's graphic representation.
 */

@@ -357,7 +357,7 @@ QStringList Model::checkIfOK()
         }
     }
 
-//sprawdzić dla tranzycji czy wyspecyfikowany subtask gdzieś istnieje
+//sprawdzić dla tranzycji czy wyspecyfikowany subtask gdzieś istnieje (powinno być już niepotrzebne)
     typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
     boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
     typedef  property_map<MyGraphType, state_t>::type StateMap;
