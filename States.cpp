@@ -1238,10 +1238,10 @@ std::string sysInitState::Print()
         x+="\nParameters: ";
         x+=this->parameters.toStdString();
     }
-    if(transmitter<TRANSMITTERS_NUMBER||sensors.size()>0)
+    if(isProper(transmitter)||sensors.size()>0)
     {
         x+="\nMP";
-        if(transmitter<TRANSMITTERS_NUMBER)
+        if(isProper(transmitter))
         {
             x+="\ntransmitter: ";
             x+=TRANSMITTER_TABLE[transmitter];
