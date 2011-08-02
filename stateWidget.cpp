@@ -156,7 +156,6 @@ void StateWidget::InsertState()
     OKButton->setDisabled(true);
     if ( !StateNameOK())
     {
-        emit reportError(QString("this statename is already in use"));
         return;
     }
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
@@ -209,6 +208,11 @@ bool StateWidget::StateNameOK()
     if(stateNameEdit->text().toLower().contains("/"))
     {
         emit reportError(QString("The StateName cannot contain \"/\""));
+        return false;
+    }
+    if(mod->getState(stateNameEdit->text()))
+    {
+        emit reportError(QString("The StateName is already in use"));
         return false;
     }
     return true;
