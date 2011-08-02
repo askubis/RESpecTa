@@ -191,7 +191,7 @@ void StateWidget::StateSelected(BaseState * state)
 
 bool StateWidget::StateNameOK()
 {
-    if (stateNameEdit->text().toLower()=="_init_" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
+    if (stateNameEdit->text().toLower()=="init" && stateTypeCombo->currentIndex()!=SYSTEM_INITIALIZATION)
     {
         emit reportError(QString("INIT name is dedicated only to SYSTEM_INITIALIZATION state"));
         return false;
