@@ -33,7 +33,6 @@ HEADERS  += respecta.h \
     globals.h \
     Coordinates.h \
     Pose.h \
-    sysInitNode.h \
     RobotSet.h \
     States.h \
     editWidget.h \
