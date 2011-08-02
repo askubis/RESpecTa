@@ -7,6 +7,9 @@ class TransDialog;
 #include "baseState.h"
 #include "Model.h"
 
+QT_BEGIN_NAMESPACE
+class QDialog;
+QT_END_NAMESPACE
 
 /**
 *   DialogBox allowing to change order of transitions for a state.

@@ -12,7 +12,6 @@ class Model;
 */
 class Model
 {
-    Q_OBJECT
 public:
     Model();
 
@@ -50,7 +49,8 @@ public:
     /**
     *   Adds a state to a subtask.
     *   @param item State, which will be inserted.
-    *   @param subtaskName Name of subtask, to which the state will be inserted.
+    *   @param subtas
+    Q_OBJECTkName Name of subtask, to which the state will be inserted.
     *   @returns True if operation successful.
     */
     bool addState(BaseState * item, QString subtaskName);

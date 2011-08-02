@@ -34,6 +34,7 @@ class QGridLayout;
 class QVBoxLayout;
 class QListWidget;
 class QListItemWidget;
+class QWidget;
 QT_END_NAMESPACE
 
 /**

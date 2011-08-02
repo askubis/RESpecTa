@@ -1,3 +1,9 @@
+# Project name
+project(RESpecTa)
+
+# CMake required version must be >= 2.6
+cmake_minimum_required(VERSION 2.6)
+
 # Try to find and setup Qt4 for this project
 FIND_PACKAGE(Qt4)
 
@@ -64,19 +70,17 @@ subtaskWidget.cpp
 SET(GUI_MOC_SRCS
 respecta.h 
 diagramscene.h 
-Transition.h 
 Graph.h 
 globals.h 
 Coordinates.h 
 Pose.h 
 RobotSet.h 
+baseState.h 
 States.h 
 editWidget.h 
 stateWidget.h 
 transWidget.h 
 StateTypeWidgets.h 
-baseState.h 
-Model.h 
 TransDialog.h 
 TreeModel.h 
 TreeItem.h 
@@ -101,7 +105,7 @@ QT4_ADD_RESOURCES(GUI_CXX_SRCS diagramscene.qrc)
 # Create GUI executable
 ADD_EXECUTABLE(RESpecTa ${GUI_CXX_SRCS})
 
-
+TARGET_LINK_LIBRARIES(RESpecTa ${QT_LIBRARIES})
 
 #SET_TARGET_PROPERTIES(discode_gui PROPERTIES
 #   BUILD_WITH_INSTALL_RPATH ON

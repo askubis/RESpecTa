@@ -28,7 +28,6 @@ SOURCES += main.cpp\
 
 HEADERS  += respecta.h \
     diagramscene.h \
-    Transition.h \
     Graph.h \
     globals.h \
     Coordinates.h \
@@ -40,7 +39,6 @@ HEADERS  += respecta.h \
     transWidget.h \
     StateTypeWidgets.h \
     baseState.h \
-    Model.h \
     TransDialog.h \
     TreeModel.h \
     TreeItem.h \

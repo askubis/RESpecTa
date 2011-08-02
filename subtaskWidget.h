@@ -7,6 +7,11 @@ class SubtaskWidget;
 #include <QWidget>
 #include "Model.h"
 
+
+QT_BEGIN_NAMESPACE
+class QWidget;
+QT_END_NAMESPACE
+
 /**
 *   Widget responsible for editing, creating and deleting tasks.
 */
