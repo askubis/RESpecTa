@@ -1057,6 +1057,11 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
             if(T->endItem() == oldState)T->setEndItem(newState);
             newState->addTransition(T);
         }
+        foreach(Transition * T, oldState->getSubtaskTransitions())
+        {
+            T->setSubtask(newState);
+        }
+
         scenes[index]->removeItem(oldState);
         scenes[index]->setItemParams(newState);
         newState->setToolTip(QString().fromStdString(newState->Print()));

@@ -54,6 +54,7 @@ public:
     void setParameters(QString newParams){parameters = newParams;}
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
     void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
+    QList<Transition*> getSubtaskTransitions(){return subtaskTransitions;}
 
     /**
     *   Resizes the text in nameTextItem to fit the boundingRect of the state.
