@@ -3,8 +3,8 @@ FIND_PACKAGE(Qt4)
 
 IF(QT_FOUND)
 
-MESSAGE(STATUS "\tUsing Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH} (${QT_QMAKE_EXECUTABLE})")
-MESSAGE(STATUS "\tIncludes in ${QT_INCLUDE_DIR}")
+MESSAGE(STATUS "tUsing Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH} (${QT_QMAKE_EXECUTABLE})")
+MESSAGE(STATUS "tIncludes in ${QT_INCLUDE_DIR}")
 
 # add Qt modules here, the include will setup QT_LIBRARIES
 #
@@ -43,47 +43,46 @@ INCLUDE(${QT_USE_FILE})
 
 # Source files
 SET(GUI_CXX_SRCS
-baseState.cpp
-diagramscene.cpp
-editWidget.cpp
 main.cpp
-Model.cpp
-respecta.cpp
-States.cpp
-StateTypeWidgets.cpp
-stateWidget.cpp
+respecta.cpp 
+diagramscene.cpp 
+editWidget.cpp 
+stateWidget.cpp 
+transWidget.cpp 
+StateTypeWidgets.cpp 
+baseState.cpp 
+Transition.cpp 
+TransDialog.cpp 
+Model.cpp 
+TreeModel.cpp 
+TreeItem.cpp 
+States.cpp 
 subtaskWidget.cpp
-TransDialog.cpp
-Transition.cpp
-transWidget.cpp
-TreeItem.cpp
-TreeModel.cpp
 )
 
 # Class headers that have to be MOCed (i.e. classes derived from QObject)
 SET(GUI_MOC_SRCS
-baseState.h
-Coordinates.h
-diagramscene.h
-editWidget.h
-globals.h
-Graph.h
-Model.h
-myTreeView.h
-Pose.h
-respecta.h
-robotInit.h
-RobotSet.h
-StateEditDialog.h
-States.h
-StateTypeWidgets.h
-stateWidget.h
+respecta.h 
+diagramscene.h 
+Transition.h 
+Graph.h 
+globals.h 
+Coordinates.h 
+Pose.h 
+RobotSet.h 
+States.h 
+editWidget.h 
+stateWidget.h 
+transWidget.h 
+StateTypeWidgets.h 
+baseState.h 
+Model.h 
+TransDialog.h 
+TreeModel.h 
+TreeItem.h 
+myTreeView.h 
+robotInit.h 
 subtaskWidget.h
-TransDialog.h
-Transition.h
-transWidget.h
-TreeItem.h
-TreeModel.h
 )
 
 # Generate MOC files

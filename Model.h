@@ -12,7 +12,7 @@ class Model;
 */
 class Model
 {
-
+    Q_OBJECT
 public:
     Model();
 
