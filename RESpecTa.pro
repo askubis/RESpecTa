@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     TreeModel.cpp \
     TreeItem.cpp \
     States.cpp \
-    subtaskWidget.cpp
+    subtaskWidget.cpp \
+    myTreeView.cpp
 
 HEADERS  += respecta.h \
     diagramscene.h \

@@ -651,7 +651,7 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     tie(first, last) = vertices(*G);
     QString tmpSaveName = QString(SaveFolder).append(QString().fromStdString(FileName));
     QFile* file = new QFile(tmpSaveName);
-    file->open( QIODevice::WriteOnly);
+    file->open( QIODevice::WriteOnly);//TODO: check if exists
     QXmlStreamWriter * writer = new QXmlStreamWriter(file);
     writer->setAutoFormatting(1);
     writer->setCodec("UTF-8");

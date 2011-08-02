@@ -72,7 +72,7 @@ RESpecTa::RESpecTa(Model * newmod)
     listLayout->addWidget(findWidget);
     listWidget->setLayout(listLayout);
 
-    TreeView = new myTreeView(listWidget);
+    TreeView = new myTreeView(this);
     TreeView->setModel(treeModel);
     listLayout->addWidget(TreeView);
 
@@ -150,11 +150,11 @@ void RESpecTa::createEditMenu()
     connect(showTransitions, SIGNAL(triggered()),
         this, SLOT(EditTransitionsOfState()));
 
-    QAction * GoToState = new QAction(tr("&Go to Item from the list"), this);
+    /*QAction * GoToState = new QAction(tr("&Go to Item from the list"), this);
     GoToState->setShortcut(tr("Ctrl+G"));
     GoToState->setStatusTip(tr("Center on the state selected on the list"));
     connect(GoToState, SIGNAL(triggered()),
-        this, SLOT(GoToState()));
+        this, SLOT(GoToState()));*/
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(deleteAction);
@@ -162,7 +162,7 @@ void RESpecTa::createEditMenu()
     editMenu->addAction(toFrontAction);
     editMenu->addAction(sendBackAction);
     editMenu->addAction(showTransitions);
-    editMenu->addAction(GoToState);
+    //editMenu->addAction(GoToState);
 
     itemMenu = new QMenu();
     itemMenu->addAction(deleteAction);
@@ -174,6 +174,7 @@ void RESpecTa::createEditMenu()
 
 void RESpecTa::selectionchanged()
 {
+    if(scenes[currentSubtask]->selectedItems().size()!=1)emit SignalDeleted();
     QList<QGraphicsItem *> newItems = scenes[currentSubtask]->selectedItems();
     foreach(QGraphicsItem * it, newItems)
     {
@@ -1011,11 +1012,13 @@ void RESpecTa::reportError(QString msgString)
     logStreamToWrite<<msgString;
     logStreamToWrite<<"\n";
     logStreamToWrite.flush();
+    QDateTime dateTime= QDateTime::currentDateTime();
+    QString time = dateTime.time().toString();
 
     //QMessageBox::information(this, QString("Error"), msgString);
     QListWidgetItem *newItem = new QListWidgetItem();
     newItem->setTextColor(Qt::red);
-    newItem->setText(QString("Error: ").append(msgString));
+    newItem->setText(time.append(QString("Error: ").append(msgString)));
     terminal->addItem(newItem);
     terminal->scrollToBottom();
 }
@@ -1235,6 +1238,7 @@ void RESpecTa::TabChanged(int newIndex)
     delete treeModel;
     treeModel = newModel;
     oldSelectedItems=QList<QGraphicsItem *>();
+    emit SignalDeleted();
 }
 
 void RESpecTa::WasChanged()
@@ -1246,7 +1250,7 @@ void RESpecTa::WasChanged()
     emit SignalDeleted();//żeby nie było problemu, gdyedytujemy coś i zmienimy podzadanie
 }
 
-void RESpecTa::GoToState()
+/*void RESpecTa::GoToState()
 {
     if(TreeView->getSelectedIndexes().size()<=0)
         return;
@@ -1262,6 +1266,21 @@ void RESpecTa::GoToState()
         this->itemSelected(it);
         return ;
     }
+}*/
+
+void RESpecTa::listSelectionChanged(QModelIndexList list)
+{
+    QModelIndex ind = list.first();
+    QGraphicsItem * it = treeModel->getItemOrParent(ind);
+    if(it==0)std::cout<<"null "<<std::endl;
+    std::cout<<currentSubtask.toStdString()<<std::endl;//TODO:why?
+    views[currentSubtask]->centerOn(it);
+    scenes[currentSubtask]->clearSelection();
+
+    scenes[currentSubtask]->selectedItems().push_back(it);
+    it->setSelected(true);
+    this->itemSelected(it);
+    return ;
 }
 
 void RESpecTa::FindOnList()

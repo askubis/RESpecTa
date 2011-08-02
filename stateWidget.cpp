@@ -13,7 +13,7 @@ this->setMaximumWidth(230);
     mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
-    OKButton = new QPushButton(tr("&OK"));
+    OKButton = new QPushButton(tr("&Apply"));
     OKButton->setChecked(false);
     connect(OKButton, SIGNAL(clicked()), this, SLOT(AcceptState()));
     OKButton->setDisabled(true);

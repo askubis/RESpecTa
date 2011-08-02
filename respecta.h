@@ -76,6 +76,11 @@ public:
    */
    void SaveGraphicsAttributes(QXmlStreamWriter * writer, QString SubName);
 
+   /**
+   *    Reacts on the change on the treeview list with concentrating on the item selected.
+   */
+   void listSelectionChanged(QModelIndexList list);
+
 signals:
    /**
    *   Signal from Scene, which is forwarded to EditWidget and then to transWidget or stateWidget to display item for edition.
@@ -103,7 +108,7 @@ private slots:
     /**
     *   Centers  the view on the graphicsItem selected on the TreeView list.
     */
-    void GoToState();
+    /*void GoToState();*/
     /**
     *   Changes the task displayed on the TreeView to the task displayed on the selected tab.
     */

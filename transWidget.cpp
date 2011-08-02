@@ -29,7 +29,7 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    TransitionLayout->addWidget(stateLabel);
    TransitionLayout->addWidget(stateCombo);
 
-   OKButton = new QPushButton(tr("&OK"));
+   OKButton = new QPushButton(tr("&Apply"));
    OKButton->setChecked(false);
    connect(OKButton, SIGNAL(clicked()), this, SLOT(AcceptTrans()));
    OKButton->setDisabled(true);
