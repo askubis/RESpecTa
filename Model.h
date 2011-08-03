@@ -22,6 +22,9 @@ public:
     int vertNum(QString SubtaskName);
 
         //*************     DELETE  ***********//
+
+    void CleanTask(QString name);
+
     /**
     *   Clears the model leaving only empty main state.
     */

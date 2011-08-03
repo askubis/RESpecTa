@@ -899,6 +899,36 @@ void Model::setChanged(bool newChanged)
     if(!changeBlocked && changed)res->WasChanged();
 }
 
+void Model::CleanTask(QString Name)
+{
+    if(subtasks->find(Name)==subtasks->end())return;
+    MyGraphType * tmp = (*subtasks)[Name];
+    if(tmp!=NULL)
+    {
+        property_map<MyGraphType, transition_t>::type TransitionMap  = get(transition_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::edge_iterator startIt, endIt;
+        tie(startIt, endIt)=edges(*tmp);
+        for(;startIt!=endIt;)
+        {
+            Transition * transition = boost::get(TransitionMap, *startIt);
+            res->deleteTrans(transition);
+            tie(startIt, endIt)=edges(*tmp);
+        }
 
+        property_map<MyGraphType, state_t>::type StateMap = get(state_t(), (*tmp));
+        boost::graph_traits<MyGraphType>::vertex_iterator first,last;
+        tie(first, last) = vertices(*tmp);
+        for (;first!=last;first++)
+        {
+            BaseState * state = boost::get(StateMap, (*first));
+            if(state->getName()!="INIT"&&state->getName()!="_END_"&&state->getName()!="_STOP_")
+            {
+                res->deleteState(state);
+                tie(first, last) = vertices(*tmp);
+            }
+        }
+    }
+    setChanged(true);
+}
 
 

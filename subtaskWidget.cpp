@@ -25,6 +25,10 @@ SubtaskWidget::SubtaskWidget(QWidget * parent,Model * mod): QWidget(parent)
    connect(AddButton, SIGNAL(clicked()), this, SLOT(AddClicked()));
    mainLayout->addWidget(AddButton, 9,0);
 
+   QPushButton * CleanButton = new QPushButton("Clean");
+   connect(CleanButton, SIGNAL(clicked()), this, SLOT(CleanClicked()));
+   mainLayout->addWidget(CleanButton, 9, 1);
+
    nameEdit = new QLineEdit();
    nameEdit->setValidator(new QRegExpValidator(QRegExp("^[\\w\\s\\-]*$"), nameEdit));
    mainLayout->addWidget(nameEdit, 7,0, 1, 2);
@@ -34,6 +38,12 @@ SubtaskWidget::SubtaskWidget(QWidget * parent,Model * mod): QWidget(parent)
    AddButton->setDisabled(true);
 
     setLayout(mainLayout);
+}
+
+void SubtaskWidget::CleanClicked()
+{
+    QStringList list = model->getTasksNameLists();
+    model->CleanTask(list[subtaskList->currentIndex().row()]);
 }
 
 void SubtaskWidget::refreshData()

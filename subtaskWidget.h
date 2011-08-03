@@ -44,6 +44,8 @@ signals:
     void reportError(QString);
 
 private slots:
+    void CleanClicked();
+
     /**
     *   Slot after clicking Add button, signals with added SIGNAL.
     */
