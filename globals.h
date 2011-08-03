@@ -4,6 +4,9 @@
 #include <QStringList>
 #include <iostream>
 
+
+enum SceneMode { InsertItem, InsertLine, MoveItem };
+
 //***************   STATE TYPES   ***************//
 /**
 *   Enum Type representing StateTypes.
@@ -16,7 +19,7 @@ enum StateType {SYSTEM_INITIALIZATION, RUN_GENERATOR, EMPTY_GEN_FOR_SET, EMPTY_G
 *   Table containing all strings representing StateTypes.
 */
 static std::string STATE_TYPE_TABLE[STATE_TYPES_NUMBER+1] =
-        {"systemInitialization","runGenerator","emptyGenForSet","emptyGen","wait","stopGen",
+        {"systemInitialization","set_next_ecp_state","wait_for_task_termination","emptyGen","wait_ms","send_end_motion_to_ecps",
          "initiateSensorReading","getSensorReading",""};
 /**
 *   Function returning list of StateTypes.

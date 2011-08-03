@@ -157,19 +157,6 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
             index--;
         }
     }
-    if(!set.second.empty())
-    {
-        if(index==0)
-        {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
-            tmp->setSet(set.second, false);
-            return tmp;
-        }
-        else
-        {
-            index--;
-        }
-    }
     if (parameters.size()>0)
     {
         if(index==0)
@@ -1068,12 +1055,6 @@ QStringList StopGenState::LoadFromXML(QXmlStreamReader * reader)
                   sprintf(linenum,"; line: %lld", reader->lineNumber());
                   errors.push_back(QString("The RobotSet parameter was not defined for the StopGeneratorState")+=linenum);
               }
-              else if(set.second.size()>0)
-              {
-                  char linenum[30];
-                  sprintf(linenum,"; line: %lld", reader->lineNumber());
-                  errors.push_back(QString("SecondSet defined for stopGenState")+=linenum);
-              }
               return errors;
           }
           else if(reader->name()=="SetOfRobots"&&reader->isStartElement())
@@ -1126,12 +1107,6 @@ QStringList StopGenState::LoadFromXML(QXmlStreamReader * reader)
         sprintf(linenum,"; line: %lld", reader->lineNumber());
         errors.push_back(QString("The RobotSet parameter was not defined for the StopGeneratorState")+=linenum);
     }
-    else if(set.second.size()>0)
-    {
-        char linenum[30];
-        sprintf(linenum,"; line: %lld", reader->lineNumber());
-        errors.push_back(QString("SecondSet defined for stopGenState")+=linenum);
-    }
     return errors;
 }
 TreeItem * StopGenState::getChild(int i, TreeItem * parent)
@@ -1143,19 +1118,6 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
         {
             TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
             tmp->setSet(set.first, true);
-            return tmp;
-        }
-        else
-        {
-            index--;
-        }
-    }
-    if(!set.second.empty())
-    {
-        if(index==0)
-        {
-            TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
-            tmp->setSet(set.second, false);
             return tmp;
         }
         else

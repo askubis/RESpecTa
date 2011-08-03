@@ -45,7 +45,9 @@ HEADERS  += respecta.h \
     TreeItem.h \
     myTreeView.h \
     robotInit.h \
-    subtaskWidget.h
+    subtaskWidget.h \
+    Model.h \
+    Transition.h
 
 
 FORMS    += respecta.ui

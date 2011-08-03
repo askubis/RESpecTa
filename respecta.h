@@ -58,6 +58,11 @@ public:
    */
    void getError(QString error){reportError(error);}
    /**
+   *   Displays a dialog showing the message.
+   *   @param msgString Message, which will be displayed.
+   */
+   void reportMsg(QString msgString);
+   /**
    *   Clears name of the Save file causing browse file window to open next time while saving.
    */
    void clearSaveName() {SaveName=QString();}
@@ -97,6 +102,11 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void sceneModeChanged(SceneMode mode);
+   void ClearTerminal();
+   void NewProject();
+
+   void checkIfOK();
     /**
     *   Selection on the stage changed, therefore color needs to be changed.
     */
@@ -130,6 +140,8 @@ private slots:
     /**
     *   Checks if state oldState exists, if yes - replaces oldState with newState.
     */
+
+    void SubtaskLoaded(QString subtaskName);
     void ReplaceState(BaseState * oldState, BaseState * newState);
     /**
     *   Opens TransDialog for the selected state.
@@ -138,7 +150,7 @@ private slots:
     /**
     *   Sets a StopState member as a state, which will be next added to the active scene.
     */
-    void addEndState();
+    //void addEndState();
     /**
     *   Displays a dialog showing the error.
     *   @param msgString Message, which will be displayed.
@@ -336,7 +348,7 @@ private:
     /**
     *   Action responsible for inserting a new Stop state.
     */
-    QAction *insertEndStateAction;
+    //QAction *insertEndStateAction;
     /**
     *   Action responsible for opening a dialogbox showing transitions of a state.
     */
@@ -395,6 +407,8 @@ private:
     *   File, to which errors are saved.
     */
     QFile logFile;
+
+    QLabel * tipLabel;
 };
 
 

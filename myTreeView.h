@@ -11,7 +11,7 @@ class myTreeView;
 class myTreeView:public QTreeView
 {
 public:
-    myTreeView(QWidget * parent):QTreeView(parent){}
+    myTreeView(QWidget * parent, RESpecTa * _res):QTreeView(parent){res = _res;}
     ~myTreeView(){}
     /**
     *   A function allowing public access to selectedIndexes() from QTreeView class
@@ -19,6 +19,7 @@ public:
      //QModelIndexList getSelectedIndexes(){return selectedIndexes();}
 
 private:
+    RESpecTa * res;
     /**
     *   A function calling main window function after selection changed.
     */

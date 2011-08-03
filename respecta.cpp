@@ -42,6 +42,7 @@ RESpecTa::RESpecTa(Model * newmod)
     connect(scenes[currentSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[currentSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[currentSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+    connect(scenes[currentSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
 
     connect(scenes[currentSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
@@ -58,6 +59,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
     treeModel = new TreeModel( this, mod, mod->getMainName());
 
+
     QWidget * listWidget = new QWidget(this);
     QHBoxLayout *findLayout = new QHBoxLayout;
     QWidget * findWidget = new QWidget(listWidget);
@@ -72,7 +74,21 @@ RESpecTa::RESpecTa(Model * newmod)
     listLayout->addWidget(findWidget);
     listWidget->setLayout(listLayout);
 
-    TreeView = new myTreeView(this);
+    mod->setBlock(true);
+    sysInitState * startState = new sysInitState();
+    startState->setPos(2100,2300);
+    startState->setName("INIT");
+    scenes[currentSubtask]->setItemParams(startState);
+    mod->addState(startState, mod->getMainName());
+    StopState * endState = new StopState();
+    endState->setPos(2600,2600);
+    endState->setName("_STOP_");
+    endState->setType(STATE_TYPES_NUMBER);
+    scenes[currentSubtask]->setItemParams(endState);
+    mod->addState(endState, mod->getMainName());
+    mod->setBlock(false);
+
+    TreeView = new myTreeView(listWidget, this);
     TreeView->setModel(treeModel);
     listLayout->addWidget(TreeView);
 
@@ -85,6 +101,11 @@ RESpecTa::RESpecTa(Model * newmod)
     terminal = new QListWidget(this);
     terminal->setMaximumHeight(200);
     layout->addWidget(terminal, 1, 0, 1, 3);
+    tipLabel = new QLabel("Insert an item, select item to edit or move items on the scene.");
+    QPushButton * clearTerminalButton = new QPushButton("Clear Terminal");
+    connect (clearTerminalButton, SIGNAL(clicked()), this, SLOT(ClearTerminal()));
+    layout->addWidget(tipLabel, 2, 0, 1, 2);
+    layout->addWidget(clearTerminalButton, 2, 2, 1, 1);
 
     mainWidget->setLayout(layout);
 
@@ -112,6 +133,14 @@ RESpecTa::RESpecTa(Model * newmod)
     if(!logFile.open(QIODevice::WriteOnly))
         qDebug()<<"Error opening the logfile";
     logStreamToWrite.setDevice(&logFile);
+    mod->setChanged(false);
+
+    reportMsg(QString("Errors will be saved to: ").append(logPath));
+}
+
+void RESpecTa::ClearTerminal()
+{
+    terminal->clear();
 }
 
 void RESpecTa::createEditMenu()
@@ -137,12 +166,12 @@ void RESpecTa::createEditMenu()
     connect(deleteAction, SIGNAL(triggered()),
         this, SLOT(deleteItem()));
 
-    insertEndStateAction = new QAction(QIcon(":/images/_END_image.jpg"),
+    /*insertEndStateAction = new QAction(QIcon(":/images/_END_image.jpg"),
                                tr("&End"), this);
     insertEndStateAction->setShortcut(tr("Ctrl+E"));
     insertEndStateAction->setStatusTip(tr("Insert End state for main task or subtask"));
     connect(insertEndStateAction, SIGNAL(triggered()),
-        this, SLOT(addEndState()));
+        this, SLOT(addEndState()));*/
 
     showTransitions = new QAction(tr("&Transitions"), this);
     showTransitions->setShortcut(tr("Ctrl+T"));
@@ -155,6 +184,10 @@ void RESpecTa::createEditMenu()
     GoToState->setStatusTip(tr("Center on the state selected on the list"));
     connect(GoToState, SIGNAL(triggered()),
         this, SLOT(GoToState()));*/
+    QAction * ModelCheckIfOK = new QAction(tr("Check for &errors in the menu"), this);
+    ModelCheckIfOK->setShortcut(tr("Ctrl+E"));
+    ModelCheckIfOK->setStatusTip(tr("Check for errors in the menu"));
+    connect (ModelCheckIfOK, SIGNAL(triggered()), this, SLOT(checkIfOK()));
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(deleteAction);
@@ -162,6 +195,7 @@ void RESpecTa::createEditMenu()
     editMenu->addAction(toFrontAction);
     editMenu->addAction(sendBackAction);
     editMenu->addAction(showTransitions);
+    editMenu->addAction(ModelCheckIfOK);
     //editMenu->addAction(GoToState);
 
     itemMenu = new QMenu();
@@ -170,6 +204,14 @@ void RESpecTa::createEditMenu()
     itemMenu->addAction(sendBackAction);
     itemMenu->addAction(showTransitions);
 
+}
+void RESpecTa::checkIfOK()
+{
+    QStringList list = mod->checkIfOK();
+    foreach(QString str, list)
+    {
+        reportError(str);
+    }
 }
 
 void RESpecTa::selectionchanged()
@@ -200,6 +242,31 @@ void RESpecTa::selectionchanged()
     oldSelectedItems=newItems;
 }
 
+void RESpecTa::SubtaskLoaded(QString newSubtask)
+{
+    scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
+    scenes[newSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
+
+    connect(scenes[newSubtask], SIGNAL(itemInserted(BaseState*)),this, SLOT(stateInserted(BaseState*)));
+    connect(scenes[newSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
+    connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+    connect(scenes[newSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
+
+    connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
+
+    layouts[newSubtask] = new QHBoxLayout;
+    views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
+    layouts[newSubtask]->addWidget(views[newSubtask]);
+
+    widgets[newSubtask] = new QWidget;
+    widgets[newSubtask]->setLayout(layouts[newSubtask]);
+
+    tabWidget->addTab(widgets[newSubtask], newSubtask);
+
+    mod->addSubtask(newSubtask);
+    emit refreshWidgets();
+}
 
 void RESpecTa::SubtaskAdded(QString newSubtask)
 {
@@ -210,8 +277,15 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     connect(scenes[newSubtask], SIGNAL(itemSelected(QGraphicsItem*)),this, SLOT(itemSelected(QGraphicsItem*)));
     connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+    connect(scenes[newSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
 
     connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
+    StopState * endState = new StopState();
+    endState->setPos(2600,2600);
+    endState->setType(STATE_TYPES_NUMBER);
+    endState->setName("_END_");
+    scenes[newSubtask]->setItemParams(endState);
+    mod->addState(endState, newSubtask);
 
     layouts[newSubtask] = new QHBoxLayout;
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
@@ -318,11 +392,52 @@ void RESpecTa::createFileMenu()
     loadAction->setStatusTip(tr("Load a file"));
     connect(loadAction, SIGNAL(triggered()), this, SLOT(Load()));
 
+    QAction * newAction = new QAction(tr("&New"), this);
+    newAction->setShortcut(QKeySequence::New);
+    loadAction->setStatusTip(tr("Close current and create a new project"));
+    connect(newAction, SIGNAL(triggered()), this, SLOT(NewProject()));
+
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(exitAction);
+    //TODO:newaction
+    fileMenu->addAction(newAction);
+    fileMenu->addAction(loadAction);
     fileMenu->addAction(saveAction);
     fileMenu->addAction(saveAsAction);
-    fileMenu->addAction(loadAction);
+    fileMenu->addAction(exitAction);
+}
+
+void RESpecTa::NewProject()
+{
+    if(mod->wasChanged())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Are you sure?"),
+                                        "Do you want to save your work before loading?",
+                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (reply == QMessageBox::Yes)
+        {
+            bool tmp = this->SaveAs();
+            if (tmp)
+            {
+
+            }
+            else
+            {
+                return;
+            }
+        }
+        else if (reply == QMessageBox::No)
+            ;
+        else
+            return;
+    }
+    QStringList list = mod->getTasksNameLists();
+    foreach(QString str, list)
+    {
+        this->SubtaskRemoved(str);
+    }
+    mod->setChanged(false);
+    reportMsg(QString("New project created"));
 }
 
 void RESpecTa::Load()
@@ -392,6 +507,7 @@ void RESpecTa::LoadFile(QString fileName)
 
     QString oldMain = mod->getMainName();
     mod->setMainName(subName);
+    //SubtaskChanged(oldMain, subName);
 
     errors+=LoadStates(fileName);
 
@@ -413,17 +529,61 @@ void RESpecTa::LoadFile(QString fileName)
     mod->setChanged(false);
     mod->setBlock(false);
     this->TabChanged(tabWidget->currentIndex());
+
+std::cout<<"checking for existance of start and end"<<std::endl;
+    foreach(QString str, mod->getTasksNameLists())
+    {
+        std::cout<<str.toStdString()<<mod->vertNum(str)<<" "<<scenes[str]->items().count()<<std::endl;
+        if(mod->getMainName()==str)
+        {
+            if(mod->checkNameAvailable("INIT"))
+            {
+                sysInitState * startState = new sysInitState();
+                startState->setPos(2100,2300);
+                startState->setName("INIT");
+                scenes[str]->setItemParams(startState);
+                mod->addState(startState, str);
+                reportMsg(QString("Added missing INIT state to task ").append(str));
+            }
+            std::cout<<mod->checkNameAvailable("_STOP_")<<std::endl;
+            if(mod->checkNameAvailable("_STOP_"))
+            {
+                StopState * endState = new StopState();
+                endState->setPos(2600,2600);
+                endState->setName("_STOP_");
+                endState->setType(STATE_TYPES_NUMBER);
+                scenes[str]->setItemParams(endState);
+                mod->addState(endState, str);
+                reportMsg(QString("Added missing _STOP_ state to task ").append(str));
+            }
+        }
+        else
+        {
+            if(mod->checkNameAvailable("_END_", mod->getGraph(str)))
+            {
+                StopState * endState = new StopState();
+                endState->setPos(2600,2600);
+                endState->setType(STATE_TYPES_NUMBER);
+                endState->setName("_END_");
+                scenes[str]->setItemParams(endState);
+                mod->addState(endState, str);
+                reportMsg(QString("Added missing _END_ state to task ").append(str));
+            }
+        }
+        std::cout<<str.toStdString()<<mod->vertNum(str)<<" "<<scenes[str]->items().count()<<std::endl;
+    }
 }
 
 QStringList RESpecTa::LoadStates(QString FileName)
 {
+    reportMsg(QString("File ").append(FileName).append(QString(" loaded")));
 QStringList errors;
     QString filename = QString(SaveFolder)+FileName;
     QString GraphName = FileName;
     GraphName.chop(4);
     if(scenes.find(GraphName)==scenes.end())
     {
-        this->SubtaskAdded(GraphName);
+        this->SubtaskLoaded(GraphName);
     }
     QFile* file = new QFile(filename);
     file->open( QIODevice::ReadOnly);
@@ -528,7 +688,7 @@ if(stateName.contains("/"))
 }
 if(type==-1)
 {
-    if(stateName.toLower()=="_stop_"||stateName.toLower()=="_end_")
+    /*if(stateName.toLower()=="_stop_"||stateName.toLower()=="_end_")
     {
         state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
     }
@@ -540,7 +700,7 @@ if(type==-1)
         reader->readElementText();
         delete state;
         continue;
-    }
+    }*/
 }
 else
 {
@@ -654,7 +814,7 @@ if(mod->checkTransCondAvailabe(trans, condition))
                             scenes[subName]->addItem(trans);
                             mod->tryInsertTransition(trans);
                             trans->updatePosition();
-                            scenes[subName]->setMode(DiagramScene::MoveItem);
+                            scenes[subName]->setMode(MoveItem);
                             trans->setToolTip(QString().fromStdString(trans->Print()));
                             trans->setZValue(-1000.0);
                             sourceState->addTransition(trans);
@@ -789,6 +949,11 @@ void RESpecTa::deleteItem()
         else if (item->type() == BaseState::Type)
         {
             BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+            if(state->getName()=="INIT"||state->getName()=="_STOP_"||state->getName()=="_END_")
+            {
+                reportError("INIT and END/STOP states cannot be deleted");
+                continue;
+            }
             deleteState(state);
         }
     }
@@ -898,7 +1063,7 @@ void RESpecTa::stateInserted(BaseState *item)
     }
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
-        (*it).second->setMode(DiagramScene::MoveItem);
+        (*it).second->setMode(MoveItem);
     }
 }
 
@@ -910,7 +1075,7 @@ bool RESpecTa::lineInserted(Transition *line)
         emit itemSelectedSig(line);
         for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
         {
-            (*it).second->setMode(DiagramScene::MoveItem);
+            (*it).second->setMode(MoveItem);
         }
     }
     return test;
@@ -962,7 +1127,7 @@ void RESpecTa::createToolbars()
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
 
-    editToolBar->addAction(insertEndStateAction);
+    //editToolBar->addAction(insertEndStateAction);
 
     QToolButton *pointerButton = new QToolButton;
     pointerButton->setCheckable(true);
@@ -988,7 +1153,7 @@ void RESpecTa::InsertState(BaseState * newState)
     {
         for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
         {
-            (*it).second->setMode(DiagramScene::InsertItem);
+            (*it).second->setMode(InsertItem);
             (*it).second->setToInsertState(newState);
         }
     }
@@ -1002,7 +1167,7 @@ void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
 {
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
-        (*it).second->setMode(DiagramScene::InsertLine);
+        (*it).second->setMode( InsertLine);
         (*it).second->setTransitionAttributes(thePair);
     }
 }
@@ -1018,20 +1183,33 @@ void RESpecTa::reportError(QString msgString)
     //QMessageBox::information(this, QString("Error"), msgString);
     QListWidgetItem *newItem = new QListWidgetItem();
     newItem->setTextColor(Qt::red);
-    newItem->setText(time.append(QString("Error: ").append(msgString)));
+    newItem->setText(time.append(QString(" Error: ").append(msgString)));
     terminal->addItem(newItem);
     terminal->scrollToBottom();
 }
 
-void RESpecTa::addEndState()
+void RESpecTa::reportMsg(QString msgString)
+{
+    QDateTime dateTime= QDateTime::currentDateTime();
+    QString time = dateTime.time().toString();
+
+    //QMessageBox::information(this, QString("Error"), msgString);
+    QListWidgetItem *newItem = new QListWidgetItem();
+    newItem->setTextColor(Qt::green);
+    newItem->setText(time.append("").append(msgString));
+    terminal->addItem(newItem);
+    terminal->scrollToBottom();
+}
+
+/*void RESpecTa::addEndState()
 {
     QString index = tabWidget->tabText(tabWidget->currentIndex());
     StopState * tmp = new StopState();
     tmp->setType(StateType(STATE_TYPES_NUMBER));
     tmp->setName("_END_");
-    scenes[index]->setMode(DiagramScene::InsertItem);
+    scenes[index]->setMode(InsertItem);
     scenes[index]->setToInsertState(tmp);
-}
+}*/
 
 void RESpecTa::EditTransitionsOfState()
 {
@@ -1272,8 +1450,6 @@ void RESpecTa::listSelectionChanged(QModelIndexList list)
 {
     QModelIndex ind = list.first();
     QGraphicsItem * it = treeModel->getItemOrParent(ind);
-    if(it==0)std::cout<<"null "<<std::endl;
-    std::cout<<currentSubtask.toStdString()<<std::endl;//TODO:why?
     views[currentSubtask]->centerOn(it);
     scenes[currentSubtask]->clearSelection();
 
@@ -1287,6 +1463,31 @@ void RESpecTa::FindOnList()
 {
     QString textToFind = findLineEdit->text();
     TreeView->keyboardSearch(textToFind);
+}
+
+
+void RESpecTa::sceneModeChanged(SceneMode mode)
+{
+    switch(mode)
+    {
+    case  MoveItem:
+
+        tipLabel->setText(QString ("Insert an item, select item to edit or move items on the scene."));
+        break;
+    case  InsertItem:
+
+        tipLabel->setText(QString ("Select place on the scene to insert an item, and then edit its properties"));
+        break;
+    case  InsertLine:
+
+        if(scenes[currentSubtask]->selectedItems().size()==0)
+            tipLabel->setText(QString("Drag the transition from start to end state"));
+        else
+            tipLabel->setText(QString("Drag to end state"));
+        break;
+    default:
+        break;
+    }
 }
 
 

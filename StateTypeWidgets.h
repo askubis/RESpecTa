@@ -222,11 +222,11 @@ private slots:
     /**
     *   Adds robot selected in SecondComboBox to the SecondRobotList.
     */
-    void addSecond();
+    //void addSecond();
     /**
     *   Removes Robot selected in SecondComboBox from SecondRobotList.
     */
-    void removeSecond();
+    //void removeSecond();
 
 private:
     /**
@@ -241,7 +241,7 @@ private:
     /**
     *   List of robots in the second Set.
     */
-    QListWidget * SecondRobotList;
+    //QListWidget * SecondRobotList;
     /**
     *   Combobox allowing to choose Robot for the first set.
     */
@@ -249,7 +249,7 @@ private:
     /**
     *   Combobox allowing to choose Robot for the second set.
     */
-    QComboBox * SecondRobotCombo;
+    //QComboBox * SecondRobotCombo;
 };
 
 /**
@@ -305,7 +305,7 @@ private:
 };
 
 /**
-*   Widget allowing to edit stopState.
+*   Widget allowing to edit stopGenState.
 */
 class stopGenWidget : public MyTypeWidget
 {
@@ -557,7 +557,7 @@ signals:
 
 private slots:
     /**
-    *   Removes sensor in the combobox from the list.
+    *   Removes sensor selected on the list.
     */
     void remove();
     /**

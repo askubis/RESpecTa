@@ -18,7 +18,6 @@ class QFont;
 class QGraphicsTextItem;
 class QColor;
 QT_END_NAMESPACE
-
 /**
 *   Class representing a scene, on which the items are shown.
 */
@@ -27,7 +26,7 @@ class DiagramScene : public QGraphicsScene
     Q_OBJECT
 
 public:
-    enum Mode { InsertItem, InsertLine, /*InsertText,*/ MoveItem };
+
 
     DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod );
     /*QFont font() const
@@ -55,7 +54,11 @@ public:
     */
     void setItemParams(BaseState * toInsert);
 
+    void checkIfFits(BaseState * state);
+
 signals:
+    void modeChanged(SceneMode mode);
+
     /**
     *   Signals, that a state has been inserted into the scene.
     */
@@ -74,7 +77,7 @@ signals:
     void reportError(QString);
 
 public slots:
-    void setMode(Mode mode);
+    void setMode(SceneMode mode);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -102,7 +105,7 @@ private:
     /**
     *   Mode of the scene, describing what will be done with the click events.
     */
-    Mode myMode;
+    SceneMode myMode;
     /**
     *   Point representing the start of the line, which is being inserted.
     */

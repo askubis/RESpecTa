@@ -11,6 +11,7 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
 
    QLabel *transCondLabel = new QLabel(tr("Transition condition:"));
    conditionLineEdit = new QLineEdit;
+   conditionLineEdit->setValidator(new QRegExpValidator(QRegExp("^(stateOperationResult|true|TRUE|iniFile\\.\\w*)$"), conditionLineEdit));
    connect(conditionLineEdit, SIGNAL(textChanged(QString)), this, SLOT(lengthChanged(QString)));
    QHBoxLayout *bottomLayout = new QHBoxLayout;
    TransitionLayout->addWidget(transCondLabel);

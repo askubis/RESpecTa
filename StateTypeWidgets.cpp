@@ -63,6 +63,11 @@ void sysIniWidget::InsertECP(robotInit newInit)
 void sysIniWidget::removeECPSection()
 {
     QList<QListWidgetItem *> toDeleteItems = robotsInitialized->selectedItems();
+    if(toDeleteItems.size()==0)
+    {
+        emit reportError(QString("No items selected on the list, cannot remove"));
+        return;
+    }
     std::vector<robotInit> genIniVector;
     genIniVector = this->State->getInits();
     int size = toDeleteItems.size();
@@ -237,7 +242,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
     firstButtonsLayout->addWidget(removeFirstButton);
     emptyGenLayout->insertLayout(3,firstButtonsLayout);
 
-    QLabel *SecondSetLabel = new QLabel("Second Set:");
+    /*QLabel *SecondSetLabel = new QLabel("Second Set:");
     emptyGenLayout->insertWidget(4,SecondSetLabel);
 
     SecondRobotList = new QListWidget(this);
@@ -256,7 +261,7 @@ emptyGenForSetWidget::emptyGenForSetWidget(QWidget * parent, Model * newmod )
     secondButtonsLayout->addWidget(addSecondButton);
     secondButtonsLayout->addWidget(removeSecondButton);
     emptyGenLayout->insertLayout(7,secondButtonsLayout);
-
+*/
      setLayout(emptyGenLayout);
 
      State = new EmptyGenForSetState();
@@ -272,14 +277,21 @@ void emptyGenForSetWidget::addFirst()
 }
 
 void emptyGenForSetWidget::removeFirst()
-{
-    if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        delete (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
-    else
-    {        emit reportError(QString("this robot is not in the first set: ").append(QString().fromStdString(ROBOT_TABLE[FirstRobotCombo->currentIndex()])));    }
+{    
+    if(FirstRobotList->selectedItems().size()==0)
+    {
+        emit reportError(QString("No items selected on the list, cannot remove"));
+        return;
+    }
+    foreach(QListWidgetItem * x, FirstRobotList->selectedItems())
+    {
+        QString text = x->text();
+        if (FirstRobotList->findItems(text, Qt::MatchFlags()).size())
+        {        delete (FirstRobotList->findItems(text, Qt::MatchFlags())[0]);    }
+    }
 }
 
-void emptyGenForSetWidget::addSecond()
+/*void emptyGenForSetWidget::addSecond()
 {
     if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()]), Qt::MatchFlags()).size())
     {        emit reportError(QString("this robot is already in the first set: ").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
@@ -294,28 +306,28 @@ void emptyGenForSetWidget::removeSecond()
     else
     {        emit reportError(QString("this robot is not in the first set: ").append(QString().fromStdString(ROBOT_TABLE[SecondRobotCombo->currentIndex()])));    }
 }
-
+*/
 BaseState * emptyGenForSetWidget::getStateObject()
 {
     RobotSet tmp;
     tmp = this->State->getSet();
     tmp.first.clear();
-    tmp.second.clear();
+  //  tmp.second.clear();
     for (int i=0;i<ROBOTS_NUMBER;i++)
     {
         if (FirstRobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
         {
             tmp.first.push_back(Robot(i));
         }
-        if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
+    /*    if (SecondRobotList->findItems(QString().fromStdString(ROBOT_TABLE[i]), Qt::MatchFlags()).size())
         {
             tmp.second.push_back(Robot(i));
-        }
+        }*/
     }
     this->State->setSet(tmp);
-    if(tmp.first.size()==0||tmp.second.size()==0)
+    if(tmp.first.size()==0)
     {
-        reportError(QString("None of the sets can be empty in EmptyGenForSet state"));
+        reportError(QString("The set can't be empty in EmptyGenForSet state"));
         return NULL;
     }
     return new EmptyGenForSetState(*State);
@@ -326,18 +338,18 @@ void emptyGenForSetWidget::setState(BaseState * st)
     delete State;
     State = new EmptyGenForSetState(*((EmptyGenForSetState*)st));
     FirstRobotList->clear();
-    SecondRobotList->clear();
+    //SecondRobotList->clear();
     RobotSet set = State->getSet();
     std::vector<Robot> robots = set.first;
     foreach(Robot rob, robots)
     {
         FirstRobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
     }
-    robots = set.second;
+    /*robots = set.second;
     foreach(Robot rob, robots)
     {
         SecondRobotList->addItem(QString().fromStdString(ROBOT_TABLE[rob]));
-    }
+    }*/
 }
 
 //***************   EMPTY_GEN   ***************//
@@ -458,10 +470,17 @@ void stopGenWidget::add()
 
 void stopGenWidget::remove()
 {
-    if (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        delete (RobotList->findItems(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
-    else
-    {        emit reportError(QString("this robot is already in the set: ").append(QString().fromStdString(ROBOT_TABLE[RobotCombo->currentIndex()])));    }
+    if(RobotList->selectedItems().size()==0)
+    {
+        emit reportError(QString("No items selected on the list, cannot remove"));
+        return;
+    }
+    foreach(QListWidgetItem * x, RobotList->selectedItems())
+    {
+        QString text = x->text();
+        if (RobotList->findItems(text, Qt::MatchFlags()).size())
+        {        delete (RobotList->findItems(text, Qt::MatchFlags())[0]);    }
+    }
 }
 
 BaseState * stopGenWidget::getStateObject()
@@ -921,9 +940,17 @@ void MPDialog::add()
 
 void MPDialog::remove()
 {
-    if (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()).size())
-    {        delete (sensorList->findItems(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]), Qt::MatchFlags()))[0];    }
-    else
-    {   emit reportError(QString("This sensor is not initialized you cannot remove it: ").append(QString().fromStdString(SENSOR_TABLE[sensorCombo->currentIndex()]))); }
+
+    if(sensorList->selectedItems().size()==0)
+    {
+        emit reportError(QString("No items selected on the list, cannot remove"));
+        return;
+    }
+    foreach(QListWidgetItem * x, sensorList->selectedItems())
+    {
+        QString text = x->text();
+        if (sensorList->findItems(text, Qt::MatchFlags()).size())
+        {        delete (sensorList->findItems(text, Qt::MatchFlags())[0]);    }
+    }
 }
 

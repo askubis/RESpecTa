@@ -218,6 +218,8 @@ signals:
     */
     void reportError(QString);
 
+    void reportMsg(QString);
+
 private:
     /**
     *   pointer to the main window class.

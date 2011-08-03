@@ -26,6 +26,7 @@ SubtaskWidget::SubtaskWidget(QWidget * parent,Model * mod): QWidget(parent)
    mainLayout->addWidget(AddButton, 9,0);
 
    nameEdit = new QLineEdit();
+   nameEdit->setValidator(new QRegExpValidator(QRegExp("^[\\w\\s\\-]*$"), nameEdit));
    mainLayout->addWidget(nameEdit, 7,0, 1, 2);
    connect(nameEdit, SIGNAL(textChanged(QString)), this, SLOT(LengthChanged(QString)));
 

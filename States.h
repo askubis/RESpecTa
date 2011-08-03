@@ -37,7 +37,7 @@ class BaseState;
 class StopState:public BaseState
 {
     public:
-    StopState():BaseState(){}
+    StopState():BaseState(){stateType=STATE_TYPES_NUMBER;}
     StopState(StopState& old):BaseState(old){}
     ~StopState(){}
 
@@ -61,7 +61,7 @@ class StopState:public BaseState
 class EmptyGenForSetState:public BaseState
 {
 public:
-    EmptyGenForSetState():BaseState(){}
+    EmptyGenForSetState():BaseState(){stateType=EMPTY_GEN_FOR_SET;}
     EmptyGenForSetState(EmptyGenForSetState& old):BaseState(old)
     {
         this->set = old.set;
@@ -76,8 +76,7 @@ public:
     int itemCount()
     {
         int i=0;//Type
-        if(set.first.empty()||set.second.empty()) i++;
-        else i+=2;//sets
+        i++;//set
         if(parameters.size()>0)i++;
         i+= this->outTransitionsCount();
         return i;
@@ -98,7 +97,7 @@ private:
 class EmptyGenState:public BaseState
 {
 public:
-    EmptyGenState():BaseState(){robot = (Robot)0;}
+    EmptyGenState():BaseState(){robot = (Robot)0;stateType=EMPTY_GEN;}
     EmptyGenState(EmptyGenState& old):BaseState(old)
     {
         this->robot=old.robot;
@@ -135,7 +134,7 @@ private:
 class GetSensorState:public BaseState
 {
 public:
-    GetSensorState():BaseState(){}
+    GetSensorState():BaseState(){stateType=GET_SENSOR_READING;}
     GetSensorState(GetSensorState& old):BaseState(old)
     {
         this->sensor=old.sensor;
@@ -168,7 +167,7 @@ private:
 class InitiateSensorState:public BaseState
 {
 public:
-    InitiateSensorState():BaseState(){}
+    InitiateSensorState():BaseState(){stateType=INITIATE_SENSOR_READING;}
     InitiateSensorState(InitiateSensorState& old):BaseState(old)
     {
         this->sensor=old.sensor;
@@ -201,7 +200,7 @@ private:
 class RunGenState:public BaseState
 {
 public:
-    RunGenState():BaseState(){coords = new Coordinates();}
+    RunGenState():BaseState(){coords = new Coordinates();stateType==RUN_GENERATOR;}
     RunGenState(RunGenState& old):BaseState(old)
     {
         this->robot=old.robot;
@@ -259,7 +258,7 @@ private:
 class StopGenState:public BaseState
 {
 public:
-    StopGenState():BaseState(){}
+    StopGenState():BaseState(){stateType==STOP_GEN;}
     StopGenState(StopGenState& old):BaseState(old)
     {
         this->set=old.set;
@@ -274,8 +273,7 @@ public:
     int itemCount()
     {
         int i=0;//Type
-        if(set.first.empty()||set.second.empty()) i++;
-        else i+=2;//sets
+        i++;//set
         if(parameters.size()>0)i++;
         i+= this->outTransitionsCount();
         return i;
@@ -293,7 +291,7 @@ private:
 class sysInitState:public BaseState
 {
 public:
-    sysInitState():BaseState(){transmitter=(Transmitter)-1;}
+    sysInitState():BaseState(){transmitter=(Transmitter)-1;stateType==SYSTEM_INITIALIZATION;}
     sysInitState(sysInitState& old):BaseState(old)
     {
         this->inits=old.inits;
@@ -336,7 +334,7 @@ private:
 class WaitState:public BaseState
 {
 public:
-    WaitState():BaseState(){Timespan=0;}
+    WaitState():BaseState(){Timespan=0;stateType==WAIT;}
     WaitState(WaitState& old):BaseState(old)
     {
         this->Timespan=old.Timespan;

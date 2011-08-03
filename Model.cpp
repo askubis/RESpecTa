@@ -192,6 +192,7 @@ bool Model::checkNameAvailable(QString name)
         MyGraphType * tmp = (*it).second;
         if (!checkNameAvailable(name,tmp))
         {
+            std::cout<<name.toStdString()<<" exists in task "<<(*it).first.toStdString()<<std::endl;
            return false;
         }
     }
@@ -502,7 +503,6 @@ bool Model::ReplaceState(BaseState * oldState, BaseState * newState)
     return false;
 }
 
-
 void Model::MoveTransitionUp(BaseState * st, int index)
 {
     QString subtaskName = getSubtaskName(st->getName());
@@ -651,6 +651,8 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     tie(first, last) = vertices(*G);
     QString tmpSaveName = QString(SaveFolder).append(QString().fromStdString(FileName));
     QFile* file = new QFile(tmpSaveName);
+    QString msg = SubName;
+    res->reportMsg(msg.append(" task saved to file ").append(tmpSaveName));
     file->open( QIODevice::WriteOnly);//TODO: check if exists
     QXmlStreamWriter * writer = new QXmlStreamWriter(file);
     writer->setAutoFormatting(1);
@@ -768,7 +770,8 @@ BaseState * Model::getState(QString name, QString subtaskName)
     for ( ;first!=last; first++)
     {
         BaseState * tmp = boost::get(State, (*first));
-        if (tmp->getName()  == name) return tmp;
+        if (!tmp->getName().compare(name, Qt::CaseSensitive))
+            return tmp;
     }
     return NULL;
 }

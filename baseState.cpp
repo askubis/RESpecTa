@@ -50,6 +50,7 @@ BaseState::BaseState()
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     nameTextItem = new QGraphicsTextItem();
+    this->stateType=STATE_TYPES_NUMBER;
 }
 
 BaseState & BaseState::operator=(const BaseState &other)

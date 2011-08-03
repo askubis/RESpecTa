@@ -13,9 +13,10 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod )
     line = 0;
 }
 
-void DiagramScene::setMode(Mode mode)
+void DiagramScene::setMode(SceneMode mode)
 {
     myMode = mode;
+    emit modeChanged(mode);
 }
 
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -65,6 +66,15 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
         }
     }
 }
+int max(int a, qreal b)
+{
+    return a>b?a:b;
+}
+
+int min(int a, qreal b)
+{
+    return a<b?a:b;
+}
 
 void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
@@ -102,7 +112,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(startItem->getName()=="_END_" || startItem->getName()=="_STOP_")
             {
                 emit reportError("_END_ and _STOP_ states cannot be a source of transition");
-                myMode = MoveItem;
+                setMode(MoveItem);
                 return;
             }
             BaseState *endItem =
@@ -110,7 +120,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(endItem->getName()=="INIT")
             {
                 emit reportError("_INIT state cannot be a target of transition");
-                myMode = MoveItem;
+                setMode(MoveItem);
                 return;
             }
             Transition *transition = new Transition(startItem, endItem);
@@ -124,7 +134,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 transition->setZValue(-1000.0);
                 addItem(transition);
                 transition->updatePosition();
-                myMode = MoveItem;
+                setMode(MoveItem);
                 transition->setToolTip(QString().fromStdString(transition->Print()));
                 foreach(QGraphicsItem *item, selectedItems())
                 {
@@ -145,14 +155,35 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     line = 0;
 
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
+
+    if(this->myMode==MoveItem)
+    {
+        foreach(QGraphicsItem * it, this->selectedItems())
+        {
+            if (it->type()==BaseState::Type)
+            {
+                checkIfFits((BaseState *)it);
+            }
+        }
+    }
 }
 
+void DiagramScene::checkIfFits(BaseState * it)
+{
+    if ((! this->sceneRect().contains(it->pos()-QPoint(50,50))) || (! this->sceneRect().contains(it->pos()+QPoint(50,50))))
+    setSceneRect(QRectF(
+                     min(0, it->pos().x() -50),
+                     min(0, it->pos().y() -50),
+                     max(5000, it->pos().x()+50),
+                     max(5000, it->pos().y())+50));
+}
 
 void DiagramScene::setItemParams(BaseState * toInsert)
 {
     toInsert->setMenu(myItemMenu);
     toInsert->setBrush(Qt::white);
     addItem(toInsert);
+    checkIfFits(toInsert);
 
     QGraphicsTextItem * textItem = toInsert->getNameTextItem();
     addItem(textItem);

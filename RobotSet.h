@@ -27,12 +27,12 @@ public:
             x+="\nROBOT: ";
             x+=ROBOT_TABLE[(*it)];
         }
-        x+="\nSECOND SET:";
+        /*x+="\nSECOND SET:";
         for(std::vector<Robot>::iterator it = second.begin();it!=second.end();it++)
         {
             x+="\nROBOT: ";
             x+=ROBOT_TABLE[(*it)];
-        }
+        }*/
         return x;
     }
 
@@ -50,15 +50,15 @@ public:
         }
         writer->writeEndElement();
 
-        if(second.size()>0)
+        /*if(second.size()>0)
         {
             writer->writeStartElement("SecSet");
             for(std::vector<Robot>::iterator it = second.begin();it!=second.end();it++)
             {
                 writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[(*it)]));
-            }//*/
+            }
             writer->writeEndElement();
-        }
+        }*/
         writer->writeEndElement();
     }
 
@@ -71,18 +71,17 @@ public:
     {
         QStringList errors;
         bool wasFirst = false;
-        bool wasSecond = false;
         std::vector<Robot> * tmpRobotVect;
         while (!reader->atEnd())
         {
               reader->readNextStartElement();
             if(reader->name().toString()=="SetOfRobots"&&reader->isEndElement())
             {
-                if(first.size()==0&&second.size()==0)
+                if(first.size()==0)
                 {
                     char linenum[30];
                     sprintf(linenum,"; line: %lld", reader->lineNumber());
-                    errors.push_back(QString("both sets empty in robotset")+=linenum);
+                    errors.push_back(QString("Set empty in robotset")+=linenum);
                 }
                 return errors;
             }
@@ -108,7 +107,7 @@ public:
                     tmpRobotVect = NULL;
                 }
             }
-            else if(reader->name()=="SecSet")
+            /*else if(reader->name()=="SecSet")
             {
                 if(reader->isStartElement())
                 {
@@ -129,7 +128,7 @@ public:
                     wasSecond = true;
                     tmpRobotVect = NULL;
                 }
-            }
+            }*/
            else if(reader->name()=="ROBOT"&&reader->isStartElement())
             {
                 if (tmpRobotVect!=NULL)
@@ -160,11 +159,11 @@ public:
                 errors.push_back((QString("Unexpected name while reading <SetOfRobots>: ")+=reader->name())+=linenum);
             }
         }
-        if(first.size()==0&&second.size()==0)
+        if(first.size()==0)
         {
             char linenum[30];
             sprintf(linenum,"; line: %lld", reader->lineNumber());
-            errors.push_back(QString("Both sets empty in <SetOfRobots>")+=linenum);
+            errors.push_back(QString("Set empty in <SetOfRobots>")+=linenum);
         }
         return errors;
     }
@@ -176,7 +175,7 @@ public:
     /**
     *   Second Set of robots.
     */
-    std::vector<Robot> second;
+    //std::vector<Robot> second;
 };
 
 #endif // ROBOTSET_H
