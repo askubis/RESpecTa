@@ -24,6 +24,9 @@ class Transition : public QGraphicsLineItem
 public:
     enum { Type = UserType + 4 };
 
+    QGraphicsScene * getScene(){return scene;}
+    void setScene(QGraphicsScene * sc);
+
     Transition(BaseState *startItem, BaseState *endItem,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
@@ -41,6 +44,8 @@ public:
     *   Sets state, which is an end state for this transition
     */
     void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
+
+    void setZValue(qreal z);
 
     void removeSubtask(){subtask=NULL;}
 
@@ -117,7 +122,9 @@ public slots:
     */
     void updatePosition();
 
-private:
+protected:
+        QGraphicsScene * scene;
+        std::vector<QGraphicsLineItem *> lines;
     /**
     *   Start item of the transition.
     */

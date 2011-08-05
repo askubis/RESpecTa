@@ -65,6 +65,10 @@ public:
     bool tryInsertTransition(Transition * trans);
 
         //*************     CHANGE  ***********//
+    /*void changeSourceStateofTrans(Transition * tr, QString newstatename);
+    void changeDestStateofTrans(Transition * tr, QString newstatename);*/
+
+
     /**
     *   Changes the name of subtask from oldName to NewName.
     */
@@ -84,6 +88,22 @@ public:
     void MoveTransitionDown(BaseState * st, int _index);
 
         //*************     GET     ***********//
+
+    QStringList getAllStartStateNames(QString sub)
+    {
+        QStringList list = getAllStateNames(sub);
+        list.removeOne("_END_");
+        list.removeOne("_STOP_");
+        return list;
+    }
+
+    QStringList getAllEndStateNames(QString sub)
+    {
+        QStringList list = getStateNames((*((*subtasks)[sub])));
+        list.removeOne("INIT");
+        return list;
+    }
+
     /**
     *   Returns the State with given name. Not for use for _END_ or _STOP_ states.
     */

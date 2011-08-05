@@ -76,6 +76,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
     mod->setBlock(true);
     sysInitState * startState = new sysInitState();
+    startState->setType(SYSTEM_INITIALIZATION);
     startState->setPos(2100,2300);
     startState->setName("INIT");
     scenes[currentSubtask]->setItemParams(startState);
@@ -131,7 +132,13 @@ RESpecTa::RESpecTa(Model * newmod)
     logPath.append(".log");
     logFile.setFileName(logPath);
     if(!logFile.open(QIODevice::WriteOnly))
-        qDebug()<<"Error opening the logfile";
+    {
+        QDir dir = QDir::current();
+        dir.mkdir("../logs/");
+        if(!logFile.open(QIODevice::WriteOnly))
+            qDebug()<<"Error opening the logfile";
+    }
+
     logStreamToWrite.setDevice(&logFile);
     mod->setChanged(false);
 
@@ -530,10 +537,8 @@ void RESpecTa::LoadFile(QString fileName)
     mod->setBlock(false);
     this->TabChanged(tabWidget->currentIndex());
 
-std::cout<<"checking for existance of start and end"<<std::endl;
     foreach(QString str, mod->getTasksNameLists())
     {
-        std::cout<<str.toStdString()<<mod->vertNum(str)<<" "<<scenes[str]->items().count()<<std::endl;
         if(mod->getMainName()==str)
         {
             if(mod->checkNameAvailable("INIT"))
@@ -545,7 +550,6 @@ std::cout<<"checking for existance of start and end"<<std::endl;
                 mod->addState(startState, str);
                 reportMsg(QString("Added missing INIT state to task ").append(str));
             }
-            std::cout<<mod->checkNameAvailable("_STOP_")<<std::endl;
             if(mod->checkNameAvailable("_STOP_"))
             {
                 StopState * endState = new StopState();
@@ -570,7 +574,6 @@ std::cout<<"checking for existance of start and end"<<std::endl;
                 reportMsg(QString("Added missing _END_ state to task ").append(str));
             }
         }
-        std::cout<<str.toStdString()<<mod->vertNum(str)<<" "<<scenes[str]->items().count()<<std::endl;
     }
 }
 
@@ -818,7 +821,8 @@ if(mod->checkTransCondAvailabe(trans, condition))
                             trans->setToolTip(QString().fromStdString(trans->Print()));
                             trans->setZValue(-1000.0);
                             sourceState->addTransition(trans);
-                            targetState->addTransition(trans);
+                            if(sourceState!=targetState)targetState->addTransition(trans);
+                            trans->setScene(scenes[subName]);
                           }
                           else
                           {
@@ -1196,7 +1200,7 @@ void RESpecTa::reportMsg(QString msgString)
     //QMessageBox::information(this, QString("Error"), msgString);
     QListWidgetItem *newItem = new QListWidgetItem();
     newItem->setTextColor(Qt::green);
-    newItem->setText(time.append("").append(msgString));
+    newItem->setText(time.append(" ").append(msgString));
     terminal->addItem(newItem);
     terminal->scrollToBottom();
 }

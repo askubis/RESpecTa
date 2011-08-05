@@ -43,15 +43,15 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    bottomLayout->addWidget(InsertButton);
 
    QLabel * sourceLabel =new QLabel(tr("Source state:"));
-   sourceNameLabel = new QLabel();
+   sourceNameCombo = new QComboBox();
 
    QLabel * destLabel =new QLabel(tr("Destination state:"));
-   destNameLabel = new QLabel();
+   destNameCombo = new QComboBox();
 
    TransitionLayout->addWidget(sourceLabel);
-   TransitionLayout->addWidget(sourceNameLabel);
+   TransitionLayout->addWidget(sourceNameCombo);
    TransitionLayout->addWidget(destLabel);
-   TransitionLayout->addWidget(destNameLabel);
+   TransitionLayout->addWidget(destNameCombo);
 
    TransitionLayout->addStretch();
    TransitionLayout->addLayout(bottomLayout);
@@ -66,8 +66,8 @@ void TransWidget::AcceptTrans()
     {
         emit reportError(QString("Please, select a transition to edit, edit it and then press OK."));
         OKButton->setDisabled(true);
-        sourceNameLabel->setText(QString());
-        destNameLabel->setText(QString());
+        sourceNameCombo->clear();
+        destNameCombo->clear();
         return;
     }
     if(!mod->checkTransitonExists(edited))
@@ -75,20 +75,62 @@ void TransWidget::AcceptTrans()
         emit reportError(QString("The Transition You have been editing has been deleted"));
         edited=NULL;
         OKButton->setDisabled(true);
-        sourceNameLabel->setText(QString());
-        destNameLabel->setText(QString());
+        sourceNameCombo->clear();
+        destNameCombo->clear();
         return;
     }
-    if (mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
+    if (edited->startItem()->getName()==sourceNameCombo->currentText() && edited->endItem()->getName()==destNameCombo->currentText())
     {
+        if(mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
+        {
+            edited->setCondition(conditionLineEdit->text());
+            edited->setSubtask(mod->getState(stateCombo->currentText()));
+            OKButton->setDisabled(false);
+            edited->setToolTip(QString().fromStdString(edited->Print()));
+        }
+        else //that condition is already used for the source state
+        {
+            emit reportError(QString("The condition you specified is already in use for the source state."));
+        }
+    }
+    else if( ( edited->startItem()->getName() == sourceNameCombo->currentText() && mod->checkTransCondAvailabe(edited, conditionLineEdit->text()) )
+            ||mod->checkTransCondAvailabe(mod->getState(sourceNameCombo->currentText()), conditionLineEdit->text()))
+    {
+        QString subtaskName = mod->getSubNameOfTrans(edited);
+        QGraphicsScene * scene = edited->getScene();
+        /*if(edited->startItem()->getName()!=sourceNameCombo->currentText())
+        {
+            mod->changeSourceStateofTrans(edited, sourceNameCombo->currentText());
+        }else{}
+        if(edited->endItem()->getName()!=destNameCombo->currentText())
+        {
+            mod->changeDestStateofTrans(edited, destNameCombo->currentText());
+        }else{}
         edited->setCondition(conditionLineEdit->text());
         edited->setSubtask(mod->getState(stateCombo->currentText()));
         OKButton->setDisabled(false);
-        sourceNameLabel->setText(edited->startItem()->getName());
-        destNameLabel->setText(edited->endItem()->getName());
-        edited->setToolTip(QString().fromStdString(edited->Print()));
+        edited->setToolTip(QString().fromStdString(edited->Print()));*/
+Transition * todelete = edited;
+        mod->deleteTransition(edited);
+        scene->removeItem(todelete);
+        delete todelete;//?
+
+        Transition * tr = new Transition(mod->getState(sourceNameCombo->currentText(), subtaskName), mod->getState(destNameCombo->currentText(), subtaskName));
+        tr->setScene(scene);
+        tr->setCondition(conditionLineEdit->text());
+        tr->setSubtask(mod->getState(stateCombo->currentText()));
+        tr->startItem()->addTransition(tr);
+        if(tr->startItem()!=tr->endItem())tr->endItem()->addTransition(tr);
+        tr->setZValue(-1000.0);
+        tr->updatePosition();
+
+        tr->setToolTip(QString().fromStdString(tr->Print()));
+        scene->addItem(tr);
+        bool test = mod->tryInsertTransition(tr);
+
+        this->TransSelected(tr);
     }
-    else //that condition is already used for the source state
+    else
     {
         emit reportError(QString("The condition you specified is already in use for the source state."));
     }
@@ -110,8 +152,8 @@ void TransWidget::InsertTrans()
 {
     edited = NULL;
     OKButton->setDisabled(true);
-    sourceNameLabel->setText(QString());
-    destNameLabel->setText(QString());
+    //sourceNameLabel->setText(QString());
+    //destNameLabel->setText(QString());
     std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), stateCombo->currentText());
     emit insertTransition(thePair);
 }
@@ -123,7 +165,7 @@ void TransWidget::subtaskChanged(QString name)
         stateCombo->clear();
         if(name.toStdString()!="None")
         {
-            stateCombo->addItems(mod->getAllStateNames(name));
+            stateCombo->addItems(mod->getAllStartStateNames(name));
         }
     }
 }
@@ -134,6 +176,8 @@ void TransWidget::refreshData()
     subtaskCombo->addItem("None");
     subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
     subtaskChanged(subtaskCombo->currentText());
+    sourceNameCombo->clear();
+    destNameCombo->clear();
 }
 
 void TransWidget::TransSelected(Transition * trans)
@@ -141,8 +185,18 @@ void TransWidget::TransSelected(Transition * trans)
     edited = trans;
     OKButton->setDisabled(false);
 
-    sourceNameLabel->setText(trans->startItem()->getName());
-    destNameLabel->setText(trans->endItem()->getName());
+    QString subtaskName=mod->getSubtaskName(trans->startItem());
+    QStringList startList = mod->getAllStartStateNames(subtaskName);
+    sourceNameCombo->clear();
+    sourceNameCombo->addItems(startList);
+    sourceNameCombo->setCurrentIndex(sourceNameCombo->findText(trans->startItem()->getName()));
+
+    QStringList endList = mod->getAllEndStateNames(subtaskName);
+    destNameCombo->clear();
+    destNameCombo->addItems(endList);
+    destNameCombo->setCurrentIndex(destNameCombo->findText(trans->endItem()->getName()));
+    //sourceNameLabel->setText(trans->startItem()->getName());
+    //destNameLabel->setText(trans->endItem()->getName());
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(trans->getSubtask())==QString(""))
     {

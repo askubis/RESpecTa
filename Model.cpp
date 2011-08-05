@@ -192,7 +192,6 @@ bool Model::checkNameAvailable(QString name)
         MyGraphType * tmp = (*it).second;
         if (!checkNameAvailable(name,tmp))
         {
-            std::cout<<name.toStdString()<<" exists in task "<<(*it).first.toStdString()<<std::endl;
            return false;
         }
     }
@@ -237,7 +236,10 @@ BaseState * Model::getState(QString name)
 QStringList Model::getAllStateNames(QString sub)
 {
     MyGraphType * tmp = (*subtasks)[sub];
-    return getStateNames( (*tmp));
+    QStringList list = getStateNames( (*tmp));
+    list.removeOne("_END_");
+    list.removeOne("_STOP_");
+    return list;
 }
 
 
@@ -729,7 +731,7 @@ QStringList Model::getStateNames(MyGraphType G)
        {
          x = boost::get(stateMap, *first);
          QString tmp = x->getName();
-         if(tmp.toLower()!="_stop_" && tmp.toLower()!="_end_")items<< (tmp);
+         items<< (tmp);
          ++first;
        }
        return items;
@@ -930,5 +932,69 @@ void Model::CleanTask(QString Name)
     }
     setChanged(true);
 }
+
+/*
+void Model::changeSourceStateofTrans(Transition * tr, QString newstatename)
+{
+    QString subtaskName = getSubtaskName(newstatename);
+    if(subtaskName==QString(""))
+    {
+        res->getError(QString("The Transition you were editing has been deleted, please choose the insert option to insert the state"));
+        return;
+    }
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+
+    BaseState * newState = getState(newstatename, subtaskName);
+    boost::remove_edge((*(findEdge(tmpGraph, tr))), (*tmpGraph));
+    boost::graph_traits<MyGraphType>::vertex_iterator start, end;
+    start = findVertex(tmpGraph, newState);
+    end = findVertex(tmpGraph, tr->endItem());
+    boost::add_edge(*start, *end, tr, *tmpGraph);
+    if(tr->startItem()==tr->endItem())
+    {
+
+    }
+    else
+    {
+        tr->startItem()->removeTransition(tr);
+    }
+    tr->setStartItem(newState);
+    newState->addTransition(tr);
+
+    setChanged(true);
+}
+
+
+
+void Model::changeDestStateofTrans(Transition * tr, QString newstatename)
+{
+    QString subtaskName = getSubtaskName(newstatename);
+    if(subtaskName==QString(""))
+    {
+        res->getError(QString("The Transition you were editing has been deleted, please choose the insert option to insert the state"));
+        return;
+    }
+    MyGraphType * tmpGraph = (*subtasks)[subtaskName];
+
+    BaseState * newState = getState(newstatename, subtaskName);
+
+    boost::remove_edge((*(findEdge(tmpGraph, tr))), (*tmpGraph));
+    boost::graph_traits<MyGraphType>::vertex_iterator start, end;
+    end = findVertex(tmpGraph, newState);
+    start = findVertex(tmpGraph, tr->startItem());
+    boost::add_edge(*start, *end, tr, *tmpGraph);
+    if(tr->startItem()==tr->endItem())
+    {
+
+    }
+    else
+    {
+        tr->endItem()->removeTransition(tr);
+    }
+    tr->setEndItem(newState);
+    newState->addTransition(tr);
+
+    setChanged(true);
+}*/
 
 

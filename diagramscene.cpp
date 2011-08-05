@@ -104,8 +104,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
         if (startItems.count() > 0 && endItems.count() > 0 &&
             startItems.first()->type() == BaseState::Type &&
-            endItems.first()->type() == BaseState::Type &&
-            startItems.first() != endItems.first()) {
+            endItems.first()->type() == BaseState::Type) {
 
             BaseState *startItem =
                 qgraphicsitem_cast<BaseState *>(startItems.first());
@@ -129,8 +128,9 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             bool test = emit lineInserted(transition);
             if(test)
             {
+                transition->setScene(this);
                 startItem->addTransition(transition);
-                endItem->addTransition(transition);
+                if(startItem!=endItem)endItem->addTransition(transition);
                 transition->setZValue(-1000.0);
                 addItem(transition);
                 transition->updatePosition();
@@ -143,13 +143,13 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 selectedItems().clear();
                 selectedItems().push_back(transition);
                 transition->setSelected(true);
+                emit itemSelected(transition);
             }
             else
             {
 
                 delete transition;
             }
-
         }
     }
     line = 0;

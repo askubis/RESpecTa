@@ -78,14 +78,10 @@ private:
     */
     QComboBox *subtaskCombo;
 
-    /**
-    *   Label showing the name of StartState for this transition(only while editing).
-    */
-    QLabel * sourceNameLabel;
-    /**
-    *   Label showing the name of EndState for this transition(only while editing).
-    */
-    QLabel * destNameLabel;
+
+    QComboBox * sourceNameCombo;
+
+    QComboBox * destNameCombo;
 signals:
     /**
     *   Signals,that a transition will be inserted, gibving it's attributes.
