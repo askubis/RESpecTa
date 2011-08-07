@@ -31,6 +31,7 @@ RESpecTa::RESpecTa(Model * newmod)
     editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     connect(this, SIGNAL(itemSelectedSig(QGraphicsItem *)), editWidget, SLOT(itemSelected(QGraphicsItem *)));
+    connect(this, SIGNAL(EditTasksSig()), editWidget, SLOT(EditTasks()));
     editWidget->resize(10,800);
 
     currentSubtask="MAIN";
@@ -210,8 +211,8 @@ void RESpecTa::createEditMenu()
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
     itemMenu->addAction(showTransitions);
-
 }
+
 void RESpecTa::checkIfOK()
 {
     QStringList list = mod->checkIfOK();
@@ -287,12 +288,6 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     connect(scenes[newSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
 
     connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
-    StopState * endState = new StopState();
-    endState->setPos(2600,2600);
-    endState->setType(STATE_TYPES_NUMBER);
-    endState->setName("_END_");
-    scenes[newSubtask]->setItemParams(endState);
-    mod->addState(endState, newSubtask);
 
     layouts[newSubtask] = new QHBoxLayout;
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
@@ -304,6 +299,14 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     tabWidget->addTab(widgets[newSubtask], newSubtask);
 
     mod->addSubtask(newSubtask);
+
+    StopState * endState = new StopState();
+    endState->setPos(2600,2600);
+    endState->setType(STATE_TYPES_NUMBER);
+    endState->setName("_END_");
+    scenes[newSubtask]->setItemParams(endState);
+    mod->addState(endState, newSubtask);
+
     emit refreshWidgets();
 }
 
@@ -374,6 +377,7 @@ void RESpecTa::SubtaskChanged(QString oldName, QString newName)
     tabWidget->removeTab(i);
 
     tabWidget->addTab(widgets[newName], newName);
+    tabWidget->setCurrentWidget(widgets[newName]);
     emit refreshWidgets();
 }
 
@@ -1126,17 +1130,35 @@ void RESpecTa::about()
 
 void RESpecTa::createToolbars()
 {
+
+    QAction * addStateAction = new QAction(QIcon(":/images/State.png"),tr("Inset a state"), this);
+    addStateAction->setStatusTip(tr("Insert a state to current task"));
+    connect(addStateAction, SIGNAL(triggered()), this, SLOT(InsertState()));
+
+    QAction * addTransAction = new QAction(QIcon(":/images/Trans.png"),tr("Inset a state"), this);
+    addTransAction->setStatusTip(tr("Insert a state to current task"));
+    connect(addTransAction, SIGNAL(triggered()), this, SLOT(insertTransition()));
+
+    QAction * TasksAction = new QAction(QIcon(":/images/Tasks.png"),tr("Inset a state"), this);
+    TasksAction->setStatusTip(tr("Insert a state to current task"));
+    connect(TasksAction, SIGNAL(triggered()), this, SLOT(openTasksWindow()));
+
     editToolBar = addToolBar(tr("Edit"));
     editToolBar->addAction(deleteAction);
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
 
+    editToolBar->addAction(addStateAction);
+    editToolBar->addAction(addTransAction);
+    editToolBar->addAction(TasksAction);
+
+
     //editToolBar->addAction(insertEndStateAction);
 
-    QToolButton *pointerButton = new QToolButton;
+    /*QToolButton *pointerButton = new QToolButton;
     pointerButton->setCheckable(true);
     pointerButton->setChecked(true);
-    pointerButton->setIcon(QIcon(":/images/pointer.png"));
+    pointerButton->setIcon(QIcon(":/images/pointer.png"));*/
 
     sceneScaleCombo = new QComboBox;
     scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
@@ -1149,30 +1171,25 @@ void RESpecTa::createToolbars()
     sceneToolbar->addWidget(sceneScaleCombo);
 }
 
-void RESpecTa::InsertState(BaseState * newState)
+void RESpecTa::InsertState()
 {
-    bool not_abort = mod->checkNameAvailable(newState->getName());
+    WaitState * st = new WaitState();
+    st->setName("Name");
+    while(!mod->checkNameAvailable(st->getName())) st->setName(st->getName().append("_1"));
 
-    if(not_abort)
+    for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
-        for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
-        {
-            (*it).second->setMode(InsertItem);
-            (*it).second->setToInsertState(newState);
-        }
-    }
-    else
-    {
-        reportError(QString("State with that name already exists"));
+        (*it).second->setMode(InsertItem);
+        (*it).second->setToInsertState(st);
     }
 }
 
-void RESpecTa::insertTransition(std::pair<QString,QString> thePair)
+void RESpecTa::insertTransition()
 {
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
         (*it).second->setMode( InsertLine);
-        (*it).second->setTransitionAttributes(thePair);
+        (*it).second->setTransitionAttributes(std::make_pair("CHANGE THIS",""));
     }
 }
 
@@ -1492,6 +1509,16 @@ void RESpecTa::sceneModeChanged(SceneMode mode)
     default:
         break;
     }
+}
+
+void RESpecTa::openTasksWindow()
+{
+    foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+    {
+        it->setSelected(false);
+    }
+    scenes[currentSubtask]->selectedItems().clear();
+    emit EditTasksSig();
 }
 
 

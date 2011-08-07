@@ -46,6 +46,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     default:
         break;
     }
+    emit selectionChanged();
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 

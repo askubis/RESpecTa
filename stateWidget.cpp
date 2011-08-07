@@ -19,11 +19,11 @@ this->setMaximumWidth(230);
     OKButton->setDisabled(true);
     bottomLayout->addWidget(OKButton);
 
-    InsertButton = new QPushButton(tr("&Insert"));
+    /*InsertButton = new QPushButton(tr("&Insert"));
     InsertButton->setChecked(false);
     connect(InsertButton, SIGNAL(clicked()), this, SLOT(InsertState()));
     InsertButton->setDisabled(true);
-    bottomLayout->addWidget(InsertButton);
+    bottomLayout->addWidget(InsertButton);*/
 
     StateLayout = new QVBoxLayout;
 
@@ -103,11 +103,11 @@ void StateWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        InsertButton->setDisabled(false);
+        //InsertButton->setDisabled(false);
     }
     else
     {
-        InsertButton->setDisabled(true);
+        //InsertButton->setDisabled(true);
     }
 }
 
@@ -150,7 +150,7 @@ void StateWidget::setStateSubclass(int chosen)
     StateWidgets[tmpWidget]->setVisible(true);
 }
 
-void StateWidget::InsertState()
+/*void StateWidget::InsertState()
 {
     edited = NULL;
     OKButton->setDisabled(true);
@@ -165,7 +165,7 @@ void StateWidget::InsertState()
     toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
     toInsertState->setParameters(paramEdit->text());
     emit InsertState(toInsertState);
-}
+}*/
 
 void StateWidget::refreshData()
 {

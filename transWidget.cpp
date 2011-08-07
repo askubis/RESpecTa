@@ -36,11 +36,11 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    OKButton->setDisabled(true);
    bottomLayout->addWidget(OKButton);
 
-   InsertButton = new QPushButton(tr("&Insert"));
+   /*InsertButton = new QPushButton(tr("&Insert"));
    InsertButton->setChecked(false);
    connect(InsertButton, SIGNAL(clicked()), this, SLOT(InsertTrans()));
    InsertButton->setDisabled(true);
-   bottomLayout->addWidget(InsertButton);
+   bottomLayout->addWidget(InsertButton);*/
 
    QLabel * sourceLabel =new QLabel(tr("Source state:"));
    sourceNameCombo = new QComboBox();
@@ -140,15 +140,15 @@ void TransWidget::lengthChanged(QString newString)
 {
     if(newString.size()>0)
     {
-        InsertButton->setDisabled(false);
+        //InsertButton->setDisabled(false);
     }
     else
     {
-        InsertButton->setDisabled(true);
+        //InsertButton->setDisabled(true);
     }
 }
 
-void TransWidget::InsertTrans()
+/*void TransWidget::InsertTrans()
 {
     edited = NULL;
     OKButton->setDisabled(true);
@@ -156,7 +156,7 @@ void TransWidget::InsertTrans()
     //destNameLabel->setText(QString());
     std::pair<QString, QString> thePair = std::make_pair(conditionLineEdit->text(), stateCombo->currentText());
     emit insertTransition(thePair);
-}
+}*/
 
 void TransWidget::subtaskChanged(QString name)
 {

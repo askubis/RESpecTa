@@ -22,13 +22,14 @@ class QLineEdit;
 class QPushButton;
 class QGridLayout;
 class QVBoxLayout;
+class QStackedWidget;
 QT_END_NAMESPACE
 
 
 /**
 *   Class containing edit widgets.
 */
-class EditWidget : public QTabWidget
+class EditWidget : public QStackedWidget//QTabWidget
 {
     Q_OBJECT
 
@@ -43,6 +44,8 @@ signals:
     void reportError(QString msgString);
 
 private slots:
+    void EditTasks();
+
     /**
     *   Calls refresh function to all widgets.
     */

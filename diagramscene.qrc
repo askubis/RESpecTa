@@ -16,5 +16,8 @@
         <file>images/background3.png</file>
         <file>images/background4.png</file>
         <file>images/_END_image.jpg</file>
+        <file>images/State.png</file>
+        <file>images/Tasks.png</file>
+        <file>images/Trans.png</file>
     </qresource>
 </RCC>

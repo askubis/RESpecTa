@@ -49,7 +49,7 @@ signals:
     /**
     *   Signals, that newState will be inserted.
     */
-    void InsertState(BaseState * newState);
+    //void InsertState(BaseState * newState);
     /**
     *   Signals to a parent widget, that an error has occured.
     */
@@ -80,7 +80,7 @@ private slots:
     /**
     *   User wants to insert a State (uses InsertState Signal)
     */
-    void InsertState();
+    //void InsertState();
 
 private:
     /**
@@ -123,7 +123,7 @@ private:
     /**
     *   Button signaling that this state will be inserted.
     */
-    QPushButton *InsertButton;
+    //QPushButton *InsertButton;
 
     /**
     *   Combobox to choose a type of the state.

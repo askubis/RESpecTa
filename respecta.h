@@ -87,6 +87,8 @@ public:
    void listSelectionChanged(QModelIndexList list);
 
 signals:
+   void EditTasksSig();
+
    /**
    *   Signal from Scene, which is forwarded to EditWidget and then to transWidget or stateWidget to display item for edition.
    *    @param item Item, which has been selected on the scene.
@@ -102,6 +104,7 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void openTasksWindow();
    void sceneModeChanged(SceneMode mode);
    void ClearTerminal();
    void NewProject();
@@ -165,7 +168,7 @@ private slots:
     /**
     *   Forwards the transition attributes (condition, subtask) to the active scene.
     */
-    void insertTransition(std::pair<QString,QString>);
+    void insertTransition();
     /**
     *   Asks the user for name of the file to open, reads the name and runs LoadFile function.
     */
@@ -182,7 +185,7 @@ private slots:
     /**
     *   If state with that name is not present in the model, then forwards the newState to all scenes(it will be added to the first scene, on which it will be clicked).
     */
-    void InsertState(BaseState * newState);
+    void InsertState();
     /**
     *   Deletes all selected items on the active scene.
     */

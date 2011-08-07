@@ -62,7 +62,7 @@ private:
     /**
     *   Button which signals, that the user wants to add this transition to the project.
     */
-    QPushButton *InsertButton;
+    //QPushButton *InsertButton;
 
     /**
     *   Transition, which is currently being edited.
@@ -86,7 +86,7 @@ signals:
     /**
     *   Signals,that a transition will be inserted, gibving it's attributes.
     */
-    void insertTransition(std::pair<QString,QString>);
+    //void insertTransition(std::pair<QString,QString>);
     /**
     *   Reports to the parent widget, that an error has occured.
     */
@@ -108,7 +108,7 @@ private slots:
     /**
     *   Signals with the insertTransition Signal, that the user wants to insert a transition into the project.
     */
-    void InsertTrans();
+    //void InsertTrans();
 };
 
 #endif // TRANSWIDGET_H
