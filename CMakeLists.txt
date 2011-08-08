@@ -64,6 +64,7 @@ TreeModel.cpp
 TreeItem.cpp 
 States.cpp 
 subtaskWidget.cpp
+myTreeView.cpp
 )
 
 # Class headers that have to be MOCed (i.e. classes derived from QObject)
