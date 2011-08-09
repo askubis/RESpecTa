@@ -10,6 +10,8 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
 
     robotsInitialized = new QListWidget;
     sysIniLayout->addWidget(robotsInitialized);
+
+
     QPushButton * removeRobotButton = new QPushButton("Remove Selected");
     sysIniLayout->addWidget(removeRobotButton);
     connect (removeRobotButton, SIGNAL(clicked()), this, SLOT(removeECPSection()));
@@ -36,6 +38,22 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
     connect (mpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
     connect(mpDialog, SIGNAL(InsertMP(std::vector<Sensor>,Transmitter)), this, SLOT(InsertMP(std::vector<Sensor>,Transmitter)));
+
+    connect(robotsInitialized, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ItemClicked(QModelIndex)));
+}
+
+void sysIniWidget::ItemClicked(QModelIndex ind)
+{
+    QString robot = robotsInitialized->currentItem()->text();
+    std::vector<robotInit> inits =this->State->getInits();
+    for(std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
+    {
+        if(ROBOT_TABLE[(*it).robot]==robot.toStdString())
+        {
+            ecpDialog->openForECP((*it));
+            ecpDialog->exec();
+        }
+    }
 }
 
 void sysIniWidget::InsertMP (std::vector<Sensor> sensors, Transmitter trans)
@@ -848,6 +866,19 @@ void ECPDialog::add()
     {
         genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[genTypeCombo->currentIndex()]).append(" ").append(argLineEdit->text()));
         robotInitObj.init_values.push_back(std::make_pair(GeneratorType(genTypeCombo->currentIndex()), argLineEdit->text().toInt()));
+    }
+}
+
+void ECPDialog::openForECP(robotInit robotIni)
+{
+    robotInitObj=robotIni;
+    genList->clear();
+    robotCombo->setCurrentIndex(robotIni.robot);
+    for (std::vector < std::pair<GeneratorType, int> >::iterator it = robotIni.init_values.begin(); it!=robotIni.init_values.end();it++)
+    {
+        char str[10];
+        sprintf(str, "%d", (*it).second);
+        genList->addItem(QString().fromStdString(GENERATOR_TYPE_TABLE[(*it).first]).append(" ").append(QString().fromStdString(str) ));
     }
 }
 
