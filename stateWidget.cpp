@@ -210,7 +210,7 @@ bool StateWidget::StateNameOK()
         emit reportError(QString("The StateName cannot contain \"/\""));
         return false;
     }
-    if(mod->getState(stateNameEdit->text()))
+    if(mod->getState(stateNameEdit->text()) && edited->getName()!=stateNameEdit->text())
     {
         emit reportError(QString("The StateName is already in use"));
         return false;

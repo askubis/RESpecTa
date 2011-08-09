@@ -193,9 +193,9 @@ void RESpecTa::createEditMenu()
     GoToState->setStatusTip(tr("Center on the state selected on the list"));
     connect(GoToState, SIGNAL(triggered()),
         this, SLOT(GoToState()));*/
-    QAction * ModelCheckIfOK = new QAction(tr("Check for &errors in the menu"), this);
+    QAction * ModelCheckIfOK = new QAction(tr("Validat&e"), this);
     ModelCheckIfOK->setShortcut(tr("Ctrl+E"));
-    ModelCheckIfOK->setStatusTip(tr("Check for errors in the menu"));
+    ModelCheckIfOK->setStatusTip(tr("Check for errors in the project"));
     connect (ModelCheckIfOK, SIGNAL(triggered()), this, SLOT(checkIfOK()));
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -1156,7 +1156,7 @@ void RESpecTa::createToolbars()
 
     TasksAction = new QAction(QIcon(":/images/Tasks.png"),tr("Inset a state"), this);
     TasksAction->setStatusTip(tr("Insert a state to current task"));
-    connect(TasksAction, SIGNAL(triggered(bool)), this, SLOT(openTasksWindow(bool)));
+    connect(TasksAction, SIGNAL(triggered()), this, SLOT(openTasksWindow()));
 
 
 
@@ -1550,21 +1550,14 @@ void RESpecTa::sceneModeChanged(SceneMode mode)
     }
 }
 
-void RESpecTa::openTasksWindow(bool enabled)
+void RESpecTa::openTasksWindow()
 {
-    if(enabled)
+    foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
     {
-        foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
-        {
-            it->setSelected(false);
-        }
-        scenes[currentSubtask]->selectedItems().clear();
-        emit EditTasksSig();
+        it->setSelected(false);
     }
-    else
-    {
-        emit SignalDeleted();
-    }
+    scenes[currentSubtask]->selectedItems().clear();
+    emit EditTasksSig();
 }
 
 void RESpecTa::LineCanceled()

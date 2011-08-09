@@ -105,7 +105,7 @@ signals:
 
 private slots:
    void LineCanceled();
-   void openTasksWindow(bool);
+   void openTasksWindow();
    void sceneModeChanged(SceneMode mode);
    void ClearTerminal();
    void NewProject();
