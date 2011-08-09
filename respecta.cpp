@@ -1084,6 +1084,8 @@ void RESpecTa::stateInserted(BaseState *item)
 void RESpecTa::lineInserted(Transition *line)
 {
     bool test;
+    int i=1;
+    QString base_cond = line->getCondition();
     do
     {
         test = mod->tryInsertTransition(line);
@@ -1098,7 +1100,10 @@ void RESpecTa::lineInserted(Transition *line)
         }
         else
         {
-            line->setCondition(line->getCondition().append("_1"));
+            char str[10];
+            sprintf(str, "%d", i);
+            line->setCondition(QString(base_cond).append("_").append(QString().fromStdString(str)));
+            i++;
         }
     }while(!test);
     return;
@@ -1195,12 +1200,21 @@ void RESpecTa::InsertState(bool enabled)
 {
     addTransAction->setChecked(false);
     TasksAction->setChecked(false);
+    SignalDeleted();
     if(enabled)
     {
         WaitState * st = new WaitState();
         st->setName("Name");
         st->setType(WAIT);
-        while(!mod->checkNameAvailable(st->getName())) st->setName(st->getName().append("_1"));
+        QString base_name = st->getName();
+        int i=1;
+        while(!mod->checkNameAvailable(st->getName()))
+        {
+            char str[10];
+            sprintf(str, "%d", i);
+            st->setName(QString(base_name).append("_").append(QString().fromStdString(str)));
+            i++;
+        }
 
         for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
         {
@@ -1221,6 +1235,7 @@ void RESpecTa::insertTransition(bool enabled)
 {
     TasksAction->setChecked(false);
     addStateAction->setChecked(false);
+    SignalDeleted();
     if(enabled)
     {
         for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
@@ -1585,7 +1600,6 @@ void RESpecTa::LineCanceled()
     {
         (*it).second->setMode(MoveItem);
     }
-
 }
 
 void RESpecTa::reportWarning(QString msg)
