@@ -319,7 +319,14 @@ QStringList Model::checkIfOK()
         Sensor sen = (Sensor)i;
         if(SensorUsed[i]^SensorInitialized[i])
         {
-            errors+=QString("Sensor initizalized but not used, or used but not initizalized ").append(QString().fromStdString(SENSOR_TABLE[sen]));
+            if(!SensorInitialized)
+            {
+                errors+=QString("Sensor  used but not initizalized ").append(QString().fromStdString(SENSOR_TABLE[sen]));
+            }
+            else
+            {
+                res->getWarning(QString("Sensor initizalized but not used").append(QString().fromStdString(SENSOR_TABLE[sen])));
+            }
         }
     }
     for(int i=0;i<ROBOTS_NUMBER;i++)
@@ -328,9 +335,13 @@ QStringList Model::checkIfOK()
         for(int j=0;j<GENERATORS_NUMBER;j++)
         {
             GeneratorType genType = (GeneratorType)j;
-            if(genUsed[rob][genType]^genInitialized[rob][genType])
+            if(!genInitialized[rob][genType])
             {
-                errors+=QString("Generator initizalized but not used, or used but not initizalized ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob]));
+                errors+=QString("Gen used but not initizalized ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob]));
+            }
+            else
+            {
+                res->getWarning(QString("Gen initizalized but not used").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob])));
             }
         }
 
@@ -432,8 +443,7 @@ QStringList Model::checkIfOK()
                 }
                 if(!mark)
                 {
-                    QString tmpQstring = state->getName().append(QString( " state should have last Transition with condition true"));
-                    errors.push_back(tmpQstring);
+                    res->getWarning( state->getName().append(QString( " state should have last Transition with condition true")));
                 }
             }
         }

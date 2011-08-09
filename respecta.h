@@ -43,6 +43,9 @@ public:
        logFile.close();
    }
 
+   void getWarning(QString msg){reportWarning(msg);}
+
+
    /**
    *   Function refreshing the TreeView, called when change in the model has occured.
    */
@@ -104,8 +107,9 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void reportWarning(QString msg);
    void LineCanceled();
-   void openTasksWindow();
+   void openTasksWindow(bool enabled);
    void sceneModeChanged(SceneMode mode);
    void ClearTerminal();
    void NewProject();

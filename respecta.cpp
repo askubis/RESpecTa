@@ -144,6 +144,8 @@ RESpecTa::RESpecTa(Model * newmod)
     logStreamToWrite.setDevice(&logFile);
     mod->setChanged(false);
 
+    views[currentSubtask]->centerOn(mod->getState("INIT", mod->getMainName()));
+
     reportMsg(QString("Errors will be saved to: ").append(logPath));
 }
 
@@ -1156,7 +1158,8 @@ void RESpecTa::createToolbars()
 
     TasksAction = new QAction(QIcon(":/images/Tasks.png"),tr("Inset a state"), this);
     TasksAction->setStatusTip(tr("Insert a state to current task"));
-    connect(TasksAction, SIGNAL(triggered()), this, SLOT(openTasksWindow()));
+    TasksAction->setCheckable(true);
+    connect(TasksAction, SIGNAL(triggered(bool)), this, SLOT(openTasksWindow(bool)));
 
 
 
@@ -1190,6 +1193,8 @@ void RESpecTa::createToolbars()
 
 void RESpecTa::InsertState(bool enabled)
 {
+    addTransAction->setChecked(false);
+    TasksAction->setChecked(false);
     if(enabled)
     {
         WaitState * st = new WaitState();
@@ -1214,6 +1219,8 @@ void RESpecTa::InsertState(bool enabled)
 
 void RESpecTa::insertTransition(bool enabled)
 {
+    TasksAction->setChecked(false);
+    addStateAction->setChecked(false);
     if(enabled)
     {
         for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
@@ -1550,24 +1557,47 @@ void RESpecTa::sceneModeChanged(SceneMode mode)
     }
 }
 
-void RESpecTa::openTasksWindow()
+void RESpecTa::openTasksWindow(bool enabled)
 {
-    foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+    addTransAction->setChecked(false);
+    addStateAction->setChecked(false);
+    if(enabled)
     {
-        it->setSelected(false);
+        foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+        {
+            it->setSelected(false);
+        }
+        scenes[currentSubtask]->selectedItems().clear();
+        emit EditTasksSig();
     }
-    scenes[currentSubtask]->selectedItems().clear();
-    emit EditTasksSig();
+    else
+    {
+        emit SignalDeleted();
+    }
 }
 
 void RESpecTa::LineCanceled()
 {
     addStateAction->setChecked(false);
     addTransAction->setChecked(false);
+    TasksAction->setChecked(false);
     for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
     {
         (*it).second->setMode(MoveItem);
     }
 
+}
+
+void RESpecTa::reportWarning(QString msg)
+{
+    QDateTime dateTime= QDateTime::currentDateTime();
+    QString time = dateTime.time().toString();
+
+    //QMessageBox::information(this, QString("Error"), msgString);
+    QListWidgetItem *newItem = new QListWidgetItem();
+    newItem->setTextColor(Qt::yellow);
+    newItem->setText(time.append(" Warning ").append(msg));
+    terminal->addItem(newItem);
+    terminal->scrollToBottom();
 }
 
