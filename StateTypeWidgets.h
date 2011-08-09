@@ -76,6 +76,8 @@ signals:
     void reportError(QString msgString);
 
 private slots:
+    void ItemClicked(QModelIndex);
+
     /**
     *   Removes ECP section connected with the robot, which is selected in the robotsInitialized widget.
     */
@@ -483,6 +485,7 @@ class ECPDialog:public QDialog
     Q_OBJECT
 public:
     ECPDialog(QWidget * parent);
+    void openForECP(robotInit robotIni);
 
 signals:
     /**
