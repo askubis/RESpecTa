@@ -44,7 +44,7 @@ public:
    }
 
    void getWarning(QString msg){reportWarning(msg);}
-
+    void CenterOn(QString name);
 
    /**
    *   Function refreshing the TreeView, called when change in the model has occured.

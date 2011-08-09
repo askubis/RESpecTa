@@ -144,8 +144,6 @@ RESpecTa::RESpecTa(Model * newmod)
     logStreamToWrite.setDevice(&logFile);
     mod->setChanged(false);
 
-    views[currentSubtask]->centerOn(mod->getState("INIT", mod->getMainName()));
-
     reportMsg(QString("Errors will be saved to: ").append(logPath));
 }
 
@@ -1241,7 +1239,7 @@ void RESpecTa::insertTransition(bool enabled)
         for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
         {
             (*it).second->setMode( InsertLine);
-            (*it).second->setTransitionAttributes(std::make_pair("CHANGE THIS",""));
+            (*it).second->setTransitionAttributes(std::make_pair("ChangeThis",""));
         }
 
     }
@@ -1613,5 +1611,10 @@ void RESpecTa::reportWarning(QString msg)
     newItem->setText(time.append(" Warning ").append(msg));
     terminal->addItem(newItem);
     terminal->scrollToBottom();
+}
+
+void RESpecTa::CenterOn(QString name)
+{
+    views[currentSubtask]->centerOn(mod->getState(name));
 }
 

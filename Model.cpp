@@ -335,13 +335,16 @@ QStringList Model::checkIfOK()
         for(int j=0;j<GENERATORS_NUMBER;j++)
         {
             GeneratorType genType = (GeneratorType)j;
-            if(!genInitialized[rob][genType])
+            if(genUsed[rob][genType]^genInitialized[rob][genType])
             {
-                errors+=QString("Gen used but not initizalized ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob]));
-            }
-            else
-            {
-                res->getWarning(QString("Gen initizalized but not used").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob])));
+                if(!genInitialized[rob][genType])
+                {
+                    errors+=QString("Gen used but not initizalized ").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob]));
+                }
+                else
+                {
+                    res->getWarning(QString("Gen initizalized but not used").append(QString().fromStdString(GENERATOR_TYPE_TABLE[genType])).append(QString(" for Robot: ")).append(QString().fromStdString(ROBOT_TABLE[rob])));
+                }
             }
         }
 
