@@ -104,7 +104,8 @@ signals:
    void SignalDeleted();
 
 private slots:
-   void openTasksWindow();
+   void LineCanceled();
+   void openTasksWindow(bool);
    void sceneModeChanged(SceneMode mode);
    void ClearTerminal();
    void NewProject();
@@ -164,11 +165,11 @@ private slots:
     *   @param line Pointer to the transition, which will be inserted.
     *   @returns True if the Transition has been added to the Model.
     */
-    bool lineInserted(Transition *line);
+    void lineInserted(Transition *line);
     /**
     *   Forwards the transition attributes (condition, subtask) to the active scene.
     */
-    void insertTransition();
+    void insertTransition(bool);
     /**
     *   Asks the user for name of the file to open, reads the name and runs LoadFile function.
     */
@@ -185,7 +186,7 @@ private slots:
     /**
     *   If state with that name is not present in the model, then forwards the newState to all scenes(it will be added to the first scene, on which it will be clicked).
     */
-    void InsertState();
+    void InsertState(bool);
     /**
     *   Deletes all selected items on the active scene.
     */
@@ -412,6 +413,9 @@ private:
     QFile logFile;
 
     QLabel * tipLabel;
+    QAction * addStateAction;
+    QAction * addTransAction;
+    QAction * TasksAction;
 };
 
 

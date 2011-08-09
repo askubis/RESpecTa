@@ -38,10 +38,17 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             break;
 
         case InsertLine:
+
             line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
                                         mouseEvent->scenePos()));
             line->setPen(QPen(Qt::black, 2));
             addItem(line);
+            if(items(line->line().p1()).size()==0)
+            {
+                emit LineCanceled();
+                delete line;
+                return;
+            }
             break;
     default:
         break;
@@ -112,7 +119,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(startItem->getName()=="_END_" || startItem->getName()=="_STOP_")
             {
                 emit reportError("_END_ and _STOP_ states cannot be a source of transition");
-                setMode(MoveItem);
+                emit LineCanceled();
                 return;
             }
             BaseState *endItem =
@@ -120,37 +127,30 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             if(endItem->getName()=="INIT")
             {
                 emit reportError("_INIT state cannot be a target of transition");
-                setMode(MoveItem);
+                emit LineCanceled();
                 return;
             }
             Transition *transition = new Transition(startItem, endItem);
             transition->setCondition(transitionAttributes.first);
             transition->setSubtask(mod->getState(transitionAttributes.second));
-            bool test = emit lineInserted(transition);
-            if(test)
-            {
-                transition->setScene(this);
-                startItem->addTransition(transition);
-                if(startItem!=endItem)endItem->addTransition(transition);
-                transition->setZValue(-1000.0);
-                addItem(transition);
-                transition->updatePosition();
-                setMode(MoveItem);
-                transition->setToolTip(QString().fromStdString(transition->Print()));
-                foreach(QGraphicsItem *item, selectedItems())
-                {
-                    item->setSelected(false);
-                }
-                selectedItems().clear();
-                selectedItems().push_back(transition);
-                transition->setSelected(true);
-                emit itemSelected(transition);
-            }
-            else
-            {
+            transition->setScene(this);
+            emit lineInserted(transition);
 
-                delete transition;
+            startItem->addTransition(transition);
+            if(startItem!=endItem)endItem->addTransition(transition);
+            transition->setZValue(-1000.0);
+            addItem(transition);
+            transition->updatePosition();
+            setMode(MoveItem);
+            transition->setToolTip(QString().fromStdString(transition->Print()));
+            foreach(QGraphicsItem *item, selectedItems())
+            {
+                item->setSelected(false);
             }
+            selectedItems().clear();
+            selectedItems().push_back(transition);
+            transition->setSelected(true);
+            emit itemSelected(transition);
         }
     }
     line = 0;

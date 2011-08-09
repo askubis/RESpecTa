@@ -57,6 +57,7 @@ public:
     void checkIfFits(BaseState * state);
 
 signals:
+    void LineCanceled();
     void modeChanged(SceneMode mode);
 
     /**
@@ -66,7 +67,7 @@ signals:
     /**
     *   Signals, that a transition has been inserted into the scene.
     */
-    bool lineInserted(Transition * line);
+    void lineInserted(Transition * line);
     /**
     *   Signals, that an item has been selected on the scene.
     */

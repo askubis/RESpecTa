@@ -44,6 +44,7 @@ RESpecTa::RESpecTa(Model * newmod)
     connect(scenes[currentSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[currentSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     connect(scenes[currentSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
+    connect(scenes[currentSubtask], SIGNAL(LineCanceled()), this, SLOT(LineCanceled()));
 
     connect(scenes[currentSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
@@ -260,6 +261,7 @@ void RESpecTa::SubtaskLoaded(QString newSubtask)
     connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     connect(scenes[newSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
+    connect(scenes[newSubtask], SIGNAL(LineCanceled()), this, SLOT(LineCanceled()));
 
     connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
@@ -286,6 +288,7 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
     connect(scenes[newSubtask], SIGNAL(lineInserted(Transition *)), this, SLOT(lineInserted(Transition *)));
     connect(scenes[newSubtask], SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
     connect(scenes[newSubtask], SIGNAL(modeChanged(SceneMode)), this, SLOT(sceneModeChanged(SceneMode)));
+    connect(scenes[newSubtask], SIGNAL(LineCanceled()), this, SLOT(LineCanceled()));
 
     connect(scenes[newSubtask], SIGNAL(selectionChanged()), this, SLOT(selectionchanged()));
 
@@ -1056,6 +1059,7 @@ void RESpecTa::stateInserted(BaseState *item)
         if(check)
         {
             item->setToolTip(QString().fromStdString(item->Print()));
+            addStateAction->setChecked(false);
         }
         else
         {
@@ -1075,18 +1079,27 @@ void RESpecTa::stateInserted(BaseState *item)
     }
 }
 
-bool RESpecTa::lineInserted(Transition *line)
+void RESpecTa::lineInserted(Transition *line)
 {
-    bool test = mod->tryInsertTransition(line);
-    if(test)//success
+    bool test;
+    do
     {
-        emit itemSelectedSig(line);
-        for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        test = mod->tryInsertTransition(line);
+        if(test)//success
         {
-            (*it).second->setMode(MoveItem);
+            emit itemSelectedSig(line);
+            for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+            {
+                (*it).second->setMode(MoveItem);
+            }
+            addTransAction->setChecked(false);
         }
-    }
-    return test;
+        else
+        {
+            line->setCondition(line->getCondition().append("_1"));
+        }
+    }while(!test);
+    return;
 }
 
 void RESpecTa::sceneScaleChanged(const QString &scale)
@@ -1131,17 +1144,21 @@ void RESpecTa::about()
 void RESpecTa::createToolbars()
 {
 
-    QAction * addStateAction = new QAction(QIcon(":/images/State.png"),tr("Inset a state"), this);
+    addStateAction = new QAction(QIcon(":/images/State.png"),tr("Inset a state"), this);
     addStateAction->setStatusTip(tr("Insert a state to current task"));
-    connect(addStateAction, SIGNAL(triggered()), this, SLOT(InsertState()));
+    addStateAction->setCheckable(true);
+    connect(addStateAction, SIGNAL(triggered(bool)), this, SLOT(InsertState(bool)));
 
-    QAction * addTransAction = new QAction(QIcon(":/images/Trans.png"),tr("Inset a state"), this);
+    addTransAction = new QAction(QIcon(":/images/Trans.png"),tr("Inset a state"), this);
     addTransAction->setStatusTip(tr("Insert a state to current task"));
-    connect(addTransAction, SIGNAL(triggered()), this, SLOT(insertTransition()));
+    addTransAction->setCheckable(true);
+    connect(addTransAction, SIGNAL(triggered(bool)), this, SLOT(insertTransition(bool)));
 
-    QAction * TasksAction = new QAction(QIcon(":/images/Tasks.png"),tr("Inset a state"), this);
+    TasksAction = new QAction(QIcon(":/images/Tasks.png"),tr("Inset a state"), this);
     TasksAction->setStatusTip(tr("Insert a state to current task"));
-    connect(TasksAction, SIGNAL(triggered()), this, SLOT(openTasksWindow()));
+    connect(TasksAction, SIGNAL(triggered(bool)), this, SLOT(openTasksWindow(bool)));
+
+
 
     editToolBar = addToolBar(tr("Edit"));
     editToolBar->addAction(deleteAction);
@@ -1171,25 +1188,47 @@ void RESpecTa::createToolbars()
     sceneToolbar->addWidget(sceneScaleCombo);
 }
 
-void RESpecTa::InsertState()
+void RESpecTa::InsertState(bool enabled)
 {
-    WaitState * st = new WaitState();
-    st->setName("Name");
-    while(!mod->checkNameAvailable(st->getName())) st->setName(st->getName().append("_1"));
-
-    for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    if(enabled)
     {
-        (*it).second->setMode(InsertItem);
-        (*it).second->setToInsertState(st);
+        WaitState * st = new WaitState();
+        st->setName("Name");
+        st->setType(WAIT);
+        while(!mod->checkNameAvailable(st->getName())) st->setName(st->getName().append("_1"));
+
+        for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode(InsertItem);
+            (*it).second->setToInsertState(st);
+        }
+    }
+    else
+    {
+        for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode(MoveItem);
+        }
     }
 }
 
-void RESpecTa::insertTransition()
+void RESpecTa::insertTransition(bool enabled)
 {
-    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    if(enabled)
     {
-        (*it).second->setMode( InsertLine);
-        (*it).second->setTransitionAttributes(std::make_pair("CHANGE THIS",""));
+        for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode( InsertLine);
+            (*it).second->setTransitionAttributes(std::make_pair("CHANGE THIS",""));
+        }
+
+    }
+    else
+    {
+        for(std::map<QString, DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            (*it).second->setMode(MoveItem);
+        }
     }
 }
 
@@ -1511,16 +1550,31 @@ void RESpecTa::sceneModeChanged(SceneMode mode)
     }
 }
 
-void RESpecTa::openTasksWindow()
+void RESpecTa::openTasksWindow(bool enabled)
 {
-    foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+    if(enabled)
     {
-        it->setSelected(false);
+        foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+        {
+            it->setSelected(false);
+        }
+        scenes[currentSubtask]->selectedItems().clear();
+        emit EditTasksSig();
     }
-    scenes[currentSubtask]->selectedItems().clear();
-    emit EditTasksSig();
+    else
+    {
+        emit SignalDeleted();
+    }
 }
 
+void RESpecTa::LineCanceled()
+{
+    addStateAction->setChecked(false);
+    addTransAction->setChecked(false);
+    for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+    {
+        (*it).second->setMode(MoveItem);
+    }
 
-
+}
 
