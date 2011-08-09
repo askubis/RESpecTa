@@ -100,7 +100,7 @@ public:
         if(reader->attributes().hasAttribute("coordinateType")&&reader->attributes().hasAttribute("motionType"))
         {
             CoordType Cindex = (CoordType)(getCoordTypeTable().indexOf(reader->attributes().value("coordinateType").toString()));
-            if(isProper(coordType))
+            if(isProper(Cindex))
             {
                  coordType = Cindex;
             }
