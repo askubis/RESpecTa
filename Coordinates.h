@@ -45,7 +45,7 @@ public:
 
     bool equals(Coordinates * other)
     {
-        if(this->coordType==other->motionType)
+        if(this->coordType==other->coordType)
         {
             if(this->motionType==other->motionType)
             {
