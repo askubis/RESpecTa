@@ -7,7 +7,7 @@ EditWidget::EditWidget(QWidget *parent, Model * newmod )
     : QStackedWidget(parent)
 {
     this->setMaximumWidth(230);
-    this->setMinimumWidth(230);
+    //this->setMinimumWidth(230);
 stateWidget = new StateWidget(this, newmod);
     this->addWidget(stateWidget);//,tr("State"));
 transWidget = new TransWidget(this, newmod);

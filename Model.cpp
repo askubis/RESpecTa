@@ -107,7 +107,7 @@ bool Model::addState(BaseState * item, QString subtaskName)
     return true;
 }
 
-bool Model::checkTransCondAvailabe(Transition * line,QString cond)
+bool Model::checkTransCondAvailabe(Transition * line, ConditionType CondType, QString cond)
 {
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
@@ -121,7 +121,7 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
                 typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
                 TransitionMap transitionMap = get(transition_t(), (*tmp));
                 Transition * transition = boost::get(transitionMap, *OEIt);
-                if(transition!=line && transition->getCondition()==cond)
+                if(transition!=line && (transition->getCondType()==CondType && transition->getCondition()==cond))
                 {
                     res->getError(QString("There already exists a transition with this condition from this state"));
                     return false;
@@ -134,7 +134,7 @@ bool Model::checkTransCondAvailabe(Transition * line,QString cond)
     return false;
 }
 
-bool Model::checkTransCondAvailabe(BaseState * source,QString cond)
+bool Model::checkTransCondAvailabe(BaseState * source,ConditionType condType, QString cond)
 {
         MyGraphType * tmp = (*subtasks)[getSubtaskName(source->getName())];
 
@@ -145,7 +145,7 @@ bool Model::checkTransCondAvailabe(BaseState * source,QString cond)
                 typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
                 TransitionMap transitionMap = get(transition_t(), (*tmp));
                 Transition * transition = boost::get(transitionMap, *OEIt);
-                if(transition->getCondition()==cond)
+                if(transition->getCondType()==condType && transition->getCondition()==cond)
                 {
                     res->getError(QString("There already exists a transition with this condition from this state"));
                     return false;
@@ -439,7 +439,7 @@ QStringList Model::checkIfOK()
                 for(;OEIt!=OEIt2;OEIt++)
                 {
                     Transition * tr = boost::get(transitionMap, *OEIt);
-                    if(tr->getCondition().toLower()=="true")
+                    if(tr->getCondType()==TRU)
                         mark=true;
                     else
                         mark = false;
@@ -684,7 +684,9 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     BaseState *State;
     Transition * transition;
 
-    writer->writeStartElement("TaskDescription");
+    if(ifMain)writer->writeStartElement("TaskDescription");
+    else writer->writeStartElement("SubTask");
+
     res->SaveGraphicsAttributes(writer, SubName);
 
     for (;first != last;first++)

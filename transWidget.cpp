@@ -10,11 +10,16 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
    QVBoxLayout *TransitionLayout = new QVBoxLayout;
 
    QLabel *transCondLabel = new QLabel(tr("Transition condition:"));
+   condTypeCombo = new QComboBox();
+   condTypeCombo->addItems(getCondTypeTable());
+   connect(condTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(indexChanged(int)));
+
    conditionLineEdit = new QLineEdit;
-   conditionLineEdit->setValidator(new QRegExpValidator(QRegExp("^(stateOperationResult|true|TRUE|iniFile\\.\\w*)$"), conditionLineEdit));
+   //conditionLineEdit->setValidator(new QRegExpValidator(QRegExp("^(stateOperationResult|true|TRUE|iniFile\\.\\w*)$"), conditionLineEdit));
    connect(conditionLineEdit, SIGNAL(textChanged(QString)), this, SLOT(lengthChanged(QString)));
    QHBoxLayout *bottomLayout = new QHBoxLayout;
    TransitionLayout->addWidget(transCondLabel);
+   TransitionLayout->addWidget(condTypeCombo);
    TransitionLayout->addWidget(conditionLineEdit);
 
    QLabel * taskLabel = new QLabel(tr("Subtask:"));
@@ -81,9 +86,10 @@ void TransWidget::AcceptTrans()
     }
     if (edited->startItem()->getName()==sourceNameCombo->currentText() && edited->endItem()->getName()==destNameCombo->currentText())
     {
-        if(mod->checkTransCondAvailabe(edited, conditionLineEdit->text()))
+        if(mod->checkTransCondAvailabe(edited, (ConditionType)condTypeCombo->currentIndex(), conditionLineEdit->text()))
         {
             edited->setCondition(conditionLineEdit->text());
+            edited->setCondType((ConditionType)condTypeCombo->currentIndex());
             edited->setSubtask(mod->getState(stateCombo->currentText()));
             OKButton->setDisabled(false);
             edited->setToolTip(QString().fromStdString(edited->Print()));
@@ -93,8 +99,8 @@ void TransWidget::AcceptTrans()
             emit reportError(QString("The condition you specified is already in use for the source state."));
         }
     }
-    else if( ( edited->startItem()->getName() == sourceNameCombo->currentText() && mod->checkTransCondAvailabe(edited, conditionLineEdit->text()) )
-            ||mod->checkTransCondAvailabe(mod->getState(sourceNameCombo->currentText()), conditionLineEdit->text()))
+    else if( ( edited->startItem()->getName() == sourceNameCombo->currentText() && mod->checkTransCondAvailabe(edited,(ConditionType)condTypeCombo->currentIndex(), conditionLineEdit->text()) )
+            ||mod->checkTransCondAvailabe(mod->getState(sourceNameCombo->currentText()),(ConditionType) condTypeCombo->currentIndex(), conditionLineEdit->text()))
     {
         QString subtaskName = mod->getSubNameOfTrans(edited);
         QGraphicsScene * scene = edited->getScene();
@@ -117,6 +123,7 @@ Transition * todelete = edited;
 
         Transition * tr = new Transition(mod->getState(sourceNameCombo->currentText(), subtaskName), mod->getState(destNameCombo->currentText(), subtaskName));
         tr->setScene(scene);
+        tr->setCondType((ConditionType)condTypeCombo->currentIndex());
         tr->setCondition(conditionLineEdit->text());
         tr->setSubtask(mod->getState(stateCombo->currentText()));
         tr->startItem()->addTransition(tr);
@@ -128,6 +135,7 @@ Transition * todelete = edited;
         scene->addItem(tr);
         bool test = mod->tryInsertTransition(tr);
 
+        edited=NULL;
         this->TransSelected(tr);
     }
     else
@@ -172,8 +180,25 @@ void TransWidget::subtaskChanged(QString name)
 
 void TransWidget::refreshData()
 {
-    if(edited) AcceptTrans();
-
+    if(edited)
+    {
+        if(edited->startItem()->getName()!=this->sourceNameCombo->currentText() ||
+                edited->endItem()->getName()!=this->destNameCombo->currentText() ||
+                edited->getCondition()!=this->conditionLineEdit->text() ||
+                condTypeCombo->currentIndex()!=edited->getCondType())
+            AcceptTrans();
+        if(edited->getSubtask())
+        {
+            if (edited->getSubtask()->getName()!=this->stateCombo->currentText())
+                AcceptTrans();
+        }
+        else
+        {
+            if(this->subtaskCombo->currentText()!="None")
+                AcceptTrans();
+        }
+    }
+edited=0;
     subtaskCombo->clear();
     subtaskCombo->addItem("None");
     subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
@@ -184,9 +209,27 @@ void TransWidget::refreshData()
 
 void TransWidget::TransSelected(Transition * trans)
 {
-    if(edited) AcceptTrans();
+    if(edited)
+    {
+        if(edited->startItem()->getName()!=this->sourceNameCombo->currentText() ||
+                edited->endItem()->getName()!=this->destNameCombo->currentText() ||
+                edited->getCondition()!=this->conditionLineEdit->text() ||
+                condTypeCombo->currentIndex()!=edited->getCondType())
+            AcceptTrans();
+        if(edited->getSubtask())
+        {
+            if (edited->getSubtask()->getName()!=this->stateCombo->currentText())
+                AcceptTrans();
+        }
+        else
+        {
+            if(this->subtaskCombo->currentText()!="None")
+                AcceptTrans();
+        }
+    }
     edited = trans;
     OKButton->setDisabled(false);
+
 
     QString subtaskName=mod->getSubtaskName(trans->startItem());
     QStringList startList = mod->getAllStartStateNames(subtaskName);
@@ -200,6 +243,7 @@ void TransWidget::TransSelected(Transition * trans)
     destNameCombo->setCurrentIndex(destNameCombo->findText(trans->endItem()->getName()));
     //sourceNameLabel->setText(trans->startItem()->getName());
     //destNameLabel->setText(trans->endItem()->getName());
+    condTypeCombo->setCurrentIndex(trans->getCondType());
     conditionLineEdit->setText(trans->getCondition());
     if(mod->getSubtaskName(trans->getSubtask())==QString(""))
     {
@@ -210,4 +254,18 @@ void TransWidget::TransSelected(Transition * trans)
         subtaskCombo->setCurrentIndex(subtaskCombo->findText(mod->getSubtaskName(trans->getSubtask())));
         stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()->getName()));
     }
+}
+
+void TransWidget::indexChanged(int index)
+{
+    if(index==INIFILE)
+    {
+        conditionLineEdit->setEnabled(true);
+    }
+    else
+    {
+        conditionLineEdit->setDisabled(true);
+        conditionLineEdit->setText("");
+    }
+
 }

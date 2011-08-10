@@ -45,6 +45,10 @@ public:
     */
     void setOKButtonDisabled(){OKButton->setDisabled(true);edited=NULL;}
 private:
+
+    QComboBox * condTypeCombo;
+
+
     /**
     *   Model of the project.
     */
@@ -93,6 +97,8 @@ signals:
     void reportError(QString);
 
 private slots:
+    void indexChanged(int index);
+
     /**
     *   Refreshes State list in StateCombo after a change in subtaskCombo.
     */

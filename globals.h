@@ -248,7 +248,7 @@ static bool isProper(MotionType value)
 
 //***************   TRANSMITTERS   ***************//
 /**
-*   Enum Type representing TraRobotsnsmitters.
+*   Enum Type representing Transmitters.
 */
 enum Transmitter {TRANSMITTER_RC_WINDOWS,
             TRANSMITTERS_NUMBER};
@@ -258,7 +258,7 @@ enum Transmitter {TRANSMITTER_RC_WINDOWS,
 static std::string TRANSMITTER_TABLE[TRANSMITTERS_NUMBER+1] =
         {"TRANSMITTER_RC_WINDOWS",""};
 /**
-*   Function returning list of StateTypes.
+*   Function returning list of Transmitters.
 *   @returns List containing names of all Transmitters.
 */
 static QStringList getTransmitterTable()
@@ -281,6 +281,40 @@ static bool isProper(Transmitter value)
     return (value>=0 && value<TRANSMITTERS_NUMBER);
 }
 
+//***************   CONDITIONS   ***************//
+/**
+*   Enum Type representing Conditions.
+*/
+enum ConditionType {TRU, STATEOPERATIONRESULT, INIFILE,
+            COND_NUMBER};
+/**
+*   Table containing all strings representing Conditions.
+*/
+static std::string CONDITION_TABLE[COND_NUMBER+1] =
+        {"true", "stateOperationResult", "iniFile.",""};
+/**
+*   Function returning list of StateTypes.
+*   @returns List containing names of all Conditions.
+*/
+static QStringList getCondTypeTable()
+{
+    QStringList items;
+    for (int i=0;i<COND_NUMBER;i++)
+    {
+        items<<QString().fromStdString(CONDITION_TABLE[i]);
+    }
+    return items;
+}
+
+/**
+*   Function checking if given Condition is a proper value of Conditions.
+*   @param  value Condition to check if proper.
+*   @returns True if the value is proper.
+*/
+static bool isProper(ConditionType value)
+{
+    return (value>=0 && value<COND_NUMBER);
+}
 
 
 #endif // GLOBALS_H

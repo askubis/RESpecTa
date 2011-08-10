@@ -131,6 +131,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 return;
             }
             Transition *transition = new Transition(startItem, endItem);
+            transition->setCondType(INIFILE);
             transition->setCondition(transitionAttributes.first);
             transition->setSubtask(mod->getState(transitionAttributes.second));
             transition->setScene(this);

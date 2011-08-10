@@ -9,6 +9,7 @@ Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
+    CondType=INIFILE;
     subtask=NULL;
     myStartItem = startItem;
     myEndItem = endItem;

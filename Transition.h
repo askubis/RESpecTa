@@ -32,6 +32,9 @@ public:
 
     ~Transition();
 
+    ConditionType getCondType(){return CondType;}
+    void setCondType(ConditionType newCondType){CondType=newCondType;}
+
     int type() const
         { return Type; }
     QRectF boundingRect() const;
@@ -76,6 +79,7 @@ public:
     {
         std::string toRet;
         toRet+="Condition: ";
+        toRet+=CONDITION_TABLE[CondType];
         toRet+=condition.toStdString();
         if(subtask!=NULL)
         {
@@ -92,7 +96,7 @@ public:
     void Print(QXmlStreamWriter * writer)
     {
         writer->writeStartElement("transition");
-        writer->writeAttribute("condition", condition);
+        writer->writeAttribute("condition", QString().fromStdString(CONDITION_TABLE[CondType]).append(condition));
         BaseState *tmpState;
         tmpState = endItem();
         QString tmpString;
@@ -123,6 +127,7 @@ public slots:
     void updatePosition();
 
 protected:
+    ConditionType CondType;
         QGraphicsScene * scene;
         std::vector<QGraphicsLineItem *> lines;
     /**

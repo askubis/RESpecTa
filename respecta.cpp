@@ -54,6 +54,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
 
     QGridLayout *layout = new QGridLayout;
+    QSplitter * splitter = new QSplitter(this);
     layouts[currentSubtask]=new QHBoxLayout;
 
     views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
@@ -95,15 +96,24 @@ RESpecTa::RESpecTa(Model * newmod)
     TreeView->setModel(treeModel);
     listLayout->addWidget(TreeView);
 
-    listWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
-    layout->addWidget(listWidget, 0, 0);
-    tabWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    layout->addWidget(tabWidget, 0, 1);
-    editWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
-    layout->addWidget(editWidget, 0, 2);
+    //listWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+    //layout->addWidget(listWidget, 0, 0);
+    splitter->addWidget(listWidget);
+    //tabWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    //layout->addWidget(tabWidget, 0, 1);
+    splitter->addWidget(tabWidget);
+    //editWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+    //layout->addWidget(editWidget, 0, 2);
+    splitter->addWidget(editWidget);
+    //layout->addWidget(splitter, 0,0,1,3);
     terminal = new QListWidget(this);
-    terminal->setMaximumHeight(200);
-    layout->addWidget(terminal, 1, 0, 1, 3);
+    //terminal->setMaximumHeight(200);
+    QSplitter * vertSplitter = new QSplitter();
+    vertSplitter->setOrientation(Qt::Vertical);
+    //layout->addWidget(terminal, 1, 0, 1, 3);
+    vertSplitter->addWidget(splitter);
+    vertSplitter->addWidget(terminal);
+    layout->addWidget(vertSplitter,0,1,2,3);
     tipLabel = new QLabel("Insert an item, select item to edit or move items on the scene.");
     QPushButton * clearTerminalButton = new QPushButton("Clear Terminal");
     connect (clearTerminalButton, SIGNAL(clicked()), this, SLOT(ClearTerminal()));
@@ -761,7 +771,7 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
                   if(reader->attributes().hasAttribute("condition")&&reader->attributes().hasAttribute("target"))
                   {
                       QString subtask="";
-                      QString condition = reader->attributes().value("condition").toString();
+                      QString conditionString = reader->attributes().value("condition").toString();
                       QString target = reader->attributes().value("target").toString();
                       QStringList strList = target.split(">>");
                       if(strList.size()>1)
@@ -778,12 +788,38 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
                       if(sourceState!=NULL&&targetState!=NULL)
                       {
                           Transition * trans = new Transition(sourceState, targetState);
-                          trans->setCondition(condition);
+                          if(conditionString.startsWith("iniFile."))
+                          {
+                              trans->setCondType(INIFILE);
+                              QStringList list = conditionString.split(".");
+                              QString condition = list[1];
+                              for(int i=2;i<list.size();i++)
+                              {
+                                  condition.append(".").append(list[i]);
+                              }
+
+                              trans->setCondition(condition);
+                          }
+                          else
+                          {
+                              ConditionType CondIndex = (ConditionType)getCondTypeTable().indexOf(conditionString);
+                              if(isProper(CondIndex))
+                              {
+                                  trans->setCondType(CondIndex);
+                                  trans->setCondition("");
+                              }
+                              else
+                              {
+                                  char linenum[30];
+                                  sprintf(linenum,"; line: %lld", reader->lineNumber());
+                                  errors.push_back(QString("Transition condition is out of boundse")+=linenum);
+                              }
+                          }
                           if(subtask.size()!=0)
                           {
                             trans->setSubtask(mod->getState(subtask));
                           }
-if(mod->checkTransCondAvailabe(trans, condition))
+if(mod->checkTransCondAvailabe(trans, trans->getCondType(), trans->getCondition()))
 {
     delete trans;
     char linenum[30];
@@ -791,7 +827,7 @@ if(mod->checkTransCondAvailabe(trans, condition))
     errors.push_back(QString("Transition condition is already used for the sourceState")+=linenum);
     continue;
 }
-                          if(mod->checkTransCondAvailabe(sourceState, condition))
+                          if(mod->checkTransCondAvailabe(sourceState, trans->getCondType(), trans->getCondition()))
                           {
                             scenes[subName]->addItem(trans);
                             mod->tryInsertTransition(trans);

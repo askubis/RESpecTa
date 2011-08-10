@@ -185,7 +185,7 @@ public:
     *   Checks if condition cond is available for the state source.
     *   @returns True if the condition cond hasn't been used as a out-condition from the state source.
     */
-    bool checkTransCondAvailabe(BaseState * source,QString cond);
+    bool checkTransCondAvailabe(BaseState * source,ConditionType condType, QString cond);
     /**
     *   Checks if subtask with name Name exists.
     *   @returns True if subtask with name Name exists.
@@ -210,7 +210,7 @@ public:
     *   Checks if condition of transition tr can be changed to cond.
     *   @returns True if no transition from the source state of tr has condition cond.
     */
-    bool checkTransCondAvailabe(Transition * tr,QString cond);
+    bool checkTransCondAvailabe(Transition * tr,ConditionType condType, QString cond);
 
         //*************     SAVE    ***********//
     /**
