@@ -223,34 +223,6 @@ void RESpecTa::checkIfOK()
     }
 }
 
-void RESpecTa::selectionchanged()
-{
-    if(scenes[currentSubtask]->selectedItems().size()!=1)emit SignalDeleted();
-    QList<QGraphicsItem *> newItems = scenes[currentSubtask]->selectedItems();
-    foreach(QGraphicsItem * it, newItems)
-    {
-        if(it->type()==BaseState::Type)
-        {
-            BaseState * tmp = (BaseState*)it;
-            tmp->setBrush(Qt::red);
-            tmp->update();
-        }
-    }
-    foreach(QGraphicsItem * it, oldSelectedItems)
-    {
-        if(it->type()==BaseState::Type)
-        {
-            if(!newItems.contains(it))
-            {
-                BaseState * tmp = (BaseState*)it;
-                tmp->setBrush(Qt::white);
-                tmp->update();
-            }
-        }
-    }
-    oldSelectedItems=newItems;
-}
-
 void RESpecTa::SubtaskLoaded(QString newSubtask)
 {
     scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
@@ -1119,9 +1091,57 @@ void RESpecTa::sceneScaleChanged(const QString &scale)
     }
 }
 
+void RESpecTa::selectionchanged()
+{
+    if(scenes[currentSubtask]->selectedItems().size()!=1)emit SignalDeleted();
+    else
+    {
+        QGraphicsItem * item = scenes[currentSubtask]->selectedItems().first();
+        if(item->type()==BaseState::Type)
+        {
+            BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+            if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
+            {
+                emit SignalDeleted();//no item was selected to change; stop state cannot be edited.
+            }
+            else
+            {
+                emit itemSelectedSig(item);
+            }
+        }
+        else
+        {
+            emit itemSelectedSig(item);
+        }
+    }
+    QList<QGraphicsItem *> newItems = scenes[currentSubtask]->selectedItems();
+    foreach(QGraphicsItem * it, newItems)
+    {
+        if(it->type()==BaseState::Type)
+        {
+            BaseState * tmp = (BaseState*)it;
+            tmp->setBrush(Qt::red);
+            tmp->update();
+        }
+    }
+    foreach(QGraphicsItem * it, oldSelectedItems)
+    {
+        if(it->type()==BaseState::Type)
+        {
+            if(!newItems.contains(it))
+            {
+                BaseState * tmp = (BaseState*)it;
+                tmp->setBrush(Qt::white);
+                tmp->update();
+            }
+        }
+    }
+    oldSelectedItems=newItems;
+}
+
 void RESpecTa::itemSelected(QGraphicsItem *item)
 {
-    if(item->type()==BaseState::Type)
+    /*if(item->type()==BaseState::Type)
     {
         BaseState * state = qgraphicsitem_cast<BaseState *>(item);
         if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
@@ -1130,13 +1150,13 @@ void RESpecTa::itemSelected(QGraphicsItem *item)
         }
         else
         {
-            emit itemSelectedSig(item);
+            //emit itemSelectedSig(item);
         }
     }
     else
     {
-        emit itemSelectedSig(item);
-    }
+        //emit itemSelectedSig(item);
+    }*/
 }
 
 void RESpecTa::about()
@@ -1330,7 +1350,7 @@ void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
         scenes[index]->selectedItems().clear();
         scenes[index]->selectedItems().push_back(newState);
         newState->setSelected(true);
-        emit itemSelected(newState);
+        selectionchanged();
     }
 }
 
@@ -1535,7 +1555,8 @@ void RESpecTa::listSelectionChanged(QModelIndexList list)
 
     scenes[currentSubtask]->selectedItems().push_back(it);
     it->setSelected(true);
-    this->itemSelected(it);
+    //this->itemSelected(it);
+    selectionchanged();
     return ;
 }
 
