@@ -83,6 +83,10 @@ private slots:
     //void InsertState();
 
 private:
+
+
+    BaseState * getState();
+
     /**
     *   Checks if name specified for the state is OK.
     *   @returns True, if anme is correct.

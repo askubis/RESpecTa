@@ -36,6 +36,20 @@ public:
         return x;
     }
 
+    bool equals(RobotSet other)
+    {
+        if(this->first.size()==other.first.size())
+        {
+            for(int i=0;i<first.size();i++)
+            {
+                if(first[i]!=other.first[i])
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
     *   Writes the data of the state to the XML stream.
     *   @param writer Stream to which the data is written

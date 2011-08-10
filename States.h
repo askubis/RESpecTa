@@ -41,6 +41,7 @@ class StopState:public BaseState
     StopState(StopState& old):BaseState(old){}
     ~StopState(){}
 
+    bool equals(BaseState* other){return BaseState::equals(other);}
     void Print(QXmlStreamWriter*);
     std::string Print();
     QStringList LoadFromXML(QXmlStreamReader * reader);
@@ -68,6 +69,7 @@ public:
     }
     ~EmptyGenForSetState(){}
 
+    bool equals(BaseState* other);
     RobotSet getSet() {return set;}
     void setSet(RobotSet newSet) {set=newSet;}
     void Print(QXmlStreamWriter * writer);
@@ -104,6 +106,7 @@ public:
     }
     ~EmptyGenState(){}
 
+    bool equals(BaseState* other);
     Robot getRobot() {return robot;}
     void setRobot(Robot newRobot) {robot=newRobot;}
     QString getArgument() {return argument;}
@@ -141,6 +144,7 @@ public:
     }
     ~GetSensorState(){}
 
+    bool equals(BaseState* other);
     Sensor getSensor() {return sensor;}
     void setSensor(Sensor newSensor) {sensor=newSensor;}
     void Print(QXmlStreamWriter * writer);
@@ -174,6 +178,7 @@ public:
     }
     ~InitiateSensorState(){}
 
+    bool equals(BaseState* other);
     Sensor getSensor() {return sensor;}
     void setSensor(Sensor newSensor) {sensor=newSensor;}
     void Print(QXmlStreamWriter * writer);
@@ -212,6 +217,7 @@ public:
     }
     ~RunGenState(){if(coords)delete coords;}
 
+    bool equals(BaseState* other);
     Robot getRobot() {return robot;}
     void setRobot(Robot newRobot) {robot=newRobot;}
     GeneratorType getGenType() {return genType;}
@@ -265,6 +271,7 @@ public:
     }
     ~StopGenState(){}
 
+    bool equals(BaseState* other);
     RobotSet getSet() {return set;}
     void setSet(RobotSet newSet) {set=newSet;}
     void Print(QXmlStreamWriter * writer);
@@ -298,6 +305,7 @@ public:
         this->transmitter=old.transmitter;
         this->sensors=old.sensors;
     }
+    bool equals(BaseState* other);
     ~sysInitState(){}
 
     std::vector<robotInit> getInits() {return inits;}
@@ -341,6 +349,7 @@ public:
     }
     ~WaitState(){}
 
+    bool equals(BaseState* other);
     long long int getTimespan() {return Timespan;}
     void setTimespan(long long int newTimeSpan){Timespan = newTimeSpan;}
     void Print(QXmlStreamWriter * writer);

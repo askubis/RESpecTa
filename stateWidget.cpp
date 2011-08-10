@@ -90,11 +90,7 @@ this->setMaximumWidth(230);
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
 
-   if(tmpWidget==SYSTEM_INITIALIZATION)
-   {
-       stateNameEdit->setText("INIT");
-       stateNameEdit->setDisabled(true);
-   }
+   setStateSubclass(tmpWidget);
 
    mainLayout->addLayout(bottomLayout);
 }
@@ -122,16 +118,13 @@ void StateWidget::AcceptState()
     {
         return;
     }
-    BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
-    if(toInsertState==NULL)
-        return;
-    toInsertState->setName(this->stateNameEdit->text());
-    toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
-    toInsertState->setParameters(paramEdit->text());
+    BaseState * toInsertState = this->getState();
+    if(toInsertState==NULL)return;
     OKButton->setDisabled(true);
     BaseState * tmp = edited;
     edited = NULL;
     emit ReplaceState(tmp, toInsertState);
+    StateSelected(toInsertState);
 }
 
 void StateWidget::setStateSubclass(int chosen)
@@ -139,11 +132,13 @@ void StateWidget::setStateSubclass(int chosen)
     if(tmpWidget==SYSTEM_INITIALIZATION)
     {
         stateNameEdit->setEnabled(true);
+        stateTypeCombo->setEnabled(true);
     }
     if(chosen==SYSTEM_INITIALIZATION)
     {
         stateNameEdit->setText("INIT");
         stateNameEdit->setDisabled(true);
+        stateTypeCombo->setDisabled(true);
     }
     StateWidgets[tmpWidget]->setVisible(false);
     tmpWidget = chosen;
@@ -167,12 +162,58 @@ void StateWidget::setStateSubclass(int chosen)
     emit InsertState(toInsertState);
 }*/
 
+BaseState * StateWidget::getState()
+{
+    BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
+    if(toInsertState==NULL)return NULL;
+    toInsertState->setName(this->stateNameEdit->text());
+    toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
+    toInsertState->setParameters(paramEdit->text());
+    return toInsertState;
+}
+
 void StateWidget::refreshData()
 {
+    if(edited)
+    {
+        if ( !StateNameOK())
+        {
+            return;
+        }
+        //if(edited->getType()==this->stateTypeCombo->currentIndex())
+
+        BaseState * toInsertState = this->getState();
+        if(toInsertState==NULL)return;
+        if(!edited->equals(toInsertState))
+        {
+            AcceptState();
+            return;
+        }
+
+    }
 }
 
 void StateWidget::StateSelected(BaseState * state)
 {
+    if(edited)
+    {
+        if ( !StateNameOK())
+        {
+            return;
+        }
+        //if(edited->getType()==this->stateTypeCombo->currentIndex())
+
+        BaseState * toInsertState = this->getState();
+        if(toInsertState==NULL)return;
+        if(!edited->equals(toInsertState))
+        {
+            AcceptState();
+            return;
+        }
+
+    }
+
+
     if(state->getName().toLower()==QString("_end_")||state->getName().toLower()==QString("_stop_"))return;
     edited = state;
     OKButton->setDisabled(false);

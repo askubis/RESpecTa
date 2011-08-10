@@ -16,6 +16,22 @@ public:
         this->robot=other.robot;
         this->init_values=other.init_values;
     }
+    bool equals(robotInit other)
+    {
+        if(this->robot==other.robot)
+        {
+            if(this->init_values.size()==other.init_values.size())
+            {
+                for(int i=0;i<init_values.size();i++)
+                {
+                    if(init_values[i].first!=other.init_values[i].first || init_values[i].second!=other.init_values[i].second)
+                        return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
     *   Creates a string describing the coordinates attributes.

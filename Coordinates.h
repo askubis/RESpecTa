@@ -43,6 +43,26 @@ public:
         }
     }
 
+    bool equals(Coordinates * other)
+    {
+        if(this->coordType==other->motionType)
+        {
+            if(this->motionType==other->motionType)
+            {
+                if(this->poses.size()==other->poses.size())
+                {
+                    for(int i=0;i<poses.size();i++)
+                    {
+                        if(!poses[i]->equals(other->poses[i]))
+                            return false;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     CoordType getCoordType() {return coordType;}
     void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
 

@@ -1222,8 +1222,8 @@ void RESpecTa::InsertState(bool enabled)
     if(enabled)
     {
         WaitState * st = new WaitState();
-        st->setName("Name");
         st->setType(WAIT);
+        st->setName("Name");
         QString base_name = st->getName();
         int i=1;
         while(!mod->checkNameAvailable(st->getName()))
@@ -1327,7 +1327,7 @@ void RESpecTa::EditTransitionsOfState()
 void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
 {
     QString index = mod->getSubtaskName(oldState);
-    bool check = mod->ReplaceState(oldState,newState);
+    bool check = mod->ReplaceState(oldState,newState);//TODO: bool niepotrzebny
     if(check)
     {
         QList<Transition *> TranList = oldState->getTransitions();

@@ -26,6 +26,20 @@ public:
         }
     }
 
+    bool equals(Pose * other)
+    {
+        if(this->a.size()==other->a.size() && this->coordinates.size()==other->coordinates.size() && this->v.size()==other->v.size() && a.size()==v.size() && v.size()==coordinates.size())
+        {
+            for (int i=0;i<a.size();i++)
+            {
+                if(a[i]!=other->a[i] || v[i]!=other->v[i] || coordinates[i]!=other->coordinates[i])
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     std::vector<double> getA(){return a;}
     void setA(std::vector<double> newA){a=newA;}
 

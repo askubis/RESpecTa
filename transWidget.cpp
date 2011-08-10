@@ -172,6 +172,8 @@ void TransWidget::subtaskChanged(QString name)
 
 void TransWidget::refreshData()
 {
+    if(edited) AcceptTrans();
+
     subtaskCombo->clear();
     subtaskCombo->addItem("None");
     subtaskCombo->addItems(mod->getTasksNameListsWithoutMain());
@@ -182,6 +184,7 @@ void TransWidget::refreshData()
 
 void TransWidget::TransSelected(Transition * trans)
 {
+    if(edited) AcceptTrans();
     edited = trans;
     OKButton->setDisabled(false);
 

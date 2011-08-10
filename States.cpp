@@ -49,6 +49,18 @@ QStringList StopState::LoadFromXML(QXmlStreamReader * reader)
 }
 
 //////////////////////////       Empty Gen for Set State        /////////////////////////////////////////////////
+
+bool EmptyGenForSetState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    EmptyGenForSetState* other = (EmptyGenForSetState *)oth;
+    if(this->set.equals(other->set))
+        return true;
+    }
+    return false;
+}
+
 void EmptyGenForSetState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -190,6 +202,16 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
 }
 
 //////////////////////////          Empty Gen State           ///////////////////////////////////////////////////
+bool EmptyGenState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    EmptyGenState* other = (EmptyGenState*)oth;
+    if(this->robot==other->robot)
+        return true;
+    }
+    return false;
+}
 void EmptyGenState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -376,6 +398,16 @@ TreeItem * EmptyGenState::getChild(int i, TreeItem * parent)
 }
 
 //////////////////////////          Get Sensor State           ///////////////////////////////////////////////////
+bool GetSensorState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    GetSensorState* other = (GetSensorState*)oth;
+    if(this->sensor==other->sensor)
+        return true;
+    }
+    return false;
+}
 void GetSensorState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -527,6 +559,16 @@ TreeItem * GetSensorState::getChild(int i, TreeItem * parent)
 }
 
 //////////////////////////          Init Sensor State           ///////////////////////////////////////////////////
+bool InitiateSensorState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    InitiateSensorState* other = (InitiateSensorState*)oth;
+    if(this->sensor==other->sensor)
+        return true;
+    }
+    return false;
+}
 void InitiateSensorState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -678,6 +720,20 @@ TreeItem * InitiateSensorState::getChild(int i, TreeItem * parent)
 }
 
 //////////////////////////          Run Gen State           ///////////////////////////////////////////////////
+bool RunGenState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    RunGenState* other = (RunGenState*)oth;
+    if(this->genArgs==other->genArgs)
+        if(this->genType==other->genType)
+            if(this->speech==other->speech)
+                if(this->robot==other->robot)
+                    if(this->coords->equals(other->coords))
+        return true;
+    }
+    return false;
+}
 void RunGenState::Print(QXmlStreamWriter * writer)
 {
     writer->writeTextElement("ROBOT", QString().fromStdString(ROBOT_TABLE[robot]));
@@ -1015,6 +1071,16 @@ TreeItem * RunGenState::getChild(int i, TreeItem * parent)
 }
 
 //////////////////////////          Stop Gen State           ///////////////////////////////////////////////////
+bool StopGenState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    StopGenState* other = (StopGenState*)oth;
+    if(this->set.equals(other->set))
+        return true;
+    }
+    return false;
+}
 void StopGenState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -1158,6 +1224,36 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
 }
 
 /////////////////////////          Sys Ini State           ///////////////////////////////////////////////////
+bool sysInitState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+        sysInitState* other = (sysInitState*)oth;
+        if(this->transmitter==other->transmitter)
+        if(this->sensors.size()==other->sensors.size())
+        {
+            for(int i=0;i<sensors.size();i++)
+            {
+                if(sensors[i]!=other->sensors[i])
+                {
+                    return false;
+                }
+            }
+            if(this->inits.size()==other->inits.size())
+            {
+                for(int i=0;i<inits.size();i++)
+                {
+                    if(!inits[i].equals(other->inits[i]))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
 void sysInitState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)
@@ -1430,6 +1526,17 @@ TreeItem * sysInitState::getChild(int i, TreeItem * parent)
 }
 
 /////////////////////////          Wait State           ///////////////////////////////////////////////////
+
+bool WaitState::equals(BaseState* oth)
+{
+    if(BaseState::equals(oth))
+    {
+    WaitState* other = (WaitState *)oth;
+    if(this->Timespan==other->Timespan)
+        return true;
+    }
+    return false;
+}
 void WaitState::Print(QXmlStreamWriter * writer)
 {
     if(parameters.size()>0)

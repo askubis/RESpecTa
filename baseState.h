@@ -86,6 +86,16 @@ public:
     */
     virtual TreeItem * getChild(int i, TreeItem * parent){return 0;}
 
+    virtual bool equals(BaseState* other)
+    {
+        if(getName()==other->getName())
+            if(this->stateType==other->stateType)
+                if(this->parameters==other->parameters)
+                    if(this->argument==other->argument)
+                        return true;
+        return false;
+    }
+
     BaseState & operator=(const BaseState &);
 
     BaseState();

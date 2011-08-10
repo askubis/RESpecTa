@@ -44,6 +44,8 @@ void EditWidget::refreshAllWidgets()
 
 void EditWidget::SignalDeleted()
 {
+    refreshWidget(this->currentIndex());
+
     this->setCurrentIndex(3);
     stateWidget->setOKButtonDisabled();
     transWidget->setOKButtonDisabled();
