@@ -235,6 +235,7 @@ void RESpecTa::checkIfOK()
 
 void RESpecTa::SubtaskLoaded(QString newSubtask)
 {
+    TasksAction->setChecked(false);
     scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
     scenes[newSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
 
@@ -262,6 +263,7 @@ void RESpecTa::SubtaskLoaded(QString newSubtask)
 
 void RESpecTa::SubtaskAdded(QString newSubtask)
 {
+    TasksAction->setChecked(false);
     scenes[newSubtask] = new DiagramScene(itemMenu, this, mod);
     scenes[newSubtask]->setSceneRect(QRectF(0, 0, 5000, 5000));
 
@@ -297,6 +299,7 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
 
 void RESpecTa::SubtaskRemoved(QString oldSubtask)
 {
+    TasksAction->setChecked(false);
      mod->DeleteTask(oldSubtask);
     if(oldSubtask!=mod->getMainName())
     {
@@ -331,6 +334,7 @@ void RESpecTa::SubtaskRemoved(QString oldSubtask)
 
 void RESpecTa::SubtaskChanged(QString oldName, QString newName)
 {
+    TasksAction->setChecked(false);
     if(oldName==newName) return;
     mod->changeSubtaskName(oldName, newName);
     if(oldName==currentSubtask)currentSubtask=newName;
@@ -559,8 +563,10 @@ void RESpecTa::LoadFile(QString fileName)
                 endState->setType(STATE_TYPES_NUMBER);
                 endState->setName("_END_");
                 scenes[str]->setItemParams(endState);
-                mod->addState(endState, str);
-                reportMsg(QString("Added missing _END_ state to task ").append(str));
+                if (mod->addState(endState, str))
+                    reportMsg(QString("Added missing _END_ state to task ").append(str));
+                else
+                    reportError(QString("Contact the admin, END state couldn't be added to  task ").append(str));
             }
         }
     }
@@ -1673,5 +1679,10 @@ void RESpecTa::reportWarning(QString msg)
 void RESpecTa::CenterOn(QString name)
 {
     views[currentSubtask]->centerOn(mod->getState(name));
+}
+
+void RESpecTa::HideSubtask()
+{
+    TasksAction->setChecked(false);
 }
 

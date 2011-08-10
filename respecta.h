@@ -107,6 +107,7 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void HideSubtask();
    void reportWarning(QString msg);
    void LineCanceled();
    void openTasksWindow(bool enabled);

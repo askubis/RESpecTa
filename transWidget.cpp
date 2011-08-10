@@ -67,6 +67,9 @@ TransWidget::TransWidget(QWidget *parent,Model * newmod )
 
 void TransWidget::AcceptTrans()
 {
+
+    QString src = sourceNameCombo->currentText();
+    QString dst = destNameCombo->currentText();
     if(edited==NULL)
     {
         emit reportError(QString("Please, select a transition to edit, edit it and then press OK."));
@@ -121,7 +124,7 @@ Transition * todelete = edited;
         scene->removeItem(todelete);
         delete todelete;//?
 
-        Transition * tr = new Transition(mod->getState(sourceNameCombo->currentText(), subtaskName), mod->getState(destNameCombo->currentText(), subtaskName));
+        Transition * tr = new Transition(mod->getState(src, subtaskName), mod->getState(dst, subtaskName));
         tr->setScene(scene);
         tr->setCondType((ConditionType)condTypeCombo->currentIndex());
         tr->setCondition(conditionLineEdit->text());
@@ -186,16 +189,26 @@ void TransWidget::refreshData()
                 edited->endItem()->getName()!=this->destNameCombo->currentText() ||
                 edited->getCondition()!=this->conditionLineEdit->text() ||
                 condTypeCombo->currentIndex()!=edited->getCondType())
+        {
             AcceptTrans();
+            return;
+        }
+
         if(edited->getSubtask())
         {
             if (edited->getSubtask()->getName()!=this->stateCombo->currentText())
+            {
                 AcceptTrans();
+                return;
+            }
         }
         else
         {
             if(this->subtaskCombo->currentText()!="None")
+            {
                 AcceptTrans();
+                return;
+            }
         }
     }
 edited=0;
@@ -245,14 +258,22 @@ void TransWidget::TransSelected(Transition * trans)
     //destNameLabel->setText(trans->endItem()->getName());
     condTypeCombo->setCurrentIndex(trans->getCondType());
     conditionLineEdit->setText(trans->getCondition());
-    if(mod->getSubtaskName(trans->getSubtask())==QString(""))
+    if(trans->getSubtask())
     {
-        trans->setSubtask(NULL);
+        if(mod->getSubtaskName(trans->getSubtask())==QString(""))
+        {
+            trans->setSubtask(NULL);
+        }
+        else
+        {
+            subtaskCombo->setCurrentIndex(subtaskCombo->findText(mod->getSubtaskName(trans->getSubtask())));
+            stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()->getName()));
+        }
     }
     else
     {
-        subtaskCombo->setCurrentIndex(subtaskCombo->findText(mod->getSubtaskName(trans->getSubtask())));
-        stateCombo->setCurrentIndex(stateCombo->findText(trans->getSubtask()->getName()));
+        stateCombo->clear();
+        subtaskCombo->setCurrentIndex(0);
     }
 }
 

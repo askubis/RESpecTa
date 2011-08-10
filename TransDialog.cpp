@@ -8,18 +8,38 @@ TransDialog::TransDialog(QWidget * parent, Model * newmod):QDialog(parent)
     QLabel * label1 = new QLabel("Condition:");
     QLabel * label2 = new QLabel("Target:");
     QLabel * label3 = new QLabel("Subtask:");
-    mainLayout->addWidget(label1, 0,0);
-    mainLayout->addWidget(label2, 0,1);
-    mainLayout->addWidget(label3, 0,2);
+    //mainLayout->addWidget(label1, 0,0);
+    //mainLayout->addWidget(label2, 0,1);
+    //mainLayout->addWidget(label3, 0,2);
+QWidget * wid1 = new QWidget();
+QWidget * wid2 = new QWidget();
+QWidget * wid3 = new QWidget();
+QVBoxLayout * layout1 = new QVBoxLayout();
+QVBoxLayout * layout2 = new QVBoxLayout();
+QVBoxLayout * layout3 = new QVBoxLayout();
 
+    QSplitter * splitter = new QSplitter();
     transCondList = new QListWidget();
-    mainLayout->addWidget(transCondList, 1,0,7,1);
+    //mainLayout->addWidget(transCondList, 1,0,7,1);
+    layout1->addWidget(label1);
+    layout1->addWidget(transCondList);
+    wid1->setLayout(layout1);
+    splitter->addWidget(wid1);
     connect(transCondList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
     transTargList = new QListWidget();
-    mainLayout->addWidget(transTargList, 1,1,7,1);
+    //mainLayout->addWidget(transTargList, 1,1,7,1);
+    layout2->addWidget(label2);
+    layout2->addWidget(transTargList);
+    wid2->setLayout(layout2);
+    splitter->addWidget(wid2);
     connect(transTargList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
     transSubList = new QListWidget();
-    mainLayout->addWidget(transSubList, 1,2,7,1);
+    //mainLayout->addWidget(transSubList, 1,2,7,1);
+    layout3->addWidget(label3);
+    layout3->addWidget(transSubList);
+    wid3->setLayout(layout3);
+    splitter->addWidget(wid3);
+    mainLayout->addWidget(splitter, 0, 0, 7, 3);
     connect(transSubList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
 
     QPushButton * UpButton = new QPushButton("Up");
@@ -32,7 +52,7 @@ TransDialog::TransDialog(QWidget * parent, Model * newmod):QDialog(parent)
     mainLayout->addWidget(DownButton,1,4);
     mainLayout->addWidget(OKButton,2,4);
 
-    this->setGeometry(0,0,500,400);
+    //this->setGeometry(0,0,500,400);
     this->setLayout(mainLayout);
 }
 
@@ -46,7 +66,7 @@ void TransDialog::openForAState(BaseState * tmp)
     std::vector<Transition *> tranList=mod->getTransitions(tmp);
     foreach(Transition * tr, tranList)
     {
-        transCondList->addItem(tr->getCondition());
+        transCondList->addItem(QString().fromStdString(CONDITION_TABLE[tr->getCondType()]).append(tr->getCondition()));
         transTargList->addItem(tr->endItem()->getName());
         if(tr->getSubtask())transSubList->addItem(tr->getSubtask()->getName());
         else transSubList->addItem(QString());

@@ -9,6 +9,7 @@ Transition::Transition(BaseState *startItem, BaseState *endItem,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
+    subtaskItem = new QGraphicsTextItem();
     CondType=INIFILE;
     subtask=NULL;
     myStartItem = startItem;
@@ -28,9 +29,11 @@ Transition::~Transition()
     scene->removeItem(lines[0]);
     scene->removeItem(lines[1]);
     scene->removeItem(lines[2]);
+    scene->removeItem(subtaskItem);
     delete lines[0];
     delete lines[1];
     delete lines[2];
+    delete subtaskItem;
 }
 
 void Transition::setScene(QGraphicsScene *sc)
@@ -39,6 +42,7 @@ void Transition::setScene(QGraphicsScene *sc)
     scene->addItem(lines[0]);
     scene->addItem(lines[1]);
     scene->addItem(lines[2]);
+    scene->addItem(subtaskItem);
 }
 
 QRectF Transition::boundingRect() const
@@ -60,6 +64,7 @@ QPainterPath Transition::shape() const
 
 void Transition::updatePosition()
 {
+    subtaskItem->setPos((myStartItem->x()+myEndItem->x())/2 , (myStartItem->y()+myEndItem->y())/2);
     QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
     setLine(line);
 }

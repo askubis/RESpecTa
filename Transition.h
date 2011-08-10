@@ -50,7 +50,10 @@ public:
 
     void setZValue(qreal z);
 
-    void removeSubtask(){subtask=NULL;}
+    void removeSubtask()
+    {
+        subtask=NULL;
+    }
 
     BaseState *startItem() const
         { return myStartItem; }
@@ -67,8 +70,11 @@ public:
     void setSubtask(BaseState * newSubtask)
     {
         if(subtask)subtask->removeSubtaskTrans(this);
+        if(subtask)subtaskItem->setPlainText("");
         subtask=newSubtask;
         if(subtask)subtask->addSubtaskTrans(this);
+
+        if(subtask)subtaskItem->setPlainText(QString("Subtask: ").append(subtask->getName()));
     }
 
     /**
@@ -151,6 +157,8 @@ protected:
     *   Pointer to the subtask starting point of the transition.
     */
     BaseState * subtask;
+
+    QGraphicsTextItem * subtaskItem;
 };
 
 #endif

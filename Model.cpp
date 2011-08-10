@@ -96,7 +96,7 @@ bool Model::addState(BaseState * item, QString subtaskName)
         res->getError(QString("A problem has been detected, code: trying to insert NULL value").append(item->getName()));
         return false;
     }
-    if(!checkNameAvailable(item->getName()))
+    if(!checkNameAvailable(item->getName()) && item->getName()!= "_END_")
     {
         res->getError(QString( "This state already exists in the Model").append(item->getName()));
         return false;
@@ -159,6 +159,12 @@ bool Model::tryInsertTransition(Transition * line)
     for(std::map<QString, MyGraphType *>::iterator it = subtasks->begin(); it!=subtasks->end();it++)
     {
         MyGraphType * tmp = (*it).second;
+        /*boost::graph_traits<MyGraphType>::vertex_iterator one = findVertex(tmp, line->startItem());
+        boost::graph_traits<MyGraphType>::vertex_iterator two = findVertex(tmp, line->endItem());
+        bool testone = (one!=vertices(*tmp).second);
+        bool testtwo = (two!=vertices(*tmp).second);
+        int ilosc = boost::num_vertices(*tmp);*/
+
         if (((findVertex(tmp, line->startItem()) )!=vertices(*tmp).second) && ((findVertex(tmp, line->endItem()) )!=vertices(*tmp).second ))
         {
             boost::graph_traits<MyGraphType>::out_edge_iterator OEIt, OEIt2;
@@ -353,11 +359,11 @@ QStringList Model::checkIfOK()
     MyGraphType * tmp = (*subtasks)[mainName];
 
 //sprawdzic czy jest _init_ i _stop_ w głównym
-    if( checkNameAvailable(QString("init"), tmp))
+    if( checkNameAvailable(QString("INIT"), tmp))
     {
         errors.push_back(QString( "No INIT state in main task!"));
     }
-    if(  checkNameAvailable(QString("_stop_"), tmp))
+    if(  checkNameAvailable(QString("_STOP_"), tmp))
     {
         errors.push_back(QString( "No STOP state in main task!"));
     }
@@ -366,7 +372,7 @@ QStringList Model::checkIfOK()
     {
         if((*it).first==mainName) continue;
         MyGraphType * tmp2 = (*it).second;
-        if ( checkNameAvailable(QString("_end_"), tmp2) )
+        if ( checkNameAvailable(QString("_END_"), tmp2) )
         {
                 QString tmpSubName = (*it).first;
                 sprintf(tab, "No END state in subtask: %s", tmpSubName.toStdString().c_str());
@@ -465,10 +471,9 @@ bool Model::checkNameAvailable(QString given, MyGraphType * G)
     BaseState * x;
        while (first != last)
        {
-         QString GivenLow = given.toLower();
          x = boost::get(stateMap, *first);
-         QString tmp = x->getName().toLower();
-         if (tmp==GivenLow) return false;
+         QString tmp = x->getName();
+         if (tmp==given) return false;
          ++first;
        }
        return true;

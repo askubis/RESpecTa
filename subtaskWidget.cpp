@@ -44,6 +44,8 @@ void SubtaskWidget::CleanClicked()
 {
     QStringList list = model->getTasksNameLists();
     model->CleanTask(list[subtaskList->currentIndex().row()]);
+    //TODO: emit uncheck me
+    emit UncheckTasksAction();
 }
 
 void SubtaskWidget::refreshData()

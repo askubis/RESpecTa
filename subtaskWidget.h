@@ -26,6 +26,8 @@ public:
     void refreshData();
 
 signals:
+    void UncheckTasksAction();
+
     /**
     *   Signals that a new task should be added.
     */

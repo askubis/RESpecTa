@@ -6,8 +6,7 @@
 EditWidget::EditWidget(QWidget *parent, Model * newmod )
     : QStackedWidget(parent)
 {
-    this->setMaximumWidth(230);
-    //this->setMinimumWidth(230);
+    this->setMinimumWidth(230);
 stateWidget = new StateWidget(this, newmod);
     this->addWidget(stateWidget);//,tr("State"));
 transWidget = new TransWidget(this, newmod);
@@ -22,6 +21,7 @@ this->addWidget(new QWidget());
     connect(subtaskWidget, SIGNAL(changed(QString,QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskChanged(QString, QString)));
     connect(subtaskWidget, SIGNAL(removed(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskRemoved(QString)));
     connect(subtaskWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
+    connect(subtaskWidget, SIGNAL(UncheckTasksAction()), (RESpecTa *)this->parentWidget(), SLOT(HideSubtask()));
 
     //connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
     connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * )));

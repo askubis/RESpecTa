@@ -7,7 +7,7 @@ StateWidget::StateWidget(QWidget *parent, Model * newmod )
 : QWidget(parent)
 {
     mod = newmod;
-this->setMaximumWidth(230);
+    this->setMinimumWidth(230);
     //creating Base of the widget (background)
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     mainLayout = new QVBoxLayout;
