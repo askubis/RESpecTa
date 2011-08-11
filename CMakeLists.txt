@@ -71,13 +71,23 @@ myTreeView.cpp
 SET(GUI_MOC_SRCS
 respecta.h 
 diagramscene.h 
+Graph.h 
+globals.h 
+Coordinates.h 
+Pose.h 
+RobotSet.h 
+States.h 
 editWidget.h 
 stateWidget.h 
 transWidget.h 
 StateTypeWidgets.h 
+baseState.h 
 TransDialog.h 
 TreeModel.h 
-subtaskWidget.h
+TreeItem.h 
+myTreeView.h 
+robotInit.h 
+subtaskWidget.h 
 )
 
 # Generate MOC files
