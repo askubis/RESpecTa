@@ -34,7 +34,7 @@ class EditWidget : public QStackedWidget//QTabWidget
     Q_OBJECT
 
 public:
-    EditWidget(QWidget *parent, Model * mod);
+    EditWidget(RESpecTa *parent, Model * mod);
 
 signals:
     /**

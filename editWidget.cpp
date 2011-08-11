@@ -3,7 +3,7 @@
 
 #include <QtGui>
 
-EditWidget::EditWidget(QWidget *parent, Model * newmod )
+EditWidget::EditWidget(RESpecTa *parent, Model * newmod )
     : QStackedWidget(parent)
 {
     this->setMinimumWidth(230);
@@ -17,21 +17,21 @@ this->addWidget(new QWidget());
 
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(refreshWidget(int)));
 
-    connect(subtaskWidget, SIGNAL(added(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskAdded(QString)));
-    connect(subtaskWidget, SIGNAL(changed(QString,QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskChanged(QString, QString)));
-    connect(subtaskWidget, SIGNAL(removed(QString)), (RESpecTa *)this->parentWidget(), SLOT(SubtaskRemoved(QString)));
+    connect(subtaskWidget, SIGNAL(added(QString)), parent, SLOT(SubtaskAdded(QString)));
+    connect(subtaskWidget, SIGNAL(changed(QString,QString)), parent, SLOT(SubtaskChanged(QString, QString)));
+    connect(subtaskWidget, SIGNAL(removed(QString)), parent, SLOT(SubtaskRemoved(QString)));
     connect(subtaskWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
-    connect(subtaskWidget, SIGNAL(UncheckTasksAction()), (RESpecTa *)this->parentWidget(), SLOT(HideSubtask()));
+    connect(subtaskWidget, SIGNAL(UncheckTasksAction()), parent, SLOT(HideSubtask()));
 
-    //connect (stateWidget, SIGNAL(InsertState(BaseState*)), (RESpecTa *)this->parentWidget(),SLOT(InsertState(BaseState*)));
-    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), (RESpecTa *)this->parentWidget(),SLOT(ReplaceState(BaseState * , BaseState * )));
+    //connect (stateWidget, SIGNAL(InsertState(BaseState*)), parent,SLOT(InsertState(BaseState*)));
+    connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), parent,SLOT(ReplaceState(BaseState * , BaseState * )));
     connect (stateWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-    //connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), (RESpecTa *)this->parentWidget(),SLOT(insertTransition(std::pair<QString,QString>)));
+    //connect (transWidget, SIGNAL(insertTransition(std::pair<QString,QString>)), parent,SLOT(insertTransition(std::pair<QString,QString>)));
     connect (transWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
-    connect((RESpecTa *)this->parentWidget(), SIGNAL(refreshWidgets()), this, SLOT(refreshAllWidgets()));
-    connect((RESpecTa *)this->parentWidget(), SIGNAL(SignalDeleted()), this, SLOT(SignalDeleted()));
+    connect(parent, SIGNAL(refreshWidgets()), this, SLOT(refreshAllWidgets()));
+    connect(parent, SIGNAL(SignalDeleted()), this, SLOT(SignalDeleted()));
     this->setCurrentIndex(3);
 }
 

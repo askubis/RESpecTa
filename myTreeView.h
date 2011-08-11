@@ -19,11 +19,16 @@ public:
      //QModelIndexList getSelectedIndexes(){return selectedIndexes();}
 
 private:
-    RESpecTa * res;
     /**
     *   A function calling main window function after selection changed.
     */
      void selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
+
+
+     void focusInEvent(QFocusEvent *event);
+
+    RESpecTa * res;
+
 };
 
 #endif // MYTREEVIEW_H

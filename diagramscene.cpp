@@ -178,11 +178,17 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void DiagramScene::checkIfFits(BaseState * it)
 {
     if ((! this->sceneRect().contains(it->pos()-QPoint(50,50))) || (! this->sceneRect().contains(it->pos()+QPoint(50,50))))
-    setSceneRect(QRectF(
-                     min(0, it->pos().x() -50),
-                     min(0, it->pos().y() -50),
-                     max(5000, it->pos().x()+50),
-                     max(5000, it->pos().y())+50));
+    {
+        int l = this->sceneRect().left();
+        int t = sceneRect().top();
+        int r = sceneRect().right();
+        int b = sceneRect().bottom();
+        int p1 =    min(min(0, it->pos().x() -50),this->sceneRect().left());
+        int p2 =    min(min(0, it->pos().y() -50),this->sceneRect().top());
+        int p3 =    max(max(5000, it->pos().x()+50),this->sceneRect().right());
+        int p4 =    max(max(5000, it->pos().y()+50), this->sceneRect().bottom());
+        setSceneRect(QRectF(p1, p2, p3-p1, p4-p2));
+    }
 }
 
 void DiagramScene::setItemParams(BaseState * toInsert)

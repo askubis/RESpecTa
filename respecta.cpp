@@ -332,6 +332,30 @@ void RESpecTa::SubtaskRemoved(QString oldSubtask)
         }
         tabWidget->removeTab(i);
     }
+    else
+    {
+        QString str = mod->getMainName();
+        if(mod->checkNameAvailable("INIT"))
+        {
+            sysInitState * startState = new sysInitState();
+            startState->setPos(2100,2300);
+            startState->setName("INIT");
+            startState->setType(SYSTEM_INITIALIZATION);
+            scenes[str]->setItemParams(startState);
+            mod->addState(startState, str);
+            reportMsg(QString("Added missing INIT state to task ").append(str));
+        }
+        if(mod->checkNameAvailable("_STOP_"))
+        {
+            StopState * endState = new StopState();
+            endState->setPos(2600,2600);
+            endState->setName("_STOP_");
+            endState->setType(STATE_TYPES_NUMBER);
+            scenes[str]->setItemParams(endState);
+            mod->addState(endState, str);
+            reportMsg(QString("Added missing _STOP_ state to task ").append(str));
+        }
+    }
     emit refreshWidgets();
 }
 
@@ -439,7 +463,30 @@ void RESpecTa::NewProject()
     {
         this->SubtaskRemoved(str);
     }
+
+    QString str = mod->getMainName();
+    if(mod->checkNameAvailable("INIT"))
+    {
+        sysInitState * startState = new sysInitState();
+        startState->setPos(2100,2300);
+        startState->setName("INIT");
+        startState->setType(SYSTEM_INITIALIZATION);
+        scenes[str]->setItemParams(startState);
+        mod->addState(startState, str);
+        reportMsg(QString("Added missing INIT state to task ").append(str));
+    }
+    if(mod->checkNameAvailable("_STOP_"))
+    {
+        StopState * endState = new StopState();
+        endState->setPos(2600,2600);
+        endState->setName("_STOP_");
+        endState->setType(STATE_TYPES_NUMBER);
+        scenes[str]->setItemParams(endState);
+        mod->addState(endState, str);
+        reportMsg(QString("Added missing _STOP_ state to task ").append(str));
+    }
     mod->setChanged(false);
+
     reportMsg(QString("New project created"));
 }
 
@@ -542,6 +589,7 @@ void RESpecTa::LoadFile(QString fileName)
                 sysInitState * startState = new sysInitState();
                 startState->setPos(2100,2300);
                 startState->setName("INIT");
+                startState->setType(SYSTEM_INITIALIZATION);
                 scenes[str]->setItemParams(startState);
                 mod->addState(startState, str);
                 reportMsg(QString("Added missing INIT state to task ").append(str));
