@@ -67,7 +67,7 @@ private slots:
     /**
     *   Changes active widget to that of Type == chosen, and blocks/unblocks NameLineEdit if neccessary.
     */
-    void setStateSubclass(int chosen);
+    void setStateSubclass(QString newString);
     /**
     *   Blocks or unblocks ok/insert buttons depending on text.size().
     */

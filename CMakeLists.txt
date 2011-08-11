@@ -71,22 +71,12 @@ myTreeView.cpp
 SET(GUI_MOC_SRCS
 respecta.h 
 diagramscene.h 
-Graph.h 
-globals.h 
-Coordinates.h 
-Pose.h 
-RobotSet.h 
-baseState.h 
-States.h 
 editWidget.h 
 stateWidget.h 
 transWidget.h 
 StateTypeWidgets.h 
 TransDialog.h 
 TreeModel.h 
-TreeItem.h 
-myTreeView.h 
-robotInit.h 
 subtaskWidget.h
 )
 

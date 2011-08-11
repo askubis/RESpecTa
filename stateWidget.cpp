@@ -36,7 +36,7 @@ StateWidget::StateWidget(QWidget *parent, Model * newmod )
 
     stateTypeCombo = new QComboBox(this);
     stateTypeCombo->addItems(getStateTypeTable());
-    connect(stateTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setStateSubclass(int)));
+    connect(stateTypeCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(setStateSubclass(QString)));
    StateLayout->addWidget(stateTypeCombo);
    QLabel * paramLabel = new QLabel("Parameters:");
    paramEdit = new QLineEdit;
@@ -90,7 +90,7 @@ StateWidget::StateWidget(QWidget *parent, Model * newmod )
    getSensorReading->setVisible(false);
    StateWidgets[7]=getSensorReading;
 
-   setStateSubclass(tmpWidget);
+   setStateSubclass(QString().fromStdString(STATE_TYPE_TABLE[tmpWidget]));
 
    mainLayout->addLayout(bottomLayout);
 }
@@ -127,8 +127,10 @@ void StateWidget::AcceptState()
     StateSelected(toInsertState);
 }
 
-void StateWidget::setStateSubclass(int chosen)
+void StateWidget::setStateSubclass(QString newType)
 {
+    int chosen = getStateTypeTable().indexOf(newType);
+
     if(tmpWidget==SYSTEM_INITIALIZATION)
     {
         stateNameEdit->setEnabled(true);
@@ -167,7 +169,8 @@ BaseState * StateWidget::getState()
     BaseState * toInsertState = StateWidgets[tmpWidget]->getStateObject();
     if(toInsertState==NULL)return NULL;
     toInsertState->setName(this->stateNameEdit->text());
-    toInsertState->setType(StateType(stateTypeCombo->currentIndex()));
+    int chosen = getStateTypeTable().indexOf(stateTypeCombo->currentText());
+    toInsertState->setType((StateType)chosen);
     toInsertState->setParameters(paramEdit->text());
     return toInsertState;
 }
@@ -219,9 +222,22 @@ void StateWidget::StateSelected(BaseState * state)
     OKButton->setDisabled(false);
     stateNameEdit->setText(state->getName());
     paramEdit->setText(state->getParameters());
-    stateTypeCombo->setCurrentIndex(state->getType());
+    if(state->getType()==SYSTEM_INITIALIZATION)
+    {
+        stateTypeCombo->clear();
+        stateTypeCombo->addItem(QString().fromStdString(STATE_TYPE_TABLE[SYSTEM_INITIALIZATION]));
+    }
+    else
+    {
+        QStringList list = getStateTypeTable();
+        list.removeOne(QString().fromStdString(STATE_TYPE_TABLE[SYSTEM_INITIALIZATION]));
+        stateTypeCombo->clear();
+        stateTypeCombo->addItems(list);
+    }
+    stateTypeCombo->setVisible(true);
+    stateTypeCombo->setCurrentIndex(state->getType()==SYSTEM_INITIALIZATION?SYSTEM_INITIALIZATION:(state->getType()-1));
     StateWidgets[tmpWidget]->setVisible(false);
-    if(state->getType()<STATE_TYPES_NUMBER)
+    if(isProper(state->getType()))
     {
         tmpWidget = state->getType();
         StateWidgets[tmpWidget]->setVisible(true);
