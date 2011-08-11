@@ -1018,3 +1018,21 @@ void Model::changeDestStateofTrans(Transition * tr, QString newstatename)
 }*/
 
 
+Transition * Model::getTransition(BaseState *st, int index)
+{
+    MyGraphType * G = getGraph(getSubtaskName(st));
+    typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
+    TransitionMap transitionMap = get(transition_t(), *G);
+
+    boost::graph_traits<MyGraphType>::out_edge_iterator startIt, endIt;
+    tie(startIt, endIt)=out_edges((*(findVertex(G, st))), *G);
+    for (int i=0 ;startIt!=endIt&& i<=index;startIt++,i++)
+    {
+        if(i==index)
+        {
+            return boost::get(transitionMap, *startIt);
+        }
+    }
+    return NULL;
+}
+

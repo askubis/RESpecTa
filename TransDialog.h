@@ -27,12 +27,17 @@ public:
     void openForAState(BaseState * tmp);
 
 signals:
+    void TransitionSelected(Transition * tr);
+
     /**
     *   reports to parent widget, that an error has occured.
     */
     void reportError(QString);
 
 private slots:
+    void TransSelected(QModelIndex);
+
+
     /**
     *   Moves the selected transition one position up.
     */

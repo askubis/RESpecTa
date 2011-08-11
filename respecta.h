@@ -107,6 +107,9 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void TransSelected(Transition * tr);
+   void ZoomIn();
+   void ZoomOut();
    void HideSubtask();
    void reportWarning(QString msg);
    void LineCanceled();

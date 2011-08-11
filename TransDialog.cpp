@@ -52,8 +52,20 @@ QVBoxLayout * layout3 = new QVBoxLayout();
     mainLayout->addWidget(DownButton,1,4);
     mainLayout->addWidget(OKButton,2,4);
 
+    connect(transCondList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransSelected(QModelIndex)));
+    connect(transSubList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransSelected(QModelIndex)));
+    connect(transTargList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransSelected(QModelIndex)));
+
     //this->setGeometry(0,0,500,400);
     this->setLayout(mainLayout);
+}
+
+void TransDialog::TransSelected(QModelIndex)
+{
+    int i= transCondList->currentIndex().row();
+    Transition * tr = mod->getTransition(state,i);
+    emit TransitionSelected(tr);
+    this->setVisible(false);
 }
 
 void TransDialog::openForAState(BaseState * tmp)

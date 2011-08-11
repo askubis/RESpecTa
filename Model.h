@@ -15,6 +15,8 @@ class Model
 public:
     Model();
 
+    Transition * getTransition(BaseState *st, int i);
+
         //*************     COUNT   ***********//
     /**
     *   Returns Number of Vertices in the subtask defined by the SubtaskName.

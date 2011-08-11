@@ -27,6 +27,7 @@ RESpecTa::RESpecTa(Model * newmod)
 
     transDial = new TransDialog(this, mod);
     connect(transDial, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
+    connect(transDial, SIGNAL(TransitionSelected(Transition*)), this, SLOT(TransSelected(Transition*)));
 
     editWidget = new EditWidget(this, mod);
     connect(editWidget, SIGNAL(reportError(QString)), this, SLOT(reportError(QString)));
@@ -156,6 +157,20 @@ RESpecTa::RESpecTa(Model * newmod)
     mod->setChanged(false);
 
     reportMsg(QString("Errors will be saved to: ").append(logPath));
+
+
+}
+
+void RESpecTa::ZoomIn()
+{
+    if(sceneScaleCombo->currentIndex()!=0)
+    sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()-1);
+}
+
+void RESpecTa::ZoomOut()
+{
+    if(sceneScaleCombo->currentIndex()!=sceneScaleCombo->count())
+    sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()+1);
 }
 
 void RESpecTa::ClearTerminal()
@@ -209,6 +224,14 @@ void RESpecTa::createEditMenu()
     ModelCheckIfOK->setStatusTip(tr("Check for errors in the project"));
     connect (ModelCheckIfOK, SIGNAL(triggered()), this, SLOT(checkIfOK()));
 
+    QAction * zoomInAct = new QAction("Zoom in", this);
+    zoomInAct->setShortcut(QKeySequence::ZoomIn);
+    connect(zoomInAct, SIGNAL(triggered()), this, SLOT(ZoomIn()));
+
+    QAction * zoomOutAct = new QAction("Zoom out", this);
+    zoomOutAct->setShortcut(QKeySequence::ZoomOut);
+    connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(ZoomOut()));
+
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(deleteAction);
     editMenu->addSeparator();
@@ -216,6 +239,8 @@ void RESpecTa::createEditMenu()
     editMenu->addAction(sendBackAction);
     editMenu->addAction(showTransitions);
     editMenu->addAction(ModelCheckIfOK);
+    editMenu->addAction(zoomInAct);
+    editMenu->addAction(zoomOutAct);
     //editMenu->addAction(GoToState);
 
     itemMenu = new QMenu();
@@ -1737,3 +1762,15 @@ void RESpecTa::HideSubtask()
     TasksAction->setChecked(false);
 }
 
+void RESpecTa::TransSelected(Transition * tr)
+{
+    foreach(QGraphicsItem * it, scenes[currentSubtask]->selectedItems())
+    {
+        it->setSelected(false);
+    }
+    scenes[currentSubtask]->selectedItems().clear();
+    tr->setSelected(true);
+    scenes[currentSubtask]->selectedItems().push_back(tr);
+    //selectionchanged();
+
+}
