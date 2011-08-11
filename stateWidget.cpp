@@ -92,6 +92,7 @@ StateWidget::StateWidget(QWidget *parent, Model * newmod )
 
    setStateSubclass(QString().fromStdString(STATE_TYPE_TABLE[tmpWidget]));
 
+   edited = NULL;
    mainLayout->addLayout(bottomLayout);
 }
 
