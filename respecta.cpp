@@ -169,7 +169,7 @@ void RESpecTa::ZoomIn()
 
 void RESpecTa::ZoomOut()
 {
-    if(sceneScaleCombo->currentIndex()!=sceneScaleCombo->count())
+    if(sceneScaleCombo->currentIndex()!=(sceneScaleCombo->count()-1))
     sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()+1);
 }
 
