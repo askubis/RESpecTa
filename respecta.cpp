@@ -58,6 +58,7 @@ RESpecTa::RESpecTa(Model * newmod)
     layouts[currentSubtask]=new QHBoxLayout;
 
     views[currentSubtask] = new QGraphicsView(scenes[currentSubtask]);
+    views[currentSubtask]->setDragMode(QGraphicsView::ScrollHandDrag);
     layouts[currentSubtask]->addWidget(views[currentSubtask]);
 
     treeModel = new TreeModel( this, mod, mod->getMainName());
@@ -250,6 +251,7 @@ void RESpecTa::SubtaskLoaded(QString newSubtask)
 
     layouts[newSubtask] = new QHBoxLayout;
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
+    views[newSubtask]->setDragMode(QGraphicsView::ScrollHandDrag);
     layouts[newSubtask]->addWidget(views[newSubtask]);
 
     widgets[newSubtask] = new QWidget;
@@ -278,6 +280,7 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
 
     layouts[newSubtask] = new QHBoxLayout;
     views[newSubtask] = new QGraphicsView(scenes[newSubtask]);
+    views[newSubtask]->setDragMode(QGraphicsView::ScrollHandDrag);
     layouts[newSubtask]->addWidget(views[newSubtask]);
 
     widgets[newSubtask] = new QWidget;

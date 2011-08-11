@@ -86,6 +86,7 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
+
     /**
     *   Pointer to the model of the task.
     */

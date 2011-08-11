@@ -21,8 +21,13 @@ void DiagramScene::setMode(SceneMode mode)
 
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+
+
     if (mouseEvent->button() != Qt::LeftButton)
         return;
+
+
+
     QGraphicsTextItem * textItem;
     switch (myMode) {
         case InsertItem:
