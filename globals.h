@@ -54,7 +54,7 @@ static bool isProper(StateType value)
 */
 enum GeneratorType {ECP_GEN_TEACH_IN, ECP_GEN_NEWSMOOTH, ECP_GEN_WEIGHT_MEASURE, ECP_GEN_TRANSPARENT, ECP_GEN_TFF_NOSE_RUN,
      ECP_ST_BIAS_EDP_FORCE, ECP_GEN_TFF_RUBIK_GRAB, ECP_GEN_TFF_RUBIK_FACE_ROTATE, ECP_ST_GRIPPER_OPENING,
-     ECP_GEN_TFF_GRIPPER_APPROACH,
+     ECP_GEN_TFF_GRIPPER_APPROACH, ECP_GEN_FESTIVAL,
                 GENERATORS_NUMBER};
 /**
 *   Table containing all strings representing GeneratorTypes(not for initialization).
@@ -62,14 +62,15 @@ enum GeneratorType {ECP_GEN_TEACH_IN, ECP_GEN_NEWSMOOTH, ECP_GEN_WEIGHT_MEASURE,
 static std::string GENERATOR_TYPE_TABLE[GENERATORS_NUMBER+1] =
         {"ECP_GEN_TEACH_IN","ECP_GEN_NEWSMOOTH","ECP_GEN_WEIGHT_MEASURE","ECP_GEN_TRANSPARENT","ECP_GEN_TFF_NOSE_RUN",
          "ECP_ST_BIAS_EDP_FORCE","ECP_GEN_TFF_RUBIK_GRAB","ECP_GEN_TFF_RUBIK_FACE_ROTATE","ECP_ST_GRIPPER_OPENING",
-         "ECP_GEN_TFF_GRIPPER_APPROACH",""};
+         "ECP_GEN_TFF_GRIPPER_APPROACH","ECP_GEN_FESTIVAL",
+         ""};
 /**
 *   Table containing all strings representing GeneratorTypes(for initialization).
 */
 static std::string GENERATOR_TYPE_TABLE2[GENERATORS_NUMBER+1] =
-        {"ecp_teach_in_gen","ecp_smooth_gen","weight_measure_gen","ecp_gen_t","ecp_tff_nose_run_gen",
+        {"ecp_teach_in_gen","ecp_newsmooth_gen","weight_measure_gen","ecp_gen_t","ecp_tff_nose_run_gen",
          "bias_edp_force_st","ecp_tff_rubik_grab_gen","ecp_tff_rubik_face_rotate_gen","gripper_opening",
-         "ecp_tff_gripper_approach_gen",""};
+         "ecp_tff_gripper_approach_gen", "ecp_gen_festival",""};
 /**
 *   Function returning list of GeneratorTypes(not for initialization).
 *   @returns List containing names of all GeneratorTypes(not for initialization).
