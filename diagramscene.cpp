@@ -21,7 +21,7 @@ void DiagramScene::setMode(SceneMode mode)
 
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-
+    ((RESpecTa*)this->parent())->HideSubtask();
 
     if (mouseEvent->button() != Qt::LeftButton)
         return;
@@ -67,6 +67,8 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (myMode == InsertLine && line != 0) {
         QLineF newLine(line->line().p1(), mouseEvent->scenePos());
         line->setLine(newLine);
+
+        //this->views().first()->centerOn(mouseEvent->pos());
     } else if (myMode == MoveItem) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
         foreach (QGraphicsItem *item, this->selectedItems())
@@ -76,6 +78,10 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 BaseState * tmp = (BaseState *)item;
                 tmp->updateTextPositions();
             }
+        }
+        if(this->selectedItems().size()>0)
+        {
+            //this->views().first()->centerOn(mouseEvent->pos());
         }
     }
 }

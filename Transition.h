@@ -133,6 +133,9 @@ public slots:
     void updatePosition();
 
 protected:
+    /**
+    *	Type of the condition.
+    */
     ConditionType CondType;
         QGraphicsScene * scene;
         std::vector<QGraphicsLineItem *> lines;

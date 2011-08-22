@@ -716,7 +716,7 @@ void CoordDialog::AddPose()
         coords->setPoses(pos_vec);
         QString str;
         char tab[20];
-        sprintf(tab, "%d Poses: C:", i);
+        sprintf(tab, "Pose: C:", i);
         str.append(QString().fromStdString(tab));
         for(int j=0;j<i;j++)
         {
@@ -771,7 +771,7 @@ void CoordDialog::coordsUpdated()
         QString str;
         char tab[20];
         int i = pose->getC().size();
-        sprintf(tab, "%d Poses: C:", i);
+        sprintf(tab, "Pose: C:", i);
         str.append(QString().fromStdString(tab));
         for(int j=0;j<i;j++)
         {
@@ -800,37 +800,43 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
 {
     setWindowTitle(tr("ECPDialog"));
     QGridLayout * mainLayout = new QGridLayout;
+    QLabel * RobotLabel = new QLabel("Robot:");
+    mainLayout->addWidget(RobotLabel,0,0,1,3);
 
     robotCombo = new QComboBox;
     robotCombo->addItems(getRobotTable());
-    mainLayout->addWidget(robotCombo, 0,0,1,3);
+    mainLayout->addWidget(robotCombo, 1,0,1,3);
+
+
+    QLabel * GenLabel = new QLabel("Generator:");
+    mainLayout->addWidget(GenLabel,2,0,1,3);
 
     genTypeCombo = new QComboBox;
     genTypeCombo->addItems(getGeneratorTypeTable());
-    mainLayout->addWidget(genTypeCombo,1,0,1,3);
+    mainLayout->addWidget(genTypeCombo,3,0,1,3);
     QLabel * argLabel = new QLabel("Init argument:");
-    mainLayout->addWidget(argLabel, 2,0,1,3);
+    mainLayout->addWidget(argLabel, 4,0,1,3);
     argLineEdit = new QLineEdit();
     argLineEdit->setValidator(new QIntValidator(argLineEdit));
-    mainLayout->addWidget(argLineEdit,3,0,1,3);
+    mainLayout->addWidget(argLineEdit,5,0,1,3);
 
     QPushButton * addButton = new QPushButton("Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
     QPushButton * removeButton = new QPushButton("Remove selected");
     connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
-    mainLayout->addWidget(addButton,4,0);
-    mainLayout->addWidget(removeButton,4,1, 1, 2);
+    mainLayout->addWidget(addButton,6,0);
+    mainLayout->addWidget(removeButton,6,1, 1, 2);
 
     genList = new QListWidget();
-    mainLayout->addWidget(genList,5, 0, 3, 3);
+    mainLayout->addWidget(genList,7, 0, 3, 3);
 
     QPushButton *OKButton = new QPushButton("OK");
     connect (OKButton, SIGNAL(clicked()), this, SLOT(OKPressed()));
-    mainLayout->addWidget(OKButton,8,1,1,2);
+    mainLayout->addWidget(OKButton,10,1,1,2);
 
     QPushButton *CancelButton = new QPushButton("Cancel");
     connect (CancelButton, SIGNAL(clicked()), this, SLOT(CancelPressed()));
-    mainLayout->addWidget(CancelButton,8,0,1,1);
+    mainLayout->addWidget(CancelButton,10,0,1,1);
     connect (this, SIGNAL(rejected()), this, SLOT(CancelPressed()));
 
     setLayout(mainLayout);
@@ -904,15 +910,20 @@ MPDialog::MPDialog(QWidget * parent): QDialog(parent)
 {
     setWindowTitle(tr("MPDialog"));
     QGridLayout * mainLayout = new QGridLayout;
-
+QLabel * TransmitterLabel = new QLabel("Transmitter:");
+mainLayout->addWidget(TransmitterLabel,0,0,1,2);
     transmitterCombo = new QComboBox;
     transmitterCombo->addItems(getTransmitterTable());
     transmitterCombo->addItem("None");
-    mainLayout->addWidget(transmitterCombo, 0,0,1,2);
+    mainLayout->addWidget(transmitterCombo, 1,0,1,2);
+
+
+    QLabel * SensorsLabel = new QLabel("Sensors:");
+    mainLayout->addWidget(SensorsLabel,2,0,1,2);
 
     sensorCombo = new QComboBox;
     sensorCombo->addItems(getSensorTable());
-    mainLayout->addWidget(sensorCombo,1,0,1,2);
+    mainLayout->addWidget(sensorCombo,3,0,1,2);
 
     QPushButton * addButton = new QPushButton("Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));

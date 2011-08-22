@@ -21,7 +21,7 @@ this->addWidget(new QWidget());
     connect(subtaskWidget, SIGNAL(changed(QString,QString)), parent, SLOT(SubtaskChanged(QString, QString)));
     connect(subtaskWidget, SIGNAL(removed(QString)), parent, SLOT(SubtaskRemoved(QString)));
     connect(subtaskWidget, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
-    connect(subtaskWidget, SIGNAL(UncheckTasksAction()), parent, SLOT(HideSubtask()));
+    connect(subtaskWidget, SIGNAL(UncheckTasksAction()), parent, SLOT(HideTheSubtask()));
 
     //connect (stateWidget, SIGNAL(InsertState(BaseState*)), parent,SLOT(InsertState(BaseState*)));
     connect (stateWidget, SIGNAL(ReplaceState(BaseState * , BaseState * )), parent,SLOT(ReplaceState(BaseState * , BaseState * )));

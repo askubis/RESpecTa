@@ -46,6 +46,8 @@ public:
    void getWarning(QString msg){reportWarning(msg);}
     void CenterOn(QString name);
 
+    void HideSubtask();
+
    /**
    *   Function refreshing the TreeView, called when change in the model has occured.
    */
@@ -107,10 +109,10 @@ signals:
    void SignalDeleted();
 
 private slots:
+   void HideTheSubtask(){HideSubtask();}
    void TransSelected(Transition * tr);
    void ZoomIn();
    void ZoomOut();
-   void HideSubtask();
    void reportWarning(QString msg);
    void LineCanceled();
    void openTasksWindow(bool enabled);

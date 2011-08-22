@@ -122,7 +122,7 @@ public:
     int childNodesCount(){if(tr->getSubtask()!=NULL)return 1; else return 0;}
     TreeItem *child(int i);
 
-    QString Name(){return QString("->")+=tr->getCondition();}
+    QString Name(){return QString("->")+=QString().fromStdString(CONDITION_TABLE[tr->getCondType()]).append(tr->getCondition());}
     QString Attr(){return tr->endItem()->getName();}
 private:
     /**

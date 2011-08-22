@@ -126,6 +126,9 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Robot, for which the empty generator is called.
+    */
     Robot robot;
     //QString argument;
 };
@@ -161,6 +164,9 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Sensor, from which the information which be received.
+    */
     Sensor sensor;
 };
 
@@ -195,6 +201,9 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Sensor to be initialized.
+    */
     Sensor sensor;
 };
 
@@ -249,11 +258,29 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Path to the trajectory file.
+    */
     QString filePath;
+    /**
+    *   Robot which executes the generator.
+    */
     Robot robot;
+    /**
+    *   Generator, which is executed.
+    */
     GeneratorType genType;
+    /**
+    *   Coordinates holding poses and pose specification.
+    */
     Coordinates * coords;
+    /**
+    *   Additional argument for generator execution.
+    */
     QString genArgs;
+    /**
+    *   Speech which will be used by a speech generator.
+    */
     QString speech;
 };
 
@@ -288,6 +315,9 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Set of robots.
+    */
     RobotSet set;
 };
 
@@ -330,8 +360,17 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
-    std::vector<robotInit> inits;//wektor, bo w jednym stanie inicjalizacji moze sie znajdowac wiele robotów
+    /**
+    *   Vector of robotInits, representing initializations of generators for robots (1 robot only in each element).
+    */
+    std::vector<robotInit> inits;
+    /**
+    *   Object representing transmitter to be initialized.
+    */
     Transmitter transmitter;
+    /**
+    *   Vector of Sensors to be initialized.
+    */
     std::vector<Sensor> sensors;
 };
 
@@ -366,6 +405,9 @@ public:
     TreeItem * getChild(int i, TreeItem * parent);
 
 private:
+    /**
+    *   Time, for which the system will stop (in ms).
+    */
     unsigned long long int Timespan;
 };
 

@@ -1,16 +1,13 @@
 
-	<!ELEMENT TaskDescription (State+,SubTask*,xi:include*)>
-	<!ELEMENT SubTask (State+)>
+	<!ELEMENT TaskDescription (Graphics?,State+,SubTask*,xi:include*)>
+	<!ELEMENT SubTask (State+,Graphics?)>
 	
 
 	<!ELEMENT State ((ROBOT|SetOfRobots)?,ECPGeneratorType?,PosX?,PosY?,
-	                        (GeneratorParameters|(TrajectoryFilePath,Trajectory))?,taskInit?,
-							Speech?,AddArg?,Sensor?,TimeSpan?,Parameters?,transition*)>
+	                        (AddArg|(TrajectoryFilePath,Trajectory))?,taskInit?,
+							Speech?,AddArgSensor?,TimeSpan?,Parameters?,transition*)>
 		<!ATTLIST State id CDATA #REQUIRED>
 		<!ATTLIST State type CDATA #REQUIRED>
-
-	<!ELEMENT PosX (#PCDATA)>
-	<!ELEMENT PosY (#PCDATA)>
 
 	<!ELEMENT SetOfRobots (FirstSet)><!--?, SecSet?)>-->
 	
@@ -24,44 +21,49 @@
 		<!ATTLIST Trajectory coordinateType CDATA #REQUIRED>
 		<!ATTLIST Trajectory motionType CDATA #REQUIRED>
 		
-	<!ELEMENT Pose (StartVelocity,EndVelocity,Velocity,Accelerations,Coordinates)>
-		<!ELEMENT StartVelocity (#PCDATA)>
-		<!ELEMENT EndVelocity (#PCDATA)>
+	<!ELEMENT Pose (Velocity,Accelerations,Coordinates)>
+		<!--?<!ELEMENT StartVelocity (#PCDATA)><!ELEMENT EndVelocity (#PCDATA)>-->
 		<!ELEMENT Velocity (#PCDATA)>
 		<!ELEMENT Accelerations (#PCDATA)>
 		<!ELEMENT Coordinates (#PCDATA)>
 	
 	<!ELEMENT taskInit (ecp+,mp?)>
-	<!ELEMENT ecp (ecp_gen_t?,ecp_tool_change_gen?,ecp_tff_nose_run_gen?,ecp_tff_rubik_grab_gen?,
-		ecp_tff_gripper_approach_gen?,ecp_tff_rubik_face_rotate_gen?,ecp_teach_in_gen?,
-		bias_edp_force_gen?,ecp_smooth_gen?,weight_meassure_gen?,ecp_sub_task_gripper_opening?)>
+	<!ELEMENT ecp (ecp_teach_in_gen?,ecp_newsmooth_gen?,weight_measure_gen?,ecp_gen_t?,ecp_tff_nose_run_gen?,
+		bias_edp_force_st?,ecp_tff_rubik_grab_gen?,ecp_tff_rubik_face_rotate_gen?,gripper_opening?,
+		ecp_tff_gripper_approach_gen?,ecp_gen_festival?)>
 		<!ATTLIST ecp name CDATA #REQUIRED>
 		<!ELEMENT ecp_gen_t (#PCDATA)>
-		<!ELEMENT ecp_tool_change_gen (#PCDATA)>
+		<!ELEMENT ecp_gen_festival (#PCDATA)>
 		<!ELEMENT ecp_tff_nose_run_gen (#PCDATA)>
 		<!ELEMENT ecp_tff_rubik_grab_gen (#PCDATA)>
 		<!ELEMENT ecp_tff_gripper_approach_gen (#PCDATA)>
 		<!ELEMENT ecp_tff_rubik_face_rotate_gen (#PCDATA)>
 		<!ELEMENT ecp_teach_in_gen (#PCDATA)>
-		<!ELEMENT bias_edp_force_gen (#PCDATA)>
-		<!ELEMENT ecp_smooth_gen (#PCDATA)>
+		<!ELEMENT bias_edp_force_st (#PCDATA)>
+		<!ELEMENT ecp_newsmooth_gen (#PCDATA)>
 		<!ELEMENT weight_meassure_gen (#PCDATA)>
 		<!ELEMENT ecp_sub_task_gripper_opening (#PCDATA)>
 	
-	<!ELEMENT mp (cube_state?,Sensor*,Transmitter?)>
-		<!ELEMENT cube_state (#PCDATA)>
+	<!ELEMENT mp (Sensor*,Transmitter?)>
+		<!--<!ELEMENT cube_state (#PCDATA)>-->
 		<!ELEMENT Transmitter (#PCDATA)>
 	
 	<!ELEMENT Speech (#PCDATA)>
 	<!ELEMENT AddArg (#PCDATA)>
 	<!ELEMENT Sensor (#PCDATA)>
 	<!ELEMENT TimeSpan (#PCDATA)>
-	<!ELEMENT GeneratorParameters (#PCDATA)>
 	<!ELEMENT Parameters (#PCDATA)>
 
 	<!ELEMENT transition (#PCDATA)>
 		<!ATTLIST transition condition CDATA #REQUIRED>
 		<!ATTLIST transition target CDATA #REQUIRED>
+
+	<!ELEMENT Graphics (PosX, PosY, Scale?)>
+
+	<!ELEMENT PosX (#PCDATA)>
+	<!ELEMENT PosY (#PCDATA)>
+	<!ELEMENT Scale (#PCDATA)>
+		
 
 	<!ELEMENT xi:include (xi:fallback?)>	
 	<!ATTLIST xi:include

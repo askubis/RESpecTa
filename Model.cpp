@@ -174,7 +174,7 @@ bool Model::tryInsertTransition(Transition * line)
                 typedef  property_map<MyGraphType, transition_t>::type TransitionMap;
                 TransitionMap transitionMap = get(transition_t(), (*tmp));
                 Transition * transition = boost::get(transitionMap, *OEIt);
-                if(transition->getCondition()==line->getCondition())
+                if(transition->getCondition()==line->getCondition() && transition->getCondType()==line->getCondType())
                 {
 
                     res->getError(QString("There already exists a transition with this condition from this state"));
