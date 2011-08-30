@@ -10,12 +10,22 @@ class robotInit;
 class robotInit
 {
 public:
+    /**
+    *   Empty construcot creating new instance of robotInit.
+    */
     robotInit(){}
+    /**
+    *   Copy constructor creating an instance of robotInit with same data os the other.
+    */
     robotInit(const robotInit& other)
     {
         this->robot=other.robot;
         this->init_values=other.init_values;
     }
+    /**
+    *   Function checking if this instance equals the other.
+    *   @returns true if objects have the same data.
+    */
     bool equals(robotInit other)
     {
         if(this->robot==other.robot)

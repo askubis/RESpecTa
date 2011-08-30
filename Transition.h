@@ -24,20 +24,47 @@ class Transition : public QGraphicsLineItem
 public:
     enum { Type = UserType + 4 };
 
+    /**
+    *   Getter function for scene.
+    */
     QGraphicsScene * getScene(){return scene;}
+    /**
+    *   Setter function for scene adding this item, all elements of lines vector and subtaskItem.
+    */
     void setScene(QGraphicsScene * sc);
 
+    /**
+    *   Constructor creating Transition between startItem and EndItem.
+    */
     Transition(BaseState *startItem, BaseState *endItem,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
+    /**
+    *   Destructor removing this item from subtask list of the state pointed as subtask and removes this item from scene.
+    */
     ~Transition();
 
+    /**
+    *   Getter function for CondType.
+    */
     ConditionType getCondType(){return CondType;}
+    /**
+    *   Setter function for CondType.
+    */
     void setCondType(ConditionType newCondType){CondType=newCondType;}
 
+    /**
+    *   Getter function for type.
+    */
     int type() const
         { return Type; }
+    /**
+    *   Returns QRectf bounding the transition.
+    */
     QRectF boundingRect() const;
+    /**
+    *   Returns the path of the shape of transition.
+    */
     QPainterPath shape() const;
     /**
     *   Sets state, which is a start state for this transition.
@@ -48,20 +75,41 @@ public:
     */
     void setEndItem( BaseState *newEndItem) { myEndItem=newEndItem; }
 
+    /**
+    *   Changes the z value (position of overlapping towards other elements).
+    */
     void setZValue(qreal z);
 
+    /**
+    *   Sets subtask to NULL pointer.
+    */
     void removeSubtask()
     {
         subtask=NULL;
     }
 
+    /**
+    *   Getter function for myStartItem.
+    */
     BaseState *startItem() const
         { return myStartItem; }
+    /**
+    *   Getter function for myEndItem.
+    */
     BaseState *endItem() const
         { return myEndItem; }
 
+    /**
+    *   Getter function for condition.
+    */
     QString getCondition() {return condition;}
+    /**
+    *   Setter function for subtask.
+    */
     void setCondition(QString newCondition) {condition=newCondition;}
+    /**
+    *   Getter function for subtask.
+    */
     BaseState * getSubtask() {return subtask;}
 
     /**
@@ -137,8 +185,15 @@ protected:
     *	Type of the condition.
     */
     ConditionType CondType;
-        QGraphicsScene * scene;
-        std::vector<QGraphicsLineItem *> lines;
+
+    /**
+    *   Scene on which this item is.
+    */
+    QGraphicsScene * scene;
+    /**
+    *   Additional lines usedfor transition whose start and end element are the same.
+    */
+    std::vector<QGraphicsLineItem *> lines;
     /**
     *   Start item of the transition.
     */
@@ -161,6 +216,9 @@ protected:
     */
     BaseState * subtask;
 
+    /**
+    *   GraphicsItem representing name of the State, which is a subtask to this transition.
+    */
     QGraphicsTextItem * subtaskItem;
 };
 

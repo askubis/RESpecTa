@@ -85,6 +85,9 @@ private slots:
 private:
 
 
+    /**
+    *   Function returning a state from the current widget (updated with name and statetype).
+    */
     BaseState * getState();
 
     /**

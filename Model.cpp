@@ -446,7 +446,14 @@ QStringList Model::checkIfOK()
                 {
                     Transition * tr = boost::get(transitionMap, *OEIt);
                     if(tr->getCondType()==TRU)
+                    {
                         mark=true;
+                        if(tr->startItem()==tr->endItem())
+                        {
+                            QString tmpQstring = state->getName().append(QString(  " state has transition with condition true going to the same state"));
+                            errors.push_back(tmpQstring);
+                        }
+                    }
                     else
                         mark = false;
                 }

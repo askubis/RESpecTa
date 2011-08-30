@@ -34,6 +34,9 @@ class EditWidget : public QStackedWidget//QTabWidget
     Q_OBJECT
 
 public:
+    /**
+    *   Constructor creating all edit widgets (stateWidget, subtaskWidget and transWidget).
+    */
     EditWidget(RESpecTa *parent, Model * mod);
 
 signals:
@@ -44,6 +47,9 @@ signals:
     void reportError(QString msgString);
 
 private slots:
+    /**
+    *   Slot setting the subtaskWidget visible.
+    */
     void EditTasks();
 
     /**

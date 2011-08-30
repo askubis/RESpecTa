@@ -22,7 +22,14 @@ QT_END_NAMESPACE
 class Coordinates
 {
 public:
+    /**
+    *   Empty constructor.
+    */
     Coordinates(){}
+
+    /**
+    *   Copy constructor creating copies of poses.
+    */
     Coordinates(Coordinates& old)
     {
         this->coordType=old.coordType;
@@ -35,6 +42,9 @@ public:
         }
     }
 
+    /**
+    *   Destructor, which deletes poses in this object.
+    */
     ~Coordinates()
     {
         for(unsigned int i = 0;i<poses.size();i++)
@@ -43,6 +53,10 @@ public:
         }
     }
 
+    /**
+    *   Function, which checks if the othe rinstance of this class is equal to this instance.
+    *   @returns true if objectshave same data.
+    */
     bool equals(Coordinates * other)
     {
         if(this->coordType==other->coordType)
@@ -63,13 +77,31 @@ public:
         return false;
     }
 
+    /**
+    *   Getter function for coordType.
+    */
     CoordType getCoordType() {return coordType;}
+    /**
+    *   Setter function for coordType.
+    */
     void setCoordType(CoordType newCoordType) {coordType=newCoordType;}
 
+    /**
+    *   Getter function for motionType.
+    */
     MotionType getMotionType() {return motionType;}
+    /**
+    *   Setter function for motionType.
+    */
     void setMotionType(MotionType newMotionType) {motionType=newMotionType;}
 
+    /**
+    *   Getter function for poses.
+    */
     std::vector<Pose *> getPoses(){return poses;}
+    /**
+    *   Setter function for poses.
+    */
     void setPoses(std::vector<Pose *> newPoses){poses=newPoses;}
 
     /**

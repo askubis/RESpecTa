@@ -64,9 +64,18 @@ class sysIniWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     sysIniWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 signals:
@@ -132,9 +141,18 @@ class runGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     runGenWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 signals:
@@ -201,9 +219,18 @@ class emptyGenForSetWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     emptyGenForSetWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 signals:
@@ -261,9 +288,18 @@ class emptyGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     emptyGenWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 private:
@@ -289,9 +325,18 @@ class waitStateWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     waitStateWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 private:
@@ -313,9 +358,18 @@ class stopGenWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     stopGenWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 signals:
@@ -357,9 +411,18 @@ class iniSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     iniSensorWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 private:
@@ -381,9 +444,18 @@ class getSensorWidget : public MyTypeWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all it's sub-widgets.
+    */
     getSensorWidget(QWidget * parent,Model * newmod );
+    /**
+    *   Returns a State with proper type and all the data from the widget.
+    */
     BaseState * getStateObject();
 
+    /**
+    *   Function opening state for edition in the widget.
+    */
     void setState(BaseState * state);
 
 private:
@@ -408,10 +480,24 @@ class CoordDialog:public QDialog
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this DialogBox and all it's sub-widgets.
+    */
     CoordDialog(QWidget * parent);
 
+    /**
+    *   Getter function for coords.
+    */
     Coordinates * getCoords(){return coords;}
+
+    /**
+    *   Setter function for coords.
+    */
     void setCoords(Coordinates * newCoords){coords = newCoords;}
+
+    /**
+    *   Refreshes the information in the Dialogbox.
+    */
     void coordsUpdated();
 
 signals:
@@ -472,7 +558,7 @@ private:
     */
     std::vector<QLineEdit *> accEdit;
     /**
-    *   Coordinates of the move.
+    *   Coordinates of the move, which are updated with eery change.
     */
     Coordinates * coords;
 };
@@ -484,7 +570,14 @@ class ECPDialog:public QDialog
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this DialogBox and all it's sub-widgets.
+    */
     ECPDialog(QWidget * parent);
+
+    /**
+    *   Loads robotIni into this window.
+    */
     void openForECP(robotInit robotIni);
 
 signals:
@@ -545,7 +638,14 @@ class MPDialog:public QDialog
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this DialogBox and all it's sub-widgets.
+    */
     MPDialog(QWidget * parent);
+
+    /**
+    *   Loads data of sensors and transmitter into the Dialog.
+    */
     void setSensTrans(std::vector<Sensor> sens, Transmitter tran);
 
 signals:

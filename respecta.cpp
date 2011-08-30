@@ -1211,27 +1211,6 @@ void RESpecTa::sceneScaleChanged(const QString &scale)
 
 void RESpecTa::selectionchanged()
 {
-    if(scenes[currentSubtask]->selectedItems().size()!=1)emit SignalDeleted();
-    else
-    {
-        QGraphicsItem * item = scenes[currentSubtask]->selectedItems().first();
-        if(item->type()==BaseState::Type)
-        {
-            BaseState * state = qgraphicsitem_cast<BaseState *>(item);
-            if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
-            {
-                emit SignalDeleted();//no item was selected to change; stop state cannot be edited.
-            }
-            else
-            {
-                emit itemSelectedSig(item);
-            }
-        }
-        else
-        {
-            emit itemSelectedSig(item);
-        }
-    }
     QList<QGraphicsItem *> newItems = scenes[currentSubtask]->selectedItems();
     foreach(QGraphicsItem * it, newItems)
     {
@@ -1255,6 +1234,27 @@ void RESpecTa::selectionchanged()
         }
     }
     oldSelectedItems=newItems;
+    if(scenes[currentSubtask]->selectedItems().size()!=1)emit SignalDeleted();
+    else
+    {
+        QGraphicsItem * item = scenes[currentSubtask]->selectedItems().first();
+        if(item->type()==BaseState::Type)
+        {
+            BaseState * state = qgraphicsitem_cast<BaseState *>(item);
+            if(state->getName().toLower()=="_stop_"||state->getName().toLower()=="_end_")
+            {
+                emit SignalDeleted();//no item was selected to change; stop state cannot be edited.
+            }
+            else
+            {
+                emit itemSelectedSig(item);
+            }
+        }
+        else
+        {
+            emit itemSelectedSig(item);
+        }
+    }
 }
 
 void RESpecTa::itemSelected(QGraphicsItem *item)
@@ -1278,10 +1278,9 @@ void RESpecTa::itemSelected(QGraphicsItem *item)
 }
 
 void RESpecTa::about()
-{//TODO
-    QMessageBox::about(this, tr("About Diagram Scene"),
-                       tr("The <b>Diagram Scene</b> example shows "
-                          "use of the graphics framework."));
+{
+    QMessageBox::about(this, tr("About RESpecTa"),
+                       tr("RESpecTa created by Adam Skubis (adam.skubis@gmail.com)"));
 }
 
 void RESpecTa::createToolbars()

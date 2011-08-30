@@ -10,6 +10,9 @@ class RobotSet;
 #include <vector>
 #include <QXmlStreamReader>
 
+/**
+*   Class representing XML element of RobotSet.
+*/
 class RobotSet
 {
 public:
@@ -36,6 +39,10 @@ public:
         return x;
     }
 
+    /**
+    *   Function checks if this instance equals other.
+    *   @returns true if objects are equal.
+    */
     bool equals(RobotSet other)
     {
         if(this->first.size()==other.first.size())

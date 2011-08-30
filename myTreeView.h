@@ -25,9 +25,15 @@ private:
      void selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
 
 
+     /**
+     *   Signals main window to focus scene on an item, when an item is re-selected
+     */
      void focusInEvent(QFocusEvent *event);
 
-    RESpecTa * res;
+     /**
+     *   Pointer to parent item.
+     */
+     RESpecTa * res;
 
 };
 

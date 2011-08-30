@@ -26,6 +26,10 @@ public:
     void refreshData();
 
 signals:
+
+    /**
+    *   Signals that an action has been done and the icon representing this widget should be unchecked.
+    */
     void UncheckTasksAction();
 
     /**
@@ -46,6 +50,9 @@ signals:
     void reportError(QString);
 
 private slots:
+    /**
+    *   Slot after clicking Clean button, which forces model to clean the selected task.
+    */
     void CleanClicked();
 
     /**

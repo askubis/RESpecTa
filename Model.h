@@ -13,9 +13,10 @@ class Model;
 class Model
 {
 public:
+    /**
+    *   Constructor creating subtask called "MAIN".
+    */
     Model();
-
-    Transition * getTransition(BaseState *st, int i);
 
         //*************     COUNT   ***********//
     /**
@@ -25,6 +26,9 @@ public:
 
         //*************     DELETE  ***********//
 
+    /**
+    *   Function removing all vertices and edges from a task with name=name.
+    */
     void CleanTask(QString name);
 
     /**
@@ -91,6 +95,15 @@ public:
 
         //*************     GET     ***********//
 
+
+    /**
+    *   Function returning the i'th transition going out of state st.
+    */
+    Transition * getTransition(BaseState *st, int i);
+
+    /**
+    *   Returns names of all States in the task sub without the end state.
+    */
     QStringList getAllStartStateNames(QString sub)
     {
         QStringList list = getAllStateNames(sub);
@@ -99,6 +112,9 @@ public:
         return list;
     }
 
+    /**
+    *   Returns all names of states in task sub without init state.
+    */
     QStringList getAllEndStateNames(QString sub)
     {
         QStringList list = getStateNames((*((*subtasks)[sub])));
@@ -234,7 +250,13 @@ public:
     *   Sets changed parameter and refreshes the TreeView in the main window.
     */
     void setChanged(bool newChanged);
+    /**
+    *   Getter function to changed.
+    */
     bool wasChanged(){return changed;}
+    /**
+    *   Setter function to block.
+    */
     void setBlock(bool block){changeBlocked=block;}
 
 signals:
@@ -242,7 +264,9 @@ signals:
     *   Reports error to the main window.
     */
     void reportError(QString);
-
+    /**
+    *   Reports a message to main view window.
+    */
     void reportMsg(QString);
 
 private:

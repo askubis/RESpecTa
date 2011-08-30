@@ -35,7 +35,9 @@ class Transition;
 class BaseState : public QGraphicsPolygonItem
 {
 public:
-
+    /**
+    *   Sets selected and updates graphics view of this object.
+    */
     void setSelected(bool selected)
     {
         QGraphicsPolygonItem::setSelected(selected);
@@ -44,16 +46,47 @@ public:
 
     enum { Type = UserType + 15 };
 
+    /**
+    *   Getter function to stateType.
+    */
     StateType getType() {return stateType;}
+    /**
+    *   Setter function for stateType.
+    */
     void setType(StateType newType){stateType=newType;}
+    /**
+    *   Getter function to stateName.
+    */
     QString getName() {return stateName;}
+    /**
+    *   Settes function for stateName.
+    */
     void setName(QString newName);
+    /**
+    *   Getter function to argument.
+    */
     QString getArgument() {return argument;}
+    /**
+    *   Setter function for argument.
+    */
     void setArgument(QString newArg){argument = newArg;}
+    /**
+    *   Getter function to parameters.
+    */
     QString getParameters() {return parameters;}
+    /**
+    *   Setter function for parameters.
+    */
     void setParameters(QString newParams){parameters = newParams;}
+    /**
+    *   Getter function for nameTextItem.
+    */
     QGraphicsTextItem * getNameTextItem(){return nameTextItem;}
-    void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
+    //void setNameTextItem(QGraphicsTextItem * newItem){nameTextItem=newItem;}
+
+    /**
+    *   Getter function for subtaskTransitions.
+    */
     QList<Transition*> getSubtaskTransitions(){return subtaskTransitions;}
 
     /**
@@ -86,6 +119,11 @@ public:
     */
     virtual TreeItem * getChild(int i, TreeItem * parent){return 0;}
 
+
+    /**
+    *   Function comparing 2 states. Checks only the basic elements of the state(name, type, arguments, parameters).
+    *   @returns true if states are equal.
+    */
     virtual bool equals(BaseState* other)
     {
         if(getName()==other->getName())
@@ -96,15 +134,33 @@ public:
         return false;
     }
 
+    /**
+    *   Copy operator for BaseState.
+    */
     BaseState & operator=(const BaseState &);
 
+    /**
+    *   Creates a state with empty nameTextItem and with no stateType.
+    */
     BaseState();
+    /**
+    *   Creates a state, which is a copy of state 'old'.
+    */
     BaseState(BaseState& old);
 
+    /**
+    *   Deletes nameTextItem, and removes this state from all transitions, which pointed to it as to a subtask.
+    */
     virtual ~BaseState();
 
-    virtual void removeSubtaskTrans(Transition * tr);
-    virtual void addSubtaskTrans(Transition * tr);
+    /**
+    *   Removes the tr Transition from the subtaskTransitions list.
+    */
+    void removeSubtaskTrans(Transition * tr);
+    /**
+    *   Adds the Transition tr to the subtaskTransitions list.
+    */
+    void addSubtaskTrans(Transition * tr);
 
     /**
     *   Sets context menu for the state.
@@ -135,9 +191,15 @@ public:
     *   Returns the image representing the state.
     */
     QPixmap image() const;
+    /**
+    *   Getter function for Type.
+    */
     int type() const
         { return Type;}
 
+    /**
+    *   Getter function for Transitions.
+    */
     QList<Transition *> getTransitions (){return Transitions;}
 
     /**

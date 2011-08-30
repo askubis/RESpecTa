@@ -29,6 +29,9 @@ class TransWidget : public QWidget
 {
     Q_OBJECT
 public:
+    /**
+    *   Constructor creating this widget and all its elements.
+    */
     TransWidget(QWidget *parent,Model * newmod );
 
     /**
@@ -46,6 +49,9 @@ public:
     void setOKButtonDisabled(){OKButton->setDisabled(true);edited=NULL;}
 private:
 
+    /**
+    *   Combobox allowing to change type of condition.
+    */
     QComboBox * condTypeCombo;
 
 
@@ -55,7 +61,7 @@ private:
     Model * mod;
 
     /**
-    *   Lineedit allowing to enter/edit condition of the transition.
+    *   Lineedit allowing to enter/edit condition of the transition when the condType is "iniFile.".
     */
     QLineEdit *conditionLineEdit;
 
@@ -83,8 +89,14 @@ private:
     QComboBox *subtaskCombo;
 
 
+    /**
+    *   Combobox allowing to change source state.
+    */
     QComboBox * sourceNameCombo;
 
+    /**
+    *   Combobox allowing to change destination state.
+    */
     QComboBox * destNameCombo;
 signals:
     /**
@@ -97,6 +109,9 @@ signals:
     void reportError(QString);
 
 private slots:
+    /**
+    *   Sets conditionLineEdit enagled or disabled depending on what condType has been chosen in CondTypeCombo.
+    */
     void indexChanged(int index);
 
     /**

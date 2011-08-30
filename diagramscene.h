@@ -19,7 +19,7 @@ class QGraphicsTextItem;
 class QColor;
 QT_END_NAMESPACE
 /**
-*   Class representing a scene, on which the items are shown.
+*   Class representing a scene, on which the items representing a graph are shown.
 */
 class DiagramScene : public QGraphicsScene
 {
@@ -28,6 +28,12 @@ class DiagramScene : public QGraphicsScene
 public:
 
 
+    /**
+    *   Constructor creating the DiagramScene.
+    *   @param itemMenu - menu, which will be added to items on the scene.
+    *   @param parent - Parent widget.
+    *   @param newmod - data model.
+    */
     DiagramScene(QMenu *itemMenu, QObject *parent,Model * newmod );
     /*QFont font() const
         { return myFont; }
@@ -54,12 +60,20 @@ public:
     */
     void setItemParams(BaseState * toInsert);
 
+    /**
+    *   Checks if the state is inside the scene, and if not it resizes the scene.
+    */
     void checkIfFits(BaseState * state);
 
 signals:
+    /**
+    *   Signals, that the line has been canceled, and the button representing transitions should be no longer pushed.
+    */
     void LineCanceled();
+    /**
+    *   Signals, that the mode has been changed and the tip should be changed.
+    */
     void modeChanged(SceneMode mode);
-
     /**
     *   Signals, that a state has been inserted into the scene.
     */
@@ -78,11 +92,23 @@ signals:
     void reportError(QString);
 
 public slots:
+    /**
+    *   Changes mode and emits modeChanged() signal.
+    */
     void setMode(SceneMode mode);
 
 protected:
+    /**
+    *   Reacts to mouse clicked action. Inserts a state, or sets startpoint for the line.
+    */
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    /**
+    *   Reacts to mouse move action. Moves items on the scene, or repaints the line representing future transition.
+    */
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    /**
+    *   Reacts to mouse released action. Inserts a transition, or checks if moved items fits after move.
+    */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:

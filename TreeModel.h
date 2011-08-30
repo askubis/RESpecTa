@@ -18,13 +18,22 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    /**
+    *   Creates the model for the treeview.
+    */
     TreeModel( QObject *parent, Model * mod, QString Name);
+    /**
+    *   Destructor for the model of the treeview.
+    */
     ~TreeModel();
 
     /**
     *   Returns data (text) from the index.
     */
     QVariant data(const QModelIndex &index, int role) const;
+    /**
+    *   Returns flags for the index.
+    */
     Qt::ItemFlags flags(const QModelIndex &index) const;
     /**
     *   Returns data for headers of the view.

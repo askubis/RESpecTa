@@ -19,7 +19,13 @@ class TransDialog:public QDialog
     Q_OBJECT
 
 public:
+    /**
+    *   Constructor creating the widget and all it's elements.
+    */
     TransDialog(QWidget * parent, Model * mod);
+    /**
+    *   Destructor for this widget.
+    */
     ~TransDialog(){}
     /**
     *   Opens the dialogbox for a state loading it's transitions from the model.
@@ -27,6 +33,9 @@ public:
     void openForAState(BaseState * tmp);
 
 signals:
+    /**
+    *   Signals that a transition should be selected.
+    */
     void TransitionSelected(Transition * tr);
 
     /**
@@ -35,6 +44,9 @@ signals:
     void reportError(QString);
 
 private slots:
+    /**
+    *   Slot reacting on doubleclick on a transition on the list.
+    */
     void TransSelected(QModelIndex);
 
 

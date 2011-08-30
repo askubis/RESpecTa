@@ -8,7 +8,7 @@ std::string StopState::Print()
     std::string x;
     x+="Name: ";
     x+=this->stateName.toStdString();
-    if(this->getType()<STATE_TYPES_NUMBER)
+    if(isProper(this->getType()))
     {
         x+="\nStateType: ";
         x+=STATE_TYPE_TABLE[this->getType()];
@@ -161,7 +161,7 @@ TreeItem * EmptyGenForSetState::getChild(int i, TreeItem * parent)
         if(index==0)
         {
             TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
-            tmp->setSet(set.first, true);
+            tmp->setSet(set.first);
             return tmp;
         }
         else
@@ -1183,7 +1183,7 @@ TreeItem * StopGenState::getChild(int i, TreeItem * parent)
         if(index==0)
         {
             TreeRobotSetItem * tmp = new TreeRobotSetItem(i, parent);
-            tmp->setSet(set.first, true);
+            tmp->setSet(set.first);
             return tmp;
         }
         else

@@ -35,17 +35,32 @@ class RESpecTa : public QMainWindow
 {
     Q_OBJECT
 public:
-   RESpecTa(){}
+   //RESpecTa(){}
+    /**
+    *   Constructor creating all sub-elements of the view.
+    */
    RESpecTa(Model * newmod );
+   /**
+   *    Destructor, which closes the log file.
+   */
    ~RESpecTa()
    {
        logStreamToWrite.flush();
        logFile.close();
    }
 
+   /**
+   *   Function which displays a warning in the terminal.
+   */
    void getWarning(QString msg){reportWarning(msg);}
-    void CenterOn(QString name);
+   /**
+   *   Function centering the view on a State with name _name.
+   */
+    void CenterOn(QString _name);
 
+    /**
+    *   Unchecks the tasksaction button.
+    */
     void HideSubtask();
 
    /**
@@ -92,6 +107,9 @@ public:
    void listSelectionChanged(QModelIndexList list);
 
 signals:
+   /**
+   *   Signal, which informs editwidget, that the Task widget should be opened.
+   */
    void EditTasksSig();
 
    /**
@@ -109,17 +127,49 @@ signals:
    void SignalDeleted();
 
 private slots:
+   /**
+   *   Slot, which runs HideSubtask function.
+   */
    void HideTheSubtask(){HideSubtask();}
+   /**
+   *   Selects a transition after it's been changed.
+   */
    void TransSelected(Transition * tr);
+   /**
+   *   Zooms into the scene.
+   */
    void ZoomIn();
+   /**
+   *   Zooms out of the scene.
+   */
    void ZoomOut();
+   /**
+   *   Slot responsible for receiving warnings from other Widgets.
+   */
    void reportWarning(QString msg);
+   /**
+   *   Cancels drawing a line(unchecks the transition insert action).
+   */
    void LineCanceled();
+   /**
+   *   Emits EditTasksSig, it's connected with the tasksAction triggered.
+   */
    void openTasksWindow(bool enabled);
+   /**
+   *   Changes the tipLabel accordingto new scene mode.
+   */
    void sceneModeChanged(SceneMode mode);
+   /**
+   *   Clears the terminal.
+   */
    void ClearTerminal();
+   /**
+   *   Creates new project.
+   */
    void NewProject();
-
+   /**
+   *   Runs checkIfOK function for the data model and displays errors and warnings.
+   */
    void checkIfOK();
     /**
     *   Selection on the stage changed, therefore color needs to be changed.
@@ -154,9 +204,13 @@ private slots:
     /**
     *   Checks if state oldState exists, if yes - replaces oldState with newState.
     */
-
-    void SubtaskLoaded(QString subtaskName);
     void ReplaceState(BaseState * oldState, BaseState * newState);
+
+    /**
+    *   Creates and connects scene and view after loading a task from the XML.
+    *   It also checks if end state exists, and if not - the function creates it.
+    */
+    void SubtaskLoaded(QString subtaskName);
     /**
     *   Opens TransDialog for the selected state.
     */
@@ -360,10 +414,6 @@ private:
     */
     QAction *deleteAction;
     /**
-    *   Action responsible for inserting a new Stop state.
-    */
-    //QAction *insertEndStateAction;
-    /**
     *   Action responsible for opening a dialogbox showing transitions of a state.
     */
     QAction *showTransitions;
@@ -379,13 +429,21 @@ private:
     *   Action responsible for showing the about dialog.
     */
     QAction *aboutAction;
-
+    /**
+    *   The "Menu" menu.
+    */
     QMenu *fileMenu;
     /**
     *   Context menu for states.
     */
     QMenu *itemMenu;
+    /**
+    *   The "Edit" menu.
+    */
     QMenu *editMenu;
+    /**
+    *   The "About" menu.
+    */
     QMenu *aboutMenu;
 
     /**
@@ -422,9 +480,21 @@ private:
     */
     QFile logFile;
 
+    /**
+    *   Label displaying tips for the user.
+    */
     QLabel * tipLabel;
+    /**
+    *   Acction responsible for adding states.
+    */
     QAction * addStateAction;
+    /**
+    *   Action responsible for adding transition.
+    */
     QAction * addTransAction;
+    /**
+    *   Action responsible
+    */
     QAction * TasksAction;
 };
 

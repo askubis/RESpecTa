@@ -15,7 +15,13 @@ class Pose;
 class Pose
 {
 public:
+    /**
+    *   Empty constructor.
+    */
     Pose(){}
+    /**
+    *   Copy constructor.
+    */
     Pose(const Pose& other)
     {
         for(unsigned int i=0; i<other.a.size();i++)
@@ -26,6 +32,10 @@ public:
         }
     }
 
+    /**
+    *   Function checking if the other object has same data as this one.
+    *   @returns true if objects equal.
+    */
     bool equals(Pose * other)
     {
         if(this->a.size()==other->a.size() && this->coordinates.size()==other->coordinates.size() && this->v.size()==other->v.size() && a.size()==v.size() && v.size()==coordinates.size())
@@ -40,13 +50,31 @@ public:
         return false;
     }
 
+    /**
+    *   Getter function for accelerations vector.
+    */
     std::vector<double> getA(){return a;}
+    /**
+    *   Setter function for accelerations vector.
+    */
     void setA(std::vector<double> newA){a=newA;}
 
+    /**
+    *   Getter function for velocity vector.
+    */
     std::vector<double> getV(){return v;}
+    /**
+    *   Setter function for velocity vector.
+    */
     void setV(std::vector<double> newV){v=newV;}
 
+    /**
+    *   Getter function for coordinates vector.
+    */
     std::vector<double> getC(){return coordinates;}
+    /**
+    *   Setter function for coordinates vector.
+    */
     void setC(std::vector<double> newC){coordinates=newC;}
 
     /**
