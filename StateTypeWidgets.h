@@ -113,6 +113,8 @@ private slots:
     */
     void forwardError(QString msgString){emit reportError(msgString);}
 
+
+    void ReplaceECP(robotInit newInit);
 private:
     /**
     *   State, which is being edited.
@@ -132,6 +134,8 @@ private:
     *   A dialogbox allowing to change MP section(sensors,transmitters, etc.).
     */
     MPDialog * mpDialog;
+
+    int selected;
 };
 
 /**
@@ -590,6 +594,8 @@ signals:
     */
     void reportError(QString msgString);
 
+
+    void ReplaceECP(robotInit newInit);
 private slots:
     /**
     *   Removes items selected on the genList.
@@ -629,6 +635,9 @@ private:
     *   robotInit object, which is edited.
     */
     robotInit robotInitObj;
+
+
+    bool edited;
 };
 
 /**

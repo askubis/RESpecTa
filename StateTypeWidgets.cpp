@@ -34,6 +34,7 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
     State->setType(StateType(SYSTEM_INITIALIZATION));
 
     connect(ecpDialog, SIGNAL(InsertECP(robotInit)), this, SLOT(InsertECP(robotInit)));
+    connect(ecpDialog, SIGNAL(ReplaceECP(robotInit)), this, SLOT(ReplaceECP(robotInit)));
     connect (ecpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
     connect (mpDialog, SIGNAL(reportError(QString)), this, SLOT(forwardError(QString)));
 
@@ -44,6 +45,7 @@ sysIniWidget::sysIniWidget(QWidget * parent, Model * newmod )
 
 void sysIniWidget::ItemClicked(QModelIndex ind)
 {
+    selected = ind.row();
     QString robot = robotsInitialized->currentItem()->text();
     std::vector<robotInit> inits =this->State->getInits();
     for(std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
@@ -76,6 +78,35 @@ void sysIniWidget::InsertECP(robotInit newInit)
     inits.push_back(newInit);
     this->State->setInits(inits);
     this->robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[newInit.robot]));
+}
+
+void sysIniWidget::ReplaceECP(robotInit newInit)
+{
+    int x = selected-1;
+    std::vector<robotInit> inits = this->State->getInits();
+    for (std::vector<robotInit>::iterator it = inits.begin();it!=inits.end();it++)
+    {
+        if((*it).robot == newInit.robot)
+        {
+            emit forwardError(QString("Robot exists:").append(QString().fromStdString(ROBOT_TABLE[newInit.robot])));
+            return;
+        }
+    }
+    int i=0;
+    std::vector<robotInit>::iterator it = inits.begin();
+    for (;it!=inits.end()&&i<x;it++,i++)
+    {
+    }
+    inits.erase(it);
+    inits.push_back(newInit);
+    this->State->setInits(inits);
+    this->robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[newInit.robot]));
+
+    robotsInitialized->clear();
+    foreach(robotInit rob, inits)
+    {
+        robotsInitialized->addItem(QString().fromStdString(ROBOT_TABLE[rob.robot]));
+    }
 }
 
 void sysIniWidget::removeECPSection()
@@ -840,17 +871,28 @@ ECPDialog::ECPDialog(QWidget * parent): QDialog(parent)
     connect (this, SIGNAL(rejected()), this, SLOT(CancelPressed()));
 
     setLayout(mainLayout);
+    edited=false;
 }
 
 void ECPDialog::CancelPressed()
 {
+    edited=false;
     this->setVisible(false);
 }
 
 void ECPDialog::OKPressed()
 {
-    robotInitObj.robot=Robot(robotCombo->currentIndex());
-    emit InsertECP(robotInitObj);
+    if(!edited)
+    {
+        robotInitObj.robot=Robot(robotCombo->currentIndex());
+        emit InsertECP(robotInitObj);
+    }
+    else
+    {
+        robotInitObj.robot=Robot(robotCombo->currentIndex());
+        emit ReplaceECP(robotInitObj);
+    }
+    edited=false;
     this->setVisible(false);
 }
 
@@ -877,6 +919,7 @@ void ECPDialog::add()
 
 void ECPDialog::openForECP(robotInit robotIni)
 {
+    edited=true;
     robotInitObj=robotIni;
     genList->clear();
     robotCombo->setCurrentIndex(robotIni.robot);
