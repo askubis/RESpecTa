@@ -13,12 +13,22 @@
 #include "editWidget.h"
 
 
-//TODO:
-//zmiana stanu kursora przy przesuwaniu/wstawianiu
+#define CBSIZE 20
+
+void printBuff(boost::circular_buffer<QString> buf)
+{
+    for (int i=0;i<buf.size();i++)
+        std::cout<<i<<" ZAWARTOŚĆ "<<buf[i].toStdString()<<std::endl;
+    std::cout<<std::endl<<std::endl;
+}
 
 RESpecTa::RESpecTa(Model * newmod)
 {
     mod=newmod;
+    boost::circular_buffer<QString> tmp(CBSIZE);
+    cb=tmp;
+    cb_iter=cb.begin();
+    cb_int_iter=0;
 
     createFileMenu();
     createEditMenu();
@@ -159,18 +169,22 @@ RESpecTa::RESpecTa(Model * newmod)
     reportMsg(QString("Errors will be saved to: ").append(logPath));
 
 
+
+    cb.insert(cb_iter, mod->CreateNextUndoPoint());
+    cb_iter=cb.end();//cb_int_iter++;
+
 }
 
 void RESpecTa::ZoomIn()
 {
     if(sceneScaleCombo->currentIndex()!=0)
-    sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()-1);
+        sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()-1);
 }
 
 void RESpecTa::ZoomOut()
 {
     if(sceneScaleCombo->currentIndex()!=(sceneScaleCombo->count()-1))
-    sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()+1);
+        sceneScaleCombo->setCurrentIndex(sceneScaleCombo->currentIndex()+1);
 }
 
 void RESpecTa::ClearTerminal()
@@ -180,6 +194,18 @@ void RESpecTa::ClearTerminal()
 
 void RESpecTa::createEditMenu()
 {
+    undoAction = new QAction(tr("Undo"), this);
+    undoAction->setShortcut(tr("Ctrl+Z"));
+    undoAction->setStatusTip(tr("Undo last change"));
+    connect(undoAction, SIGNAL(triggered()),
+            this, SLOT(undo()));
+
+    redoAction = new QAction(tr("Redo"), this);
+    redoAction->setShortcut(tr("Ctrl+Shift+Z"));
+    redoAction->setStatusTip(tr("Redo last change"));
+    connect(redoAction, SIGNAL(triggered()),
+            this, SLOT(redo()));
+
     toFrontAction = new QAction(QIcon(":/images/bringtofront.png"),
                                 tr("Bring to &Front"), this);
     toFrontAction->setShortcut(tr("Ctrl+F"));
@@ -192,14 +218,14 @@ void RESpecTa::createEditMenu()
     sendBackAction->setShortcut(tr("Ctrl+K"));
     sendBackAction->setStatusTip(tr("Send item to back"));
     connect(sendBackAction, SIGNAL(triggered()),
-        this, SLOT(sendToBack()));
+            this, SLOT(sendToBack()));
 
     deleteAction = new QAction(QIcon(":/images/delete.png"),
                                tr("Delete"), this);
     deleteAction->setShortcut(tr("Delete"));
     deleteAction->setStatusTip(tr("Delete item from diagram"));
     connect(deleteAction, SIGNAL(triggered()),
-        this, SLOT(deleteItem()));
+            this, SLOT(deleteItem()));
 
     /*insertEndStateAction = new QAction(QIcon(":/images/_END_image.jpg"),
                                tr("&End"), this);
@@ -212,7 +238,7 @@ void RESpecTa::createEditMenu()
     showTransitions->setShortcut(tr("Ctrl+T"));
     showTransitions->setStatusTip(tr("Show transitions of this State"));
     connect(showTransitions, SIGNAL(triggered()),
-        this, SLOT(EditTransitionsOfState()));
+            this, SLOT(EditTransitionsOfState()));
 
     /*QAction * GoToState = new QAction(tr("&Go to Item from the list"), this);
     GoToState->setShortcut(tr("Ctrl+G"));
@@ -233,6 +259,9 @@ void RESpecTa::createEditMenu()
     connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(ZoomOut()));
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu->addAction(undoAction);
+    editMenu->addAction(redoAction);
+    editMenu->addSeparator();
     editMenu->addAction(deleteAction);
     editMenu->addSeparator();
     editMenu->addAction(toFrontAction);
@@ -248,6 +277,79 @@ void RESpecTa::createEditMenu()
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
     itemMenu->addAction(showTransitions);
+}
+
+void RESpecTa::undo()
+{
+    //@TODO: zapisać która scena aktywna
+
+    if(cb_int_iter>0 && cb_redo_count <CBSIZE)
+    {
+        printBuff(cb);
+
+
+        mod->setBlock(true);
+
+        for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            SubtaskRemoved((*it).first);
+            it = scenes.begin();//usuwa wszystkie sceny z widoku
+        }
+        mod->deleteAll();//usuwa wszystko z modelu
+        cb_int_iter--;
+        cb_iter--;
+        cb_redo_count++;
+        std::cout<<"SIZE "<<cb.size()<<" UNDO TO "<<cb_int_iter<<std::endl;
+        Load(cb[cb_int_iter]);
+        std::cout<<"UNDO TO "<<cb_int_iter<<" "<<cb[cb_int_iter].toStdString()<<std::endl;
+        mod->setBlock(false);
+        TreeModel * newModel = new TreeModel(this, mod, currentSubtask);
+        TreeView->setModel(newModel);
+        delete treeModel;
+        treeModel = newModel;
+    }
+}
+
+void RESpecTa::redo()
+{
+    if(cb_redo_count>0)
+    {
+        printBuff(cb);
+
+
+        cb_redo_count--;
+        cb_iter++; cb_int_iter++;
+        mod->setBlock(true);
+
+        for (std::map<QString,DiagramScene *>::iterator it = scenes.begin();it!=scenes.end();it++)
+        {
+            SubtaskRemoved((*it).first);
+            it = scenes.begin();//usuwa wszystkie sceny z widoku
+        }
+        mod->deleteAll();//usuwa wszystko z modelu
+
+
+        std::cout<<"SIZE "<<cb.size()<<" REDO TO "<<cb_int_iter<<std::endl;
+        Load(cb[cb_int_iter]);
+        std::cout<<"REDO TO "<<cb_int_iter<<" "<<cb[cb_int_iter].toStdString()<<std::endl;
+        mod->setBlock(false);
+        TreeModel * newModel = new TreeModel(this, mod, currentSubtask);
+        TreeView->setModel(newModel);
+        delete treeModel;
+        treeModel = newModel;
+    }
+
+}
+
+void RESpecTa::Load(QString str)
+{
+    QXmlStreamReader * reader = new QXmlStreamReader(str);
+    LoadStatesFromReader(reader, mod->getMainName());
+    delete reader;
+    reader = new QXmlStreamReader(str);
+    LoadTransitionsFromReader(reader, str);
+    //TODO: get from QString
+    //rename
 }
 
 void RESpecTa::checkIfOK()
@@ -328,7 +430,7 @@ void RESpecTa::SubtaskAdded(QString newSubtask)
 void RESpecTa::SubtaskRemoved(QString oldSubtask)
 {
     TasksAction->setChecked(false);
-     mod->DeleteTask(oldSubtask);
+    mod->DeleteTask(oldSubtask);
     if(oldSubtask!=mod->getMainName())
     {
         std::map<QString,QHBoxLayout *>::iterator layoutIt = layouts.find(oldSubtask);
@@ -450,7 +552,6 @@ void RESpecTa::createFileMenu()
     connect(newAction, SIGNAL(triggered()), this, SLOT(NewProject()));
 
     fileMenu = menuBar()->addMenu(tr("&File"));
-    //TODO:newaction
     fileMenu->addAction(newAction);
     fileMenu->addAction(loadAction);
     fileMenu->addAction(saveAction);
@@ -464,8 +565,8 @@ void RESpecTa::NewProject()
     {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, tr("Are you sure?"),
-                                        "Do you want to save your work before loading?",
-                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                                      "Do you want to save your work before loading?",
+                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if (reply == QMessageBox::Yes)
         {
             bool tmp = this->SaveAs();
@@ -483,6 +584,12 @@ void RESpecTa::NewProject()
         else
             return;
     }
+    clear();
+    reportMsg(QString("New project created"));
+}
+
+void RESpecTa::clear()
+{
     QStringList list = mod->getTasksNameLists();
     foreach(QString str, list)
     {
@@ -512,7 +619,6 @@ void RESpecTa::NewProject()
     }
     mod->setChanged(false);
 
-    reportMsg(QString("New project created"));
 }
 
 void RESpecTa::Load()
@@ -521,8 +627,8 @@ void RESpecTa::Load()
     {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, tr("Are you sure?"),
-                                        "Do you want to save your work before loading?",
-                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                                      "Do you want to save your work before loading?",
+                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if (reply == QMessageBox::Yes)
         {
             bool tmp = this->SaveAs();
@@ -543,9 +649,9 @@ void RESpecTa::Load()
 
     QString tmp;
     QString LoadName = QFileDialog::getOpenFileName(this,
-                                tr("Loading file"),
-                                tmp,
-                                tr("XML Files (*.xml)"));
+                                                    tr("Loading file"),
+                                                    tmp,
+                                                    tr("XML Files (*.xml)"));
     if(!LoadName.isEmpty())
     {
         QString tmpName = LoadName;
@@ -592,7 +698,7 @@ void RESpecTa::LoadFile(QString fileName)
 
     foreach(QString x, errors)
     {
-       reportError(x);
+        reportError(x);
     }
 
     if(mod->vertNum(oldMain)==0)
@@ -651,7 +757,7 @@ void RESpecTa::LoadFile(QString fileName)
 QStringList RESpecTa::LoadStates(QString FileName)
 {
     reportMsg(QString("File ").append(FileName).append(QString(" loaded")));
-QStringList errors;
+    QStringList errors;
     QString filename = QString(SaveFolder)+FileName;
     QString GraphName = FileName;
     GraphName.chop(4);
@@ -662,107 +768,133 @@ QStringList errors;
     QFile* file = new QFile(filename);
     file->open( QIODevice::ReadOnly);
     QXmlStreamReader * reader = new QXmlStreamReader(file);
+    errors+=LoadStatesFromReader(reader, GraphName);
+    file->close();
+    return errors;
+}
+QStringList RESpecTa::LoadStatesFromReader(QXmlStreamReader * reader, QString GName)
+{
+    QString GraphName= GName;
+    QStringList errors;
     while (!reader->atEnd())
     {
-          reader->readNextStartElement();
+        reader->readNextStartElement();
+        std::cout<<reader->lineNumber()<<std::endl;
+        std::cout<<reader->columnNumber()<<std::endl;
+        std::cout<<"NAME "<<reader->name().toString().toStdString()<<" START "<<reader->isStartElement()<<" END "<<reader->isEndElement()<<std::endl;
+        if(reader->name().toString()=="Subtask"&&reader->isStartElement())
+        {
+            GraphName = reader->attributes().first().value().toString();
+            SubtaskAdded(GraphName);
+        }
+        if(reader->name().toString()=="Subtask"&&reader->isEndElement())
+        {
+            GraphName = GName;
+        }
 
-          if(reader->name().toString()=="Graphics"&&reader->isStartElement())
-          {
-              errors+=this->loadGraphics(reader, GraphName);
-          }
-          if(reader->name().toString()=="State")
-          {
-              if(reader->attributes().hasAttribute("id")&&reader->attributes().hasAttribute("type"))
-              {
-                  BaseState * state=NULL;
-                  StateType type;
-                  int index = (getStateTypeTable().indexOf(reader->attributes().value("type").toString()));
-                  if(index<STATE_TYPES_NUMBER)
-                  {
-                       type = (StateType)index;
-                  }
-                  //else - //in switch
-                  switch (type)
-                  {
-                      case 0:
-                          state = new sysInitState();
-                          break;
-                      case 1:
-                          state = new RunGenState();
-                          break;
-                      case 2:
-                          state = new EmptyGenForSetState();
-                          break;
-                      case 3:
-                          state = new EmptyGenState();
-                          break;
-                      case 4:
-                          state = new WaitState();
-                          break;
-                      case 5:
-                          state = new StopGenState();
-                          break;
-                      case 6:
-                          state = new InitiateSensorState();
-                          break;
-                      case 7:
-                          state = new GetSensorState();
-                          break;
-                      default:
-                        if(reader->attributes().value("type").toString()==QString(""))
-                         {
-                            state = new StopState();
-                         }
-                        else
-                        {
-                            char linenum[30];
-                            sprintf(linenum,"; line: %lld", reader->lineNumber());
-                            errors.push_back(QString("Unknown type of State")+=linenum);
-                        }
-                      break;
-                  };
-                  if(state!=NULL)
-                  {
-                      QString stateName = reader->attributes().value("id").toString();
-if(!mod->checkNameAvailable(stateName) && stateName.toLower()!="_end_")
-{
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors+=(QString("This state name is already taken: ")+=stateName)+=linenum;
-    reader->readElementText();
-    delete state;
-    continue;
-}
-if(stateName.toLower()=="init" ^ type==SYSTEM_INITIALIZATION)
-{
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors+=QString("Only the SYSTEM INITIALIZATION statetype can have name INIT")+=linenum;
-    reader->readElementText();
-    delete state;
-    continue;
-}
-if(stateName.contains("<<"))
-{
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors+=(QString("The StateName cannot contain \"<<\""))+=linenum;
-    reader->readElementText();
-    delete state;
-    continue;
-}
-if(stateName.contains("/"))
-{
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors+=(QString("The StateName cannot contain \"/\""))+=linenum;
-    reader->readElementText();
-    delete state;
-    continue;
-}
-if(type==-1)
-{
-    /*if(stateName.toLower()=="_stop_"||stateName.toLower()=="_end_")
+        if(reader->name().toString()=="Graphics"&&reader->isStartElement())
+        {
+            errors+=this->loadGraphics(reader, GraphName);
+        }
+        if(reader->name().toString()=="State"&&!reader->isStartElement())
+        {
+            continue;
+        }
+        if(reader->name().toString()=="State"&&reader->isStartElement())
+        {
+            if(reader->attributes().hasAttribute("id")&&reader->attributes().hasAttribute("type"))
+            {
+                BaseState * state=NULL;
+                StateType type;
+                int index = (getStateTypeTable().indexOf(reader->attributes().value("type").toString()));
+                if(index<STATE_TYPES_NUMBER)
+                {
+                    type = (StateType)index;
+                }
+                //else - //in switch
+                switch (type)
+                {
+                case 0:
+                    state = new sysInitState();
+                    break;
+                case 1:
+                    state = new RunGenState();
+                    break;
+                case 2:
+                    state = new EmptyGenForSetState();
+                    break;
+                case 3:
+                    state = new EmptyGenState();
+                    break;
+                case 4:
+                    state = new WaitState();
+                    break;
+                case 5:
+                    state = new StopGenState();
+                    break;
+                case 6:
+                    state = new InitiateSensorState();
+                    break;
+                case 7:
+                    state = new GetSensorState();
+                    break;
+                default:
+                    if(reader->attributes().value("type").toString()==QString(""))
+                    {
+                        state = new StopState();
+                    }
+                    else
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("Unknown type of State")+=linenum);
+                    }
+                    break;
+                };
+                if(state!=NULL)
+                {
+                    QString stateName = reader->attributes().value("id").toString();
+
+                    std::cout<<"Loaded new state: "<<stateName.toStdString()<<std::endl;
+
+                    if(!mod->checkNameAvailable(stateName, mod->getGraph(GraphName)))
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors+=(QString("This state name is already taken: ")+=stateName)+=linenum;
+                        delete state;
+                        continue;
+                    }
+                    if(stateName.toLower()=="init" ^ type==SYSTEM_INITIALIZATION)
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors+=QString("Only the SYSTEM INITIALIZATION statetype can have name INIT")+=linenum;
+                        reader->readElementText();
+                        delete state;
+                        continue;
+                    }
+                    if(stateName.contains("<<"))
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors+=(QString("The StateName cannot contain \"<<\""))+=linenum;
+                        reader->readElementText();
+                        delete state;
+                        continue;
+                    }
+                    if(stateName.contains("/"))
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors+=(QString("The StateName cannot contain \"/\""))+=linenum;
+                        reader->readElementText();
+                        delete state;
+                        continue;
+                    }
+                    if(type==-1)
+                    {
+                        /*if(stateName.toLower()=="_stop_"||stateName.toLower()=="_end_")
     {
         state->setType((StateType)STATE_TYPES_NUMBER);//STOPSTATE
     }
@@ -775,44 +907,43 @@ if(type==-1)
         delete state;
         continue;
     }*/
-}
-else
-{
-    state->setType(type);
-}
+                    }
+                    else
+                    {
+                        state->setType(type);
+                    }
                     state->setName(stateName);
                     errors+= state->LoadFromXML(reader);
                     scenes[GraphName]->setItemParams(state);
                     state->setToolTip(QString().fromStdString(state->Print()));
                     mod->addState(state, GraphName);
-                  }
-                  else//state==NULL
-                  {
+                }
+                else//state==NULL
+                {
 
-                  }
-              }
-              else//no id or type
-              {
+                }
+            }
+            else//no id or type
+            {
 
-                  char linenum[30];
-                  sprintf(linenum,"; line: %lld", reader->lineNumber());
-                  errors.push_back(QString("No ID or Type in <State>")+=linenum);
-                  reader->readElementText();
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("No ID or Type in <State>")+=linenum);
+                reader->readElementText();
 
-              }
-          }
-          else if (reader->name()=="include"&&reader->isStartElement())
-          {
-                   QString subtaskName = reader->attributes().value("href").toString();
-        if(subtaskName.contains("/"))
-        {
-            int ind = subtaskName.lastIndexOf('/');
-            subtaskName.remove(0,ind+1);//delete beginning till the last /
+            }
         }
-                   errors+=LoadStates(subtaskName);
-          }
+        else if (reader->name()=="include"&&reader->isStartElement())
+        {
+            QString subtaskName = reader->attributes().value("href").toString();
+            if(subtaskName.contains("/"))
+            {
+                int ind = subtaskName.lastIndexOf('/');
+                subtaskName.remove(0,ind+1);//delete beginning till the last /
+            }
+            errors+=LoadStates(subtaskName);
+        }
     }
-    file->close();
     return errors;
 }
 
@@ -828,89 +959,105 @@ QStringList RESpecTa::LoadTransitions(QString FileName)
     subName.remove(0,ind+1);//delete beginning till the last /
     file->open( QIODevice::ReadOnly);
     QXmlStreamReader * reader = new QXmlStreamReader(file);
+    errors+=LoadTransitionsFromReader(reader, subName);
+    return errors;
+}
+
+QStringList RESpecTa::LoadTransitionsFromReader(QXmlStreamReader * reader, QString SName)
+{
+    QString subName = SName;
+    if(reader->name().toString()=="Subtask"&&reader->isStartElement())
+    {
+        subName = reader->attributes().first().value().toString();
+    }
+    if(reader->name().toString()=="Subtask"&&reader->isEndElement())
+    {
+        subName = SName;
+    }
+    QStringList errors;
     QString StateName;
     while (!reader->atEnd())
     {
-          reader->readNextStartElement();
-          if(reader->name().toString()=="State"&&reader->isStartElement() && !mod->checkNameAvailable(reader->attributes().value("id").toString()))
-          {
-              StateName = reader->attributes().value("id").toString();
-          }
-          else if(reader->name().toString()=="State"&&reader->isEndElement())
-          {
-              StateName = "";
-          }
-          else if(reader->name().toString()=="transition"&&reader->isStartElement())
-          {
-              if(StateName=="")
-              {
-                  char linenum[30];
-                  sprintf(linenum,"; line: %lld", reader->lineNumber());
-                  errors.push_back(QString("Unknown State while loading Transition")+=linenum);
-              }
-              else
-              {
-                  if(reader->attributes().hasAttribute("condition")&&reader->attributes().hasAttribute("target"))
-                  {
-                      QString subtask="";
-                      QString conditionString = reader->attributes().value("condition").toString();
-                      QString target = reader->attributes().value("target").toString();
-                      QStringList strList = target.split(">>");
-                      if(strList.size()>1)
-                      {
-                          subtask = strList[0];
-                          target = strList[1];
-                      }
-                      else
-                      {
-                          target = strList[0];
-                      }
-                      BaseState * sourceState = mod->getState(StateName, subName);
-                      BaseState * targetState = mod->getState(target, subName);
-                      if(sourceState!=NULL&&targetState!=NULL)
-                      {
-                          Transition * trans = new Transition(sourceState, targetState);
-                          if(conditionString.startsWith("iniFile."))
-                          {
-                              trans->setCondType(INIFILE);
-                              QStringList list = conditionString.split(".");
-                              QString condition = list[1];
-                              for(int i=2;i<list.size();i++)
-                              {
-                                  condition.append(".").append(list[i]);
-                              }
+        reader->readNextStartElement();
+        if(reader->name().toString()=="State"&&reader->isStartElement() && !mod->checkNameAvailable(reader->attributes().value("id").toString()))
+        {
+            StateName = reader->attributes().value("id").toString();
+        }
+        else if(reader->name().toString()=="State"&&reader->isEndElement())
+        {
+            StateName = "";
+        }
+        else if(reader->name().toString()=="transition"&&reader->isStartElement())
+        {
+            if(StateName=="")
+            {
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("Unknown State while loading Transition")+=linenum);
+            }
+            else
+            {
+                if(reader->attributes().hasAttribute("condition")&&reader->attributes().hasAttribute("target"))
+                {
+                    QString subtask="";
+                    QString conditionString = reader->attributes().value("condition").toString();
+                    QString target = reader->attributes().value("target").toString();
+                    QStringList strList = target.split(">>");
+                    if(strList.size()>1)
+                    {
+                        subtask = strList[0];
+                        target = strList[1];
+                    }
+                    else
+                    {
+                        target = strList[0];
+                    }
+                    BaseState * sourceState = mod->getState(StateName, subName);
+                    BaseState * targetState = mod->getState(target, subName);
+                    if(sourceState!=NULL&&targetState!=NULL)
+                    {
+                        Transition * trans = new Transition(sourceState, targetState);
+                        if(conditionString.startsWith("iniFile."))
+                        {
+                            trans->setCondType(INIFILE);
+                            QStringList list = conditionString.split(".");
+                            QString condition = list[1];
+                            for(int i=2;i<list.size();i++)
+                            {
+                                condition.append(".").append(list[i]);
+                            }
 
-                              trans->setCondition(condition);
-                          }
-                          else
-                          {
-                              ConditionType CondIndex = (ConditionType)getCondTypeTable().indexOf(conditionString);
-                              if(isProper(CondIndex))
-                              {
-                                  trans->setCondType(CondIndex);
-                                  trans->setCondition("");
-                              }
-                              else
-                              {
-                                  char linenum[30];
-                                  sprintf(linenum,"; line: %lld", reader->lineNumber());
-                                  errors.push_back(QString("Transition condition is out of boundse")+=linenum);
-                              }
-                          }
-                          if(subtask.size()!=0)
-                          {
+                            trans->setCondition(condition);
+                        }
+                        else
+                        {
+                            ConditionType CondIndex = (ConditionType)getCondTypeTable().indexOf(conditionString);
+                            if(isProper(CondIndex))
+                            {
+                                trans->setCondType(CondIndex);
+                                trans->setCondition("");
+                            }
+                            else
+                            {
+                                char linenum[30];
+                                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                                errors.push_back(QString("Transition condition is out of boundse")+=linenum);
+                            }
+                        }
+                        if(subtask.size()!=0)
+                        {
                             trans->setSubtask(mod->getState(subtask));
-                          }
-if(mod->checkTransCondAvailabe(trans, trans->getCondType(), trans->getCondition()))
-{
-    delete trans;
-    char linenum[30];
-    sprintf(linenum,"; line: %lld", reader->lineNumber());
-    errors.push_back(QString("Transition condition is already used for the sourceState")+=linenum);
-    continue;
-}
-                          if(mod->checkTransCondAvailabe(sourceState, trans->getCondType(), trans->getCondition()))
-                          {
+                        }
+                        if(mod->checkTransCondAvailabe(trans, trans->getCondType(), trans->getCondition()))
+                        {
+                            delete trans;
+                            char linenum[30];
+                            sprintf(linenum,"; line: %lld", reader->lineNumber());
+                            errors.push_back(QString("Transition condition is already used for the sourceState")+=linenum);
+                            continue;
+                        }
+                        if(mod->checkTransCondAvailabe(sourceState, trans->getCondType(), trans->getCondition()))
+                        {
                             scenes[subName]->addItem(trans);
                             mod->tryInsertTransition(trans);
                             trans->updatePosition();
@@ -920,37 +1067,37 @@ if(mod->checkTransCondAvailabe(trans, trans->getCondType(), trans->getCondition(
                             sourceState->addTransition(trans);
                             if(sourceState!=targetState)targetState->addTransition(trans);
                             trans->setScene(scenes[subName]);
-                          }
-                          else
-                          {
-                              delete trans;
-                              char linenum[30];
-                              sprintf(linenum,"; line: %lld", reader->lineNumber());
-                              errors.push_back(QString("Transition between States in different subtasks")+=linenum);
-                          }
-                      }
-                      else
-                      {
-                          char linenum[30];
-                          sprintf(linenum,"; line: %lld", reader->lineNumber());
-                          errors.push_back(QString("Start or End State not found in the map while loading transition")+=linenum);
-                      }
-                  }
-                  else
-                  {
-                      char linenum[30];
-                      sprintf(linenum,"; line: %lld", reader->lineNumber());
-                      errors.push_back(QString("No condition or target in Transition")+=linenum);
-                  }
-              }
-          }
-          else if (reader->name()=="include")
-          {
-              QString subtaskName = reader->attributes().value("href").toString();
-              int ind = subtaskName.lastIndexOf('/');
-              subtaskName.remove(0,ind+1);//delete beginning till the last /
-              errors+=LoadTransitions(subtaskName);
-          }
+                        }
+                        else
+                        {
+                            delete trans;
+                            char linenum[30];
+                            sprintf(linenum,"; line: %lld", reader->lineNumber());
+                            errors.push_back(QString("Transition between States in different subtasks")+=linenum);
+                        }
+                    }
+                    else
+                    {
+                        char linenum[30];
+                        sprintf(linenum,"; line: %lld", reader->lineNumber());
+                        errors.push_back(QString("Start or End State not found in the map while loading transition")+=linenum);
+                    }
+                }
+                else
+                {
+                    char linenum[30];
+                    sprintf(linenum,"; line: %lld", reader->lineNumber());
+                    errors.push_back(QString("No condition or target in Transition")+=linenum);
+                }
+            }
+        }
+        else if (reader->name()=="include")
+        {
+            QString subtaskName = reader->attributes().value("href").toString();
+            int ind = subtaskName.lastIndexOf('/');
+            subtaskName.remove(0,ind+1);//delete beginning till the last /
+            errors+=LoadTransitions(subtaskName);
+        }
     }
     return errors;
 }
@@ -973,13 +1120,15 @@ void RESpecTa::save()
     }
 }
 
+
+
 bool RESpecTa::SaveAs()
 {
     QString tmp;
     SaveName = QFileDialog::getSaveFileName(this,
-                                tr("Save to file"),
-                                tmp,
-                                tr("XML Files (*.xml)"));
+                                            tr("Save to file"),
+                                            tmp,
+                                            tr("XML Files (*.xml)"));
     if (!SaveName.isEmpty())
     {
         QString tmpName = SaveName;
@@ -998,8 +1147,8 @@ bool RESpecTa::SaveAs()
             {
                 QMessageBox::StandardButton reply;
                 reply = QMessageBox::question(this, tr("Warning"),
-                                                QString("The file exists, are you sure want to overwrite it"),
-                                                QMessageBox::Yes | QMessageBox::Abort);
+                                              QString("The file exists, are you sure want to overwrite it"),
+                                              QMessageBox::Yes | QMessageBox::Abort);
                 if(reply==QMessageBox::Abort)
                 {
                     return false;
@@ -1100,7 +1249,7 @@ void RESpecTa::bringToFront()
     qreal zValue = 0;
     foreach (QGraphicsItem *item, overlapItems) {
         if (item->zValue() >= zValue &&
-            item->type() == BaseState::Type)
+                item->type() == BaseState::Type)
             zValue = item->zValue() + 0.1;
     }
     selectedItem->setZValue(zValue);
@@ -1124,7 +1273,7 @@ void RESpecTa::sendToBack()
     qreal zValue = 0;
     foreach (QGraphicsItem *item, overlapItems) {
         if (item->zValue() <= zValue &&
-            item->type() == BaseState::Type)
+                item->type() == BaseState::Type)
             zValue = item->zValue() - 0.2;
     }
     selectedItem->setZValue(zValue);
@@ -1444,7 +1593,7 @@ void RESpecTa::EditTransitionsOfState()
 void RESpecTa::ReplaceState(BaseState * oldState, BaseState * newState)
 {
     QString index = mod->getSubtaskName(oldState);
-    bool check = mod->ReplaceState(oldState,newState);//TODO: bool niepotrzebny
+    bool check = mod->ReplaceState(oldState,newState);
     if(check)
     {
         QList<Transition *> TranList = oldState->getTransitions();
@@ -1477,8 +1626,8 @@ void RESpecTa::closeEvent(QCloseEvent *event)
     {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, tr("Are you sure?"),
-                                        "Do you want to save your work before closing?",
-                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                                      "Do you want to save your work before closing?",
+                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if (reply == QMessageBox::Yes)
         {
             bool tmp = this->SaveAs();
@@ -1530,67 +1679,67 @@ QStringList RESpecTa::loadGraphics(QXmlStreamReader * reader, QString subName)
     QStringList errors;
     while (!reader->atEnd())
     {
-          reader->readNextStartElement();
-          if(reader->name()=="Graphics"&&reader->isEndElement())
-          {
-              if(!wasX||!wasY)
-              {
-                  char linenum[30];
-                  sprintf(linenum,"; line: %lld", reader->lineNumber());
-                  errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
-              }
-              else
-              {
-                  if(!wasScale)
-                  {
-                      QString scaleTmpString = sceneScaleCombo->currentText();
-                      scaleTmpString.chop(1);
-                      scaleInt = scaleTmpString.toInt();
-                  }
-                  views[subName]->centerOn(-X+(views[subName]->size().width()*50/scaleInt), -Y+(views[subName]->size().height()*50/scaleInt));
-              }
-              return errors;
-          }
-          else if(reader->name()=="PosX"&&reader->isStartElement())
-          {
-              wasX=true;
-              X = reader->readElementText().toInt();
-          }
-          else if(reader->name()=="PosY"&&reader->isStartElement())
-          {
-              wasY=true;
-              Y = reader->readElementText().toInt();
-          }
-          else if (reader->name()=="Scale"&&reader->isStartElement())
-          {
-              wasScale=true;
-              QString ScaleString = reader->readElementText();
-              scaleInt =(int) ScaleString.toDouble();
-              char tmp[10];
-              sprintf (tmp,"%d",scaleInt);
-              ScaleString = QString(tmp);
-              ScaleString.append("%");
-              this->sceneScaleChanged(ScaleString);
-              QStringList tmpScales = scales;
-              if(tmpScales.contains(ScaleString))
-              {
-                  sceneScaleCombo->setCurrentIndex(tmpScales.indexOf(ScaleString));
-              }
-              else
-              {
+        reader->readNextStartElement();
+        if(reader->name()=="Graphics"&&reader->isEndElement())
+        {
+            if(!wasX||!wasY)
+            {
+                char linenum[30];
+                sprintf(linenum,"; line: %lld", reader->lineNumber());
+                errors.push_back(QString("The X, Y or Sacle parameter was not defined for the Graphics")+=linenum);
+            }
+            else
+            {
+                if(!wasScale)
+                {
+                    QString scaleTmpString = sceneScaleCombo->currentText();
+                    scaleTmpString.chop(1);
+                    scaleInt = scaleTmpString.toInt();
+                }
+                views[subName]->centerOn(-X+(views[subName]->size().width()*50/scaleInt), -Y+(views[subName]->size().height()*50/scaleInt));
+            }
+            return errors;
+        }
+        else if(reader->name()=="PosX"&&reader->isStartElement())
+        {
+            wasX=true;
+            X = reader->readElementText().toInt();
+        }
+        else if(reader->name()=="PosY"&&reader->isStartElement())
+        {
+            wasY=true;
+            Y = reader->readElementText().toInt();
+        }
+        else if (reader->name()=="Scale"&&reader->isStartElement())
+        {
+            wasScale=true;
+            QString ScaleString = reader->readElementText();
+            scaleInt =(int) ScaleString.toDouble();
+            char tmp[10];
+            sprintf (tmp,"%d",scaleInt);
+            ScaleString = QString(tmp);
+            ScaleString.append("%");
+            this->sceneScaleChanged(ScaleString);
+            QStringList tmpScales = scales;
+            if(tmpScales.contains(ScaleString))
+            {
+                sceneScaleCombo->setCurrentIndex(tmpScales.indexOf(ScaleString));
+            }
+            else
+            {
                 tmpScales<<ScaleString;
                 sceneScaleCombo->clear();
                 sceneScaleCombo->addItems(tmpScales);
                 sceneScaleCombo->setCurrentIndex(tmpScales.indexOf(ScaleString));
-              }
-          }
+            }
+        }
 
-          else if (reader->isStartElement())
-          {
-              char linenum[30];
-              sprintf(linenum,"; line: %lld", reader->lineNumber());
-              errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
-          }
+        else if (reader->isStartElement())
+        {
+            char linenum[30];
+            sprintf(linenum,"; line: %lld", reader->lineNumber());
+            errors.push_back((QString("unexpected name while reading wait <State>: ")+=reader->name())+=linenum);
+        }
 
     }
     if(!wasX||!wasY)
@@ -1636,8 +1785,12 @@ void RESpecTa::TabChanged(int newIndex)
     emit SignalDeleted();
 }
 
-void RESpecTa::WasChanged()
+void RESpecTa::WasChanged(QString undo_string)
 {
+    cb.insert(cb_iter, undo_string);//TODO trzeba wstawiac na wlasne polozenie
+    printBuff(cb);
+    cb_iter=cb.end();cb_int_iter++;
+    cb_redo_count=0;
     TreeModel * newModel = new TreeModel(this, mod, currentSubtask);
     TreeView->setModel(newModel);
     delete treeModel;

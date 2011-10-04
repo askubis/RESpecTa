@@ -98,7 +98,6 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem * Style
         pointsVector.push_back((startItem()->pos()+QPoint(100,0)).toPoint());
         pointsVector.push_back((startItem()->pos()+QPoint(50,0)).toPoint());
         painter->drawLines(pointsVector);
-        //TODO:create transition view
 
         setLine(QLineF(startItem()->pos()+QPoint(0,-50), startItem()->pos()+QPoint(0,-100)));
 
@@ -145,10 +144,6 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem * Style
         return;
     else
     {
-
-        //scene->removeItem(lines[0]);//TODO czy moznato zrobic w taki sposob, czy nie trzebausunac i dodac czegos pustego.
-        //scene->removeItem(lines[1]);
-        //scene->removeItem(lines[2]);
 
         QPen myPen = pen();
         myPen.setColor(Qt::black);

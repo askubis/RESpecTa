@@ -245,6 +245,11 @@ public:
     */
     QStringList checkIfOK();
 
+
+    QString CreateNextUndoPoint();
+
+    void saveToStream(MyGraphType *G, QXmlStreamWriter * writer);
+
         //*************     OTHER   ***********//
     /**
     *   Sets changed parameter and refreshes the TreeView in the main window.

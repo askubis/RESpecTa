@@ -13,6 +13,8 @@ class RESpecTa;
 #include "myTreeView.h"
 #include "diagramscene.h"
 
+#include <boost/circular_buffer.hpp>
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QToolBox;
@@ -66,7 +68,7 @@ public:
    /**
    *   Function refreshing the TreeView, called when change in the model has occured.
    */
-   void WasChanged();
+   void WasChanged(QString undoString);
    /**
    *   Sets curentSubtask to newSubtask.
    *    @param newSubtask Name of the new subtask to show.
@@ -127,6 +129,9 @@ signals:
    void SignalDeleted();
 
 private slots:
+
+   void undo();
+   void redo();
    /**
    *   Slot, which runs HideSubtask function.
    */
@@ -327,6 +332,15 @@ private:
     QStringList LoadTransitions(QString filename);
 
     /**
+    *
+    */
+    QStringList LoadStatesFromReader(QXmlStreamReader * reader, QString GraphName);
+    /**
+    *
+    */
+    QStringList LoadTransitionsFromReader(QXmlStreamReader * reader, QString subname);
+
+    /**
     *   List of available scale modifiers.
     */
     QStringList scales;
@@ -496,6 +510,19 @@ private:
     *   Action responsible
     */
     QAction * TasksAction;
+
+
+    QAction * undoAction;
+    QAction * redoAction;
+
+
+     boost::circular_buffer<QString> cb;
+
+     boost::circular_buffer<QString>::iterator cb_iter;
+     int cb_int_iter;
+     int cb_redo_count;
+     void clear();
+     void Load(QString);
 };
 
 

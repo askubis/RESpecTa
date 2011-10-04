@@ -674,8 +674,6 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     QString SubName = QString().fromStdString(FileName);
     SubName.chop(4);
 
-    boost::graph_traits<MyGraphType>::vertex_iterator first,last;
-    tie(first, last) = vertices(*G);
     QString tmpSaveName = QString(SaveFolder).append(QString().fromStdString(FileName));
     QFile* file = new QFile(tmpSaveName);
     QString msg = SubName;
@@ -687,6 +685,38 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
     writer->writeStartDocument("1.0");
     writer->writeDTD(QString("<!DOCTYPE TaskDescription SYSTEM \"fsautomat.dtd\" >"));
 
+
+
+    if(ifMain)writer->writeStartElement("TaskDescription");
+    else writer->writeStartElement("SubTask");
+
+    res->SaveGraphicsAttributes(writer, SubName);
+
+    saveToStream(G, writer);
+
+    if(ifMain)
+    {
+        for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+        {
+            if((*it).first == mainName)continue;
+            std::string subtaskFileName = (*it).first.toStdString() + ".xml";
+            writer->writeStartElement("xi:include");
+            writer->writeAttribute("href", QString(SaveFolder).append(QString().fromStdString(subtaskFileName)));
+            writer->writeAttribute("parse", "xml");
+            writer->writeAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
+            writer->writeEndElement();
+        }
+    }
+    writer->writeEndElement();
+    writer->writeEndDocument();
+    file->close();
+}
+
+void Model::saveToStream(MyGraphType *G, QXmlStreamWriter * writer)
+{
+    boost::graph_traits<MyGraphType>::vertex_iterator first,last;
+    tie(first, last) = vertices(*G);
+
     typedef  property_map<MyGraphType, state_t>::type StateMap;
     StateMap stateMap = get(state_t(), *G);
 
@@ -695,11 +725,6 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 
     BaseState *State;
     Transition * transition;
-
-    if(ifMain)writer->writeStartElement("TaskDescription");
-    else writer->writeStartElement("SubTask");
-
-    res->SaveGraphicsAttributes(writer, SubName);
 
     for (;first != last;first++)
     {
@@ -725,23 +750,6 @@ void Model::printStates(MyGraphType *G, std::string FileName, bool ifMain)
 
       writer->writeEndElement();
     }
-
-    if(ifMain)
-    {
-        for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
-        {
-            if((*it).first == mainName)continue;
-            std::string subtaskFileName = (*it).first.toStdString() + ".xml";
-            writer->writeStartElement("xi:include");
-            writer->writeAttribute("href", QString(SaveFolder).append(QString().fromStdString(subtaskFileName)));
-            writer->writeAttribute("parse", "xml");
-            writer->writeAttribute("xmlns:xi", "http://www.w3.org/2001/XInclude");
-            writer->writeEndElement();
-        }
-    }
-    writer->writeEndElement();
-    writer->writeEndDocument();
-    file->close();
 }
 
 QStringList Model::getStateNames(MyGraphType G)
@@ -925,7 +933,30 @@ BaseState * Model::getState(MyGraphType * tmp, int index)
 void Model::setChanged(bool newChanged)
 {
     changed=newChanged;
-    if(!changeBlocked && changed)res->WasChanged();
+    QString undoString = this->CreateNextUndoPoint();
+    if(!changeBlocked && changed)res->WasChanged(undoString);
+}
+
+QString Model::CreateNextUndoPoint()
+{
+    QString * str = new QString();
+    QXmlStreamWriter * writer = new QXmlStreamWriter(str);
+    writer->writeStartElement("TMP");
+    saveToStream((*subtasks)[mainName], writer);
+    for (std::map<QString, MyGraphType *>::iterator it = subtasks->begin();it!=subtasks->end();it++)
+    {
+        if((*it).first!=mainName)
+        {
+            writer->writeStartElement("Subtask");
+            writer->writeAttribute("Task", (*it).first);
+            saveToStream((*it).second, writer);
+            writer->writeEndElement();
+        }
+
+    }
+    writer->writeEndElement();
+    //TODO:save
+    return *str;
 }
 
 void Model::CleanTask(QString Name)
